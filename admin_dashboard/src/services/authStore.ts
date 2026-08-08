@@ -1,4 +1,4 @@
-import { UserSession, UserRole } from '../types/index.js';
+import { UserSession } from '../types/index.js';
 
 const STORAGE_KEY = 'kissan_mithar_expert_session';
 
@@ -6,10 +6,10 @@ export class AuthStore {
   static getSession(): UserSession | null {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return this.getDefaultExpertSession();
+      if (!raw) return null;
       return JSON.parse(raw);
     } catch {
-      return this.getDefaultExpertSession();
+      return null;
     }
   }
 

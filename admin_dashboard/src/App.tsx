@@ -15,6 +15,13 @@ export const App: React.FC = () => {
   const [selectedRequest, setSelectedRequest] = useState<OrchardRequest | null>(null);
   const [isBuildingReport, setIsBuildingReport] = useState<boolean>(false);
 
+  const handleLogout = () => {
+    AuthStore.clearSession();
+    setSession(null);
+    setSelectedRequest(null);
+    setIsBuildingReport(false);
+  };
+
   if (!session) {
     return <LoginPage onLoginSuccess={(s) => setSession(s)} />;
   }
@@ -89,6 +96,7 @@ export const App: React.FC = () => {
       }}
       session={session}
       onSessionChange={(s) => setSession(s)}
+      onLogout={handleLogout}
     >
       {renderContent()}
     </Layout>

@@ -193,3 +193,28 @@ model Device {
   @@index([farmerId])
   @@map("devices")
 }
+
+enum AuthAction {
+  LOGIN
+  LOGOUT
+  TOKEN_REFRESH
+}
+
+model AuthAuditLog {
+  id         String     @id @default(uuid())
+  userId     String
+  userType   Role       @default(EXPERT)
+  userName   String?
+  userEmail  String?
+  action     AuthAction
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?
+  timestamp  DateTime   @default(now())
+
+  @@index([userId])
+  @@index([userType])
+  @@index([action])
+  @@index([timestamp])
+  @@map("auth_audit_logs")
+}

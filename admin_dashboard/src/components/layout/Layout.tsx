@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sidebar } from './Sidebar.js';
 import { Header } from './Header.js';
+import { ProfileModal } from '../profile/ProfileModal.js';
 import { UserSession } from '../../types/index.js';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
   setActiveTab: (tab: string) => void;
   session: UserSession;
   onSessionChange: (session: UserSession) => void;
+  onLogout: () => void;
   children: React.ReactNode;
 }
 
@@ -16,13 +18,26 @@ export const Layout: React.FC<Props> = ({
   setActiveTab,
   session,
   onSessionChange,
+  onLogout,
   children,
 }) => {
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
+        onLogout={onLogout}
+      />
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-        <Header session={session} onSessionChange={onSessionChange} />
+        <Header
+          session={session}
+          onSessionChange={onSessionChange}
+          onOpenProfile={() => setIsProfileModalOpen(true)}
+          onLogout={onLogout}
+        />
         <main
           style={{
             flex: 1,
@@ -34,6 +49,13 @@ export const Layout: React.FC<Props> = ({
           {children}
         </main>
       </div>
+
+      <ProfileModal
+        session={session}
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        onLogout={onLogout}
+      />
     </div>
   );
 };

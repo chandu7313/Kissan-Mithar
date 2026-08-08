@@ -4,9 +4,17 @@ interface Props {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   pendingCount?: number;
+  onOpenProfile?: () => void;
+  onLogout?: () => void;
 }
 
-export const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab, pendingCount = 12 }) => {
+export const Sidebar: React.FC<Props> = ({
+  activeTab,
+  setActiveTab,
+  pendingCount = 12,
+  onOpenProfile,
+  onLogout,
+}) => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard & Analytics', icon: '📊' },
     { id: 'requests', label: 'Orchard Surveys', icon: '🌾', badge: pendingCount },
@@ -110,9 +118,37 @@ export const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab, pendingCount
             </button>
           );
         })}
+
+        {/* Quick Profile & Activity trigger */}
+        {onOpenProfile && (
+          <button
+            onClick={onOpenProfile}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.75rem 1rem',
+              borderRadius: '0.5rem',
+              backgroundColor: 'transparent',
+              color: '#94a3b8',
+              fontWeight: 500,
+              fontSize: '0.875rem',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+              textAlign: 'left',
+              marginTop: '0.5rem',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+          >
+            <span style={{ fontSize: '1.125rem' }}>📋</span>
+            <span>Profile & Audit Logs</span>
+          </button>
+        )}
       </nav>
 
-      {/* System Status Footer */}
+      {/* System Status & Logout Footer */}
       <div
         style={{
           padding: '1rem 1.25rem',
@@ -121,13 +157,41 @@ export const Sidebar: React.FC<Props> = ({ activeTab, setActiveTab, pendingCount
           color: '#64748b',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.25rem',
+          gap: '0.75rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#4ade80' }}>
-          <span>●</span> API Gateway Online
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#4ade80' }}>
+            <span>●</span> PostgreSQL Online
+          </div>
+          <span style={{ color: '#94a3b8' }}>v1.0.0</span>
         </div>
-        <div>v1.0.0 · PostgreSQL & FCM</div>
+
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem',
+              borderRadius: '0.375rem',
+              backgroundColor: 'rgba(220, 38, 38, 0.15)',
+              color: '#f87171',
+              border: '1px solid rgba(220, 38, 38, 0.3)',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(220, 38, 38, 0.25)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(220, 38, 38, 0.15)')}
+          >
+            <span>🚪</span>
+            <span>Sign Out</span>
+          </button>
+        )}
       </div>
     </aside>
   );
