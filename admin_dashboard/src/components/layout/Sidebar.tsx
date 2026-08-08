@@ -35,30 +35,28 @@ export const Sidebar: React.FC<Props> = ({
       {/* Brand Header */}
       <div
         style={{
-          padding: '1.5rem 1.25rem',
+          padding: '1.25rem 1.25rem',
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
           display: 'flex',
           alignItems: 'center',
           gap: '0.75rem',
         }}
       >
-        <div
+        <img
+          src="/app_logo.png"
+          alt="Kisan Mithar"
           style={{
-            width: '36px',
-            height: '36px',
+            height: '42px',
+            width: '42px',
+            objectFit: 'contain',
             borderRadius: '8px',
-            backgroundColor: 'var(--primary-600)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.25rem',
+            backgroundColor: 'white',
+            padding: '2px',
             boxShadow: '0 0 12px rgba(34, 197, 94, 0.4)',
           }}
-        >
-          🌾
-        </div>
+        />
         <div>
-          <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.125rem', letterSpacing: '-0.02em' }}>
+          <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.0625rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
             KISAN MITHAR
           </div>
           <div style={{ fontSize: '0.6875rem', color: '#94a3b8', fontWeight: 500, letterSpacing: '0.05em' }}>

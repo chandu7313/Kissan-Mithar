@@ -211,29 +211,20 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
         }}
       >
         {/* Brand Header */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '0.375rem' }}>
-          <div
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '0.5rem' }}>
+          <img
+            src="/app_logo.png"
+            alt="Kisan Mithar Logo"
             style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '14px',
-              backgroundColor: '#15803d',
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1.75rem',
-              boxShadow: '0 10px 20px -5px rgba(21, 128, 61, 0.5)',
+              height: '84px',
+              maxWidth: '220px',
+              objectFit: 'contain',
+              marginBottom: '0.25rem',
             }}
-          >
-            🌾
-          </div>
+          />
           <div>
-            <h1 style={{ fontSize: '1.375rem', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>
-              KISAN MITHAR
-            </h1>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#15803d', letterSpacing: '0.08em', marginTop: '0.125rem' }}>
-              CONSOLE LOGIN
+            <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#15803d', letterSpacing: '0.08em' }}>
+              EXPERT & AGRONOMY CONSOLE
             </div>
           </div>
           <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: 0 }}>

@@ -123,7 +123,7 @@ class HomeScreen extends ConsumerWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Farmer Avatar
+                    // Brand Logo Avatar
                     Container(
                       width: 48,
                       height: 48,
@@ -131,10 +131,17 @@ class HomeScreen extends ConsumerWidget {
                         color: Color(0xFFE8F5E9),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
-                        Icons.agriculture_rounded,
-                        color: Color(0xFF1B6327),
-                        size: 28,
+                      padding: const EdgeInsets.all(4),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/app_logo.png',
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.agriculture_rounded,
+                            color: Color(0xFF1B6327),
+                            size: 28,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),

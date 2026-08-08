@@ -126,10 +126,16 @@ class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (showTractorIcon) ...[
-                const Icon(
-                  Icons.agriculture_rounded,
-                  color: AppColors.primaryGreen,
-                  size: 28,
+                Image.asset(
+                  'assets/images/app_logo.png',
+                  height: 32,
+                  width: 32,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.agriculture_rounded,
+                    color: AppColors.primaryGreen,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(width: 8),
               ],

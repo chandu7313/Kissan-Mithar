@@ -84,12 +84,16 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ fontSize: '1.5rem' }}>👨‍🌾</span>
+            <img
+              src="/app_logo.png"
+              alt="Kisan Mithar"
+              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+            />
             <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
+              <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
                 Expert Profile & Session Logs
               </h2>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', margin: 0 }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
                 KISAN MITHAR EXPERT CONSOLE
               </p>
             </div>
