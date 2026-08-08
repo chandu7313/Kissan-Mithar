@@ -1,0 +1,53 @@
+name: kissan_mithar
+description: "KISSAN MITHAR - Farmer-First Mobile App"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+
+  # State Management
+  flutter_riverpod: ^2.5.1
+
+  # Routing
+  go_router: ^14.2.0
+
+  # Environment & Backend
+  flutter_dotenv: ^5.1.0
+  supabase_flutter: ^2.5.6
+
+  # Networking & HTTP
+  dio: ^5.4.3+1
+  http: ^1.2.1
+
+  # Media & Location
+  image_picker: ^1.1.2
+  geolocator: ^12.0.0
+  google_maps_flutter: ^2.6.1
+  shared_preferences: ^2.2.3
+  share_plus: ^9.0.0
+
+  # UI & Charts
+  fl_chart: ^0.68.0
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - .env
+    - assets/images/
