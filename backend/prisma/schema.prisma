@@ -70,6 +70,7 @@ model Expert {
   name            String
   phoneNumber     String   @unique
   email           String?  @unique
+  passwordHash    String?
   photoUrl        String?
   specialization  String
   experienceYears Int      @default(5)
@@ -85,12 +86,13 @@ model Expert {
 }
 
 model Admin {
-  id          String   @id @default(uuid())
-  firebaseUid String   @unique
-  name        String
-  email       String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(uuid())
+  firebaseUid  String?  @unique
+  name         String
+  email        String   @unique
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("admins")
 }
@@ -198,6 +200,7 @@ enum AuthAction {
   LOGIN
   LOGOUT
   TOKEN_REFRESH
+  PASSWORD_RESET
 }
 
 model AuthAuditLog {
@@ -217,4 +220,18 @@ model AuthAuditLog {
   @@index([action])
   @@index([timestamp])
   @@map("auth_audit_logs")
+}
+
+model EmailOtp {
+  id        String   @id @default(uuid())
+  email     String
+  otp       String
+  purpose   String   @default("LOGIN") // "LOGIN" | "RESET_PASSWORD"
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([purpose])
+  @@map("email_otps")
 }

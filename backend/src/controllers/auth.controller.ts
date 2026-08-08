@@ -27,6 +27,88 @@ export class AuthController {
     }
   }
 
+  static async sendEmailOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { email, purpose, role } = req.body;
+      const result = await AuthService.sendEmailOtp({ email, purpose, role });
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async verifyEmailOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { email, otp, role } = req.body;
+      const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
+      const userAgent = req.headers['user-agent'] || 'Unknown Client';
+
+      const result = await AuthService.verifyEmailOtpAndLogin({
+        email,
+        otp,
+        role,
+        ipAddress,
+        userAgent,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async loginWithPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { email, password, role } = req.body;
+      const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
+      const userAgent = req.headers['user-agent'] || 'Unknown Client';
+
+      const result = await AuthService.loginWithPassword({
+        email,
+        password,
+        role,
+        ipAddress,
+        userAgent,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { email, otp, newPassword } = req.body;
+      const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
+      const userAgent = req.headers['user-agent'] || 'Unknown Client';
+
+      const result = await AuthService.resetPasswordWithOtp({
+        email,
+        otp,
+        newPassword,
+        ipAddress,
+        userAgent,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userId, role, userName, userEmail } = req.body;
