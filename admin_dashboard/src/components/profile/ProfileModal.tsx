@@ -172,7 +172,7 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ fontSize: '1rem' }}>🕒</span>
               <h4 style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>
-                Authentication Audit Trail (PostgreSQL Logs)
+                Authentication & Session Audit Trail
               </h4>
             </div>
             <button

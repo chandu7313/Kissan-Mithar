@@ -693,7 +693,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
           }}
         >
           <span>🔒</span>
-          <span>Secured via PostgreSQL Authentication Audits</span>
+          <span>Secured via Authentication & Audit Trail</span>
         </div>
       </div>
     </div>
