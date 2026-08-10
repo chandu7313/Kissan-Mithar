@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../core/localization/app_language.dart';
-import '../../../../core/localization/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/routing/app_router.dart';
+import '../../../../core/services/step_voice_guide_service.dart';
 import '../../providers/orchard_planning_provider.dart';
 
 class OrchardGuidedFlowScreen extends ConsumerStatefulWidget {
@@ -20,18 +23,29 @@ class OrchardGuidedFlowScreen extends ConsumerStatefulWidget {
 class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScreen> {
   late final PageController _pageController;
   final ImagePicker _picker = ImagePicker();
+  final StepVoiceGuideService _voiceGuide = StepVoiceGuideService();
 
   @override
   void initState() {
     super.initState();
     final currentStep = ref.read(orchardPlanningProvider).currentStep;
     _pageController = PageController(initialPage: currentStep);
+    // Speak the instruction for the initial step after the frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _speakCurrentStep(currentStep);
+    });
   }
 
   @override
   void dispose() {
+    _voiceGuide.stop();
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _speakCurrentStep(int step) {
+    final language = ref.read(languageNotifierProvider);
+    _voiceGuide.speakStepInstruction(step, language);
   }
 
   void _goToStep(int step) {
@@ -41,21 +55,41 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
       duration: const Duration(milliseconds: 350),
       curve: Curves.easeInOutCubic,
     );
+    // Speak instruction for the new step
+    _speakCurrentStep(step);
   }
 
   Future<void> _pickImage(String angle, ImageSource source) async {
     try {
       final XFile? photo = await _picker.pickImage(
         source: source,
-        maxWidth: 1280,
         maxHeight: 1280,
         imageQuality: 85,
       );
       if (photo != null) {
-        ref.read(orchardPlanningProvider.notifier).setPhoto(angle, photo.path);
+        if (angle == 'surveyMap') {
+          ref.read(orchardPlanningProvider.notifier).setSurveyMap(photo.path, 'Camera');
+        } else {
+          ref.read(orchardPlanningProvider.notifier).setPhoto(angle, photo.path);
+        }
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
+    }
+  }
+
+  Future<void> _pickSurveyPdf() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        ref.read(orchardPlanningProvider.notifier).setSurveyMap(result.files.single.path!, 'PDF');
+      }
+    } catch (e) {
+      debugPrint('Error picking pdf: $e');
     }
   }
 
@@ -90,7 +124,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
           children: [
             Icon(Icons.edit_location_alt_rounded, color: AppColors.primary),
             SizedBox(width: 8),
-            Text('Edit Location', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(l10n.editLocation, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         content: SingleChildScrollView(
@@ -129,7 +163,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -146,7 +180,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               );
               Navigator.pop(ctx);
             },
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -169,8 +203,8 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Select Farm on Map',
+                Text(
+                  l10n.selectFarmOnMap,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
@@ -180,8 +214,8 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               ],
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Drag the pin to mark your farm boundary.',
+            Text(
+              l10n.dragPinToMark,
               style: TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 16),
@@ -231,14 +265,235 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                 onPressed: () {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Farm coordinates updated!')),
+                    SnackBar(content: Text(l10n.farmCoordinatesUpdated)),
                   );
                 },
-                child: const Text('Confirm Location', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(l10n.confirmLocation, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildUploadOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    bool isSmall = false,
+  }) {
+    return InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: isSmall ? 12 : 20, horizontal: 8),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFB0BEC5), width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(5),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: isSmall
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, color: const Color(0xFF1B6327), size: 20),
+                    const SizedBox(width: 6),
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icon == Icons.camera_alt_outlined
+                        ? _RipplingIcon(icon: icon, size: 30)
+                        : Icon(icon, color: const Color(0xFF1B6327), size: 32),
+                    const SizedBox(height: 10),
+                    Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+    );
+  }
+
+  Widget _buildStep0SurveyMap(BuildContext context, OrchardDraftState state, OrchardPlanningNotifier notifier) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 16),
+          Text(
+            l10n.uploadDocument,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+              letterSpacing: -0.4,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              l10n.surveyMapSubtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.textSecondary,
+                height: 1.35,
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+          _buildUploadOption(
+            icon: Icons.camera_alt_outlined,
+            label: l10n.takePhoto,
+            onTap: () => _pickImage('surveyMap', ImageSource.camera),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildUploadOption(
+                  icon: Icons.picture_as_pdf_outlined,
+                  label: l10n.uploadPdf,
+                  onTap: _pickSurveyPdf,
+                  isSmall: true,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildUploadOption(
+                  icon: Icons.photo_library_outlined,
+                  label: l10n.fromGallery,
+                  onTap: () => _pickImage('surveyMap', ImageSource.gallery),
+                  isSmall: true,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 28),
+          Container(
+            width: double.infinity,
+            height: 190,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: state.surveyMapPath != null ? const Color(0xFF1B6327) : const Color(0xFFB0BEC5),
+                width: 1.5,
+                strokeAlign: BorderSide.strokeAlignCenter,
+              ),
+            ),
+            child: Center(
+              child: state.surveyMapPath == null
+                  ? const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.image_outlined,
+                          size: 48,
+                          color: Color(0xFF90A4AE),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          'No file selected',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF78909C),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          state.surveyMapType == 'PDF' ? Icons.picture_as_pdf : Icons.check_circle_outline_rounded,
+                          size: 48,
+                          color: const Color(0xFF1B6327),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          state.surveyMapType == 'PDF' ? l10n.pdfUploaded : l10n.imageSelected,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF1B6327),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          state.surveyMapPath!.split('/').last,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 12),
+                        TextButton.icon(
+                          onPressed: () {
+                            notifier.clearSurveyMap();
+                          },
+                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                          label: Text(l10n.remove, style: const TextStyle(color: Colors.red)),
+                        )
+                      ],
+                    ),
+            ),
+          ),
+          const SizedBox(height: 36),
+          InkWell(
+            onTap: () {
+              notifier.clearSurveyMap();
+              notifier.nextStep();
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Text(
+                "I don't have this — Skip",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                  decoration: TextDecoration.underline,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }
@@ -249,72 +504,21 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
     final notifier = ref.read(orchardPlanningProvider.notifier);
     final currentLang = ref.watch(languageProvider);
 
-    final stepProgress = (state.currentStep + 1) / 3.0;
-    final stepPercent = '${((state.currentStep + 1) * 33.33).toInt()}%';
+    final stepProgress = (state.currentStep + 1) / 4.0;
+    final stepPercent = '${((state.currentStep + 1) * 25).toInt()}%';
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF9F2),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Color(0x12000000),
-                blurRadius: 10,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, size: 28, color: AppColors.textPrimary),
-                    onPressed: () {
-                      if (state.currentStep > 0) {
-                        _goToStep(state.currentStep - 1);
-                      } else {
-                        context.pop();
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.eco_rounded, color: AppColors.primary, size: 28),
-                  const SizedBox(width: 6),
-                  const Text(
-                    'Kissan Mithar',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5F4ED),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFBFCABA)),
-                    ),
-                    child: Text(
-                      currentLang.nativeName,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+      appBar: FarmerAppBar(
+        showBrandTitle: false,
+        showTractorIcon: false,
+        onBackTap: () {
+          if (state.currentStep > 0) {
+            _goToStep(state.currentStep - 1);
+          } else {
+            context.pop();
+          }
+        },
       ),
       body: Column(
         children: [
@@ -328,20 +532,42 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Step ${state.currentStep + 1} of 3',
+                      l10n.step + ' ${state.currentStep + 1} ' + l10n.of + ' 4',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                    Text(
-                      stepPercent,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          stepPercent,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Replay voice instruction button
+                        InkWell(
+                          onTap: () => _speakCurrentStep(state.currentStep),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.volume_up_rounded,
+                              size: 18,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -365,6 +591,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
+                _buildStep0SurveyMap(context, state, notifier),
                 _buildStep1Photos(context, state, notifier),
                 _buildStep2Location(context, state, notifier),
                 _buildStep3LandDetails(context, state, notifier),
@@ -395,18 +622,16 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                   onPressed: state.isSubmitting
                       ? null
                       : () async {
-                          if (state.currentStep == 0) {
-                            _goToStep(1);
-                          } else if (state.currentStep == 1) {
-                            _goToStep(2);
+                          if (state.currentStep < 3) {
+                            _goToStep(state.currentStep + 1);
                           } else {
-                            // Step 3 -> Final Submit
+                            // Step 4 -> Final Submit
                             final success = await notifier.submitOrchardPlan();
                             if (success && context.mounted) {
                               context.pushNamed(AppRoutes.planTracker, extra: {
                                 'landSize': state.landSize,
-                                'soilType': state.soilType,
-                                'hasMap': true,
+                                'soilType': state.soilTypes.join(', '),
+                                'hasMap': state.surveyMapPath != null,
                               });
                             }
                           }
@@ -431,12 +656,12 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              state.currentStep == 2 ? 'Submit Farm Plan' : 'Next Step',
+                              state.currentStep == 3 ? l10n.submitFarmPlan : l10n.nextStep,
                               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(width: 8),
                             Icon(
-                              state.currentStep == 2 ? Icons.send_rounded : Icons.arrow_forward_rounded,
+                              state.currentStep == 3 ? Icons.send_rounded : Icons.arrow_forward_rounded,
                               size: 24,
                             ),
                           ],
@@ -459,8 +684,8 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Take Photos of Your Land',
+          Text(
+            l10n.takePhotosOfLand,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -468,30 +693,25 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Please capture clear images of your farm from the following 4 angles to help our agronomists assess soil & slope.',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 24),
+
 
           // 2x2 Photo Capture Grid
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 0.95,
-            children: [
-              _buildPhotoCard('Front View', 'front', state.frontPhoto, notifier),
-              _buildPhotoCard('Left View', 'left', state.leftPhoto, notifier),
-              _buildPhotoCard('Right View', 'right', state.rightPhoto, notifier),
-              _buildPhotoCard('Center View', 'center', state.centerPhoto, notifier),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 1.15,
+              children: [
+                _buildPhotoCard(l10n.frontView, 'front', state.frontPhoto, notifier),
+                _buildPhotoCard(l10n.leftView, 'left', state.leftPhoto, notifier),
+                _buildPhotoCard(l10n.rightView, 'right', state.rightPhoto, notifier),
+                _buildPhotoCard(l10n.backView, 'center', state.centerPhoto, notifier),
+              ],
+            ),
           ),
 
           const SizedBox(height: 24),
@@ -507,8 +727,8 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               ),
               onPressed: _pickFromGallery,
               icon: const Icon(Icons.photo_library_rounded, size: 22),
-              label: const Text(
-                'Upload from Gallery instead',
+              label: Text(
+                l10n.uploadFromGalleryInstead,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
@@ -517,7 +737,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
           if (state.galleryPhotos.isNotEmpty) ...[
             const SizedBox(height: 16),
             Text(
-              '${state.galleryPhotos.length} additional photo(s) selected from gallery',
+              '${state.galleryPhotos.length} ' + l10n.additionalPhotosSelected.replaceAll('{count}', state.galleryPhotos.length.toString()),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 13, color: AppColors.primary, fontWeight: FontWeight.w600),
             ),
@@ -569,7 +789,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                                   imagePath,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Center(
+                                  errorBuilder: (_, _, _) => const Center(
                                     child: Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 40),
                                   ),
                                 )
@@ -577,7 +797,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                                   File(imagePath),
                                   width: double.infinity,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => const Center(
+                                  errorBuilder: (_, _, _) => const Center(
                                     child: Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 40),
                                   ),
                                 ),
@@ -610,15 +830,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                     ),
                   ),
                 ] else ...[
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE8F5E9),
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                    child: const Icon(Icons.photo_camera_rounded, size: 30, color: AppColors.primary),
-                  ),
+                  const _RipplingIcon(icon: Icons.photo_camera_rounded),
                   const SizedBox(height: 12),
                   Text(
                     title,
@@ -869,49 +1081,20 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Provide details about water, soil, budget, and goals to get an expert-certified orchard design.',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-              height: 1.4,
-            ),
-          ),
           const SizedBox(height: 24),
 
-          // 1. Land Size Single Select Radio Cards
-          _buildSectionHeader('1. Land Size', Icons.straighten_rounded),
+          // 1. Land Size (Single-select)
+          _buildSectionHeader('1. Farm Land Size', Icons.square_foot_rounded),
           const SizedBox(height: 12),
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: ['<1 Acre', '1-3 Acres', '3-5 Acres', 'Above 5 Acres'].map((size) {
-              final isSelected = state.landSize == size;
-              return InkWell(
-                onTap: () => notifier.setLandSize(size),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? AppColors.primary : const Color(0xFFBFCABA),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Text(
-                    size,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
+            children: [
+              _buildFilterChip('< 1 Acre', state.landSize == '<1 Acre', () => notifier.setLandSize('<1 Acre')),
+              _buildFilterChip('1 - 3 Acres', state.landSize == '1-3 Acres', () => notifier.setLandSize('1-3 Acres')),
+              _buildFilterChip('3 - 5 Acres', state.landSize == '3-5 Acres', () => notifier.setLandSize('3-5 Acres')),
+              _buildFilterChip('Above 5 Acres', state.landSize == 'Above 5 Acres', () => notifier.setLandSize('Above 5 Acres')),
+            ],
           ),
 
           const SizedBox(height: 28),
@@ -919,270 +1102,103 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
           // 2. Water Availability (Multi-select)
           _buildSectionHeader('2. Water Availability', Icons.water_drop_rounded),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
+          GridView.count(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            childAspectRatio: 0.85,
             children: [
-              _buildFilterChip('Borewell', Icons.water_damage_rounded, state.waterSources.contains('Borewell'), () => notifier.toggleWaterSource('Borewell')),
-              _buildFilterChip('Canal', Icons.waves_rounded, state.waterSources.contains('Canal'), () => notifier.toggleWaterSource('Canal')),
-              _buildFilterChip('Drip', Icons.grain_rounded, state.waterSources.contains('Drip'), () => notifier.toggleWaterSource('Drip')),
-              _buildFilterChip('Rain-fed', Icons.cloud_queue_rounded, state.waterSources.contains('Rain-fed'), () => notifier.toggleWaterSource('Rain-fed')),
+              _buildImageCard(
+                title: 'Borewell',
+                imageUrl: 'assets/images/borewell.png',
+                isSelected: state.waterSources.contains('Borewell'),
+                onTap: () => notifier.toggleWaterSource('Borewell'),
+              ),
+              _buildImageCard(
+                title: 'Canal',
+                imageUrl: 'assets/images/canal.png',
+                isSelected: state.waterSources.contains('Canal'),
+                onTap: () => notifier.toggleWaterSource('Canal'),
+              ),
+              _buildImageCard(
+                title: 'Drip',
+                imageUrl: 'assets/images/drip.png',
+                isSelected: state.waterSources.contains('Drip'),
+                onTap: () => notifier.toggleWaterSource('Drip'),
+              ),
+              _buildImageCard(
+                title: 'Rain-fed',
+                imageUrl: 'assets/images/rain.png',
+                isSelected: state.waterSources.contains('Rain-fed'),
+                onTap: () => notifier.toggleWaterSource('Rain-fed'),
+              ),
             ],
           ),
 
           const SizedBox(height: 28),
 
-          // 3. Soil Type (Single select)
+          // 3. Soil Type (Multi-select)
           _buildSectionHeader('3. Soil Type', Icons.landscape_rounded),
           const SizedBox(height: 12),
-          Row(
+          GridView.count(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            childAspectRatio: 0.85,
             children: [
-              Expanded(
-                child: _buildSoilCard('Red Soil', 'Red Soil (Lal Mitti)', const Color(0xFFD32F2F), state.soilType, notifier),
+              _buildImageCard(
+                title: 'Red Soil',
+                imageUrl: 'assets/images/ red soil.png',
+                isSelected: state.soilTypes.contains('Red Soil (Lal Mitti)'),
+                onTap: () => notifier.toggleSoilType('Red Soil (Lal Mitti)'),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildSoilCard('Black Soil', 'Black Soil (Kali Mitti)', const Color(0xFF37474F), state.soilType, notifier),
+              _buildImageCard(
+                title: 'Black Soil',
+                imageUrl: 'assets/images/black soil.png',
+                isSelected: state.soilTypes.contains('Black Soil (Kali Mitti)'),
+                onTap: () => notifier.toggleSoilType('Black Soil (Kali Mitti)'),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildSoilCard('Sandy Soil', 'Sandy Soil (Balui Mitti)', const Color(0xFFFFA000), state.soilType, notifier),
+              _buildImageCard(
+                title: 'Sandy Soil',
+                imageUrl: 'assets/images/sandy soil.png',
+                isSelected: state.soilTypes.contains('Sandy Soil (Balui Mitti)'),
+                onTap: () => notifier.toggleSoilType('Sandy Soil (Balui Mitti)'),
+              ),
+              _buildImageCard(
+                title: 'Forest Soil',
+                imageUrl: 'assets/images/alluvial soil.png',
+                isSelected: state.soilTypes.contains('Forest Soil'),
+                onTap: () => notifier.toggleSoilType('Forest Soil'),
+              ),
+              _buildImageCard(
+                title: 'Laterite Soil',
+                imageUrl: 'assets/images/laterite soil.png',
+                isSelected: state.soilTypes.contains('Laterite Soil'),
+                onTap: () => notifier.toggleSoilType('Laterite Soil'),
+              ),
+              _buildImageCard(
+                title: 'Alluvial Soil',
+                imageUrl: 'assets/images/alluvial soil01.png',
+                isSelected: state.soilTypes.contains('Alluvial Soil'),
+                onTap: () => notifier.toggleSoilType('Alluvial Soil'),
+              ),
+              _buildImageCard(
+                title: 'Saline Soil',
+                imageUrl: 'assets/images/saline soil.png',
+                isSelected: state.soilTypes.contains('Saline Soil'),
+                onTap: () => notifier.toggleSoilType('Saline Soil'),
               ),
             ],
           ),
 
           const SizedBox(height: 28),
 
-          // 4. Existing Crops (Multi-select)
-          _buildSectionHeader('4. Existing / Previous Crops', Icons.agriculture_rounded),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: ['Cotton', 'Soybean', 'Paddy', 'Sugarcane', 'Vegetables', 'None / Fallow'].map((crop) {
-              final isSelected = state.existingCrops.contains(crop);
-              return FilterChip(
-                label: Text(crop),
-                selected: isSelected,
-                selectedColor: const Color(0xFFE8F5E9),
-                checkmarkColor: AppColors.primary,
-                labelStyle: TextStyle(
-                  color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-                onSelected: (_) => notifier.toggleExistingCrop(crop),
-              );
-            }).toList(),
-          ),
-
-          const SizedBox(height: 28),
-
-          // 5. Electricity & Drip Toggles
-          _buildSectionHeader('5. Farm Infrastructure', Icons.bolt_rounded),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE3E3DC)),
-            ),
-            child: Column(
-              children: [
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  activeColor: AppColors.primary,
-                  title: const Text('Electricity Availability', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('3-phase or single-phase power on site'),
-                  value: state.hasElectricity,
-                  onChanged: (val) => notifier.setElectricity(val),
-                ),
-                const Divider(),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  activeColor: AppColors.primary,
-                  title: const Text('Existing Drip System', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Drip irrigation pipes installed'),
-                  value: state.hasDripIrrigation,
-                  onChanged: (val) => notifier.setDripIrrigation(val),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 28),
-
-          // 6. Budget Slider
-          _buildSectionHeader('6. Estimated Budget', Icons.currency_rupee_rounded),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE3E3DC)),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Planned Investment:', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE8F5E9),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        state.budget >= 100000 ? '₹1,00,000+' : currencyFormatter.format(state.budget),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Slider(
-                  value: state.budget,
-                  min: 20000,
-                  max: 100000,
-                  divisions: 16,
-                  activeColor: AppColors.primary,
-                  inactiveColor: const Color(0xFFE0E0E0),
-                  onChanged: (val) => notifier.setBudget(val),
-                ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('₹20,000 (Basic)', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                    Text('₹1,00,000+ (High-Density)', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 28),
-
-          // 7. Preferred Orchard
-          _buildSectionHeader('7. Preferred Orchard Crop', Icons.park_rounded),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              'Mango (Kesar Variety)',
-              'Guava (Taiwan Pink)',
-              'Pomegranate (Bhagwa)',
-              'Custard Apple (Sitaphal)',
-              'Dragon Fruit',
-              'Sweet Lime (Mosambi)',
-            ].map((orchard) {
-              final isSelected = state.preferredOrchards.contains(orchard);
-              return FilterChip(
-                label: Text(orchard),
-                selected: isSelected,
-                selectedColor: const Color(0xFFE8F5E9),
-                checkmarkColor: AppColors.primary,
-                labelStyle: TextStyle(
-                  color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-                onSelected: (_) => notifier.togglePreferredOrchard(orchard),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 12),
-          InkWell(
-            onTap: () => notifier.toggleExpertSuggestion(),
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: state.needExpertSuggestion ? const Color(0xFFFFF3E0) : Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: state.needExpertSuggestion ? const Color(0xFFFFA000) : const Color(0xFFBFCABA),
-                  width: 1.5,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    state.needExpertSuggestion ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                    color: state.needExpertSuggestion ? const Color(0xFFE65100) : AppColors.textSecondary,
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Text(
-                      'I need expert suggestion (Recommend based on soil & climate)',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 28),
-
-          // 8. Expected Goal
-          _buildSectionHeader('8. Primary Farming Goal', Icons.flag_rounded),
-          const SizedBox(height: 12),
-          Column(
-            children: [
-              'Higher Profit Margin',
-              'Low Water Requirement',
-              'Export Quality Produce',
-              'Organic Farming',
-              'Long-Term Steady Income',
-            ].map((goal) {
-              final isSelected = state.expectedGoal == goal;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: InkWell(
-                  onTap: () => notifier.setExpectedGoal(goal),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFFE8F5E9) : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected ? AppColors.primary : const Color(0xFFE3E3DC),
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
-                          color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          goal,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                            color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-
-          const SizedBox(height: 28),
-
-          // 9. Voice Note
-          _buildSectionHeader('9. Voice Note for Expert (Optional)', Icons.mic_rounded),
+          // 4. Voice Note
+          _buildSectionHeader('4. Voice Note for Expert (Optional)', Icons.mic_rounded),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(16),
@@ -1250,8 +1266,8 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Voice Note (0:15)', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text('Tap play to listen', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                            Text(l10n.voiceNote, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text(l10n.tapPlayToListen, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                           ],
                         ),
                       ),
@@ -1289,29 +1305,43 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
     );
   }
 
-  Widget _buildFilterChip(String label, IconData icon, bool isSelected, VoidCallback onTap) {
+  Widget _buildFilterChip(String label, bool isSelected, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFE8F5E9) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.primary : const Color(0xFFBFCABA),
-            width: isSelected ? 2 : 1,
+            color: isSelected ? AppColors.primary : const Color(0xFFC7CEC7),
+            width: isSelected ? 2.0 : 1.0,
           ),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: AppColors.primary.withAlpha(50),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              )
+            else
+              BoxShadow(
+                color: Colors.black.withAlpha(10),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 18, color: isSelected ? AppColors.primary : AppColors.textSecondary),
-            const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                fontSize: 15,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected ? AppColors.primary : AppColors.textPrimary,
               ),
             ),
@@ -1321,45 +1351,168 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
     );
   }
 
-  Widget _buildSoilCard(String title, String fullName, Color color, String selectedSoil, OrchardPlanningNotifier notifier) {
-    final isSelected = selectedSoil == fullName;
-
+  Widget _buildImageCard({
+    required String title,
+    required String imageUrl,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
-      onTap: () => notifier.setSoilType(fullName),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(12),
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFE8F5E9) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.primary : const Color(0xFFBFCABA),
-            width: isSelected ? 2 : 1,
+            color: isSelected ? AppColors.primary : const Color(0xFFC7CEC7),
+            width: isSelected ? 3.0 : 1.0,
           ),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: AppColors.primary.withAlpha(50),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              )
+            else
+              BoxShadow(
+                color: Colors.black.withAlpha(15),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+          ],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                    child: imageUrl.startsWith('http')
+                        ? Image.network(
+                            imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              color: const Color(0xFFF0F0F0),
+                              child: const Icon(Icons.image_not_supported_rounded, color: Colors.grey),
+                            ),
+                          )
+                        : Image.asset(
+                            imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              color: const Color(0xFFF0F0F0),
+                              child: const Icon(Icons.image_not_supported_rounded, color: Colors.grey),
+                            ),
+                          ),
+                  ),
+                  if (isSelected)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.4),
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.check_circle, color: Colors.white, size: 36),
+                      ),
+                    ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? AppColors.primary : AppColors.textPrimary,
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                  color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                  height: 1.2,
+                ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// An icon that pulses with a ripple effect to draw the farmer's attention.
+class _RipplingIcon extends StatefulWidget {
+  final IconData icon;
+  final double size;
+  
+  const _RipplingIcon({required this.icon, this.size = 30});
+
+  @override
+  State<_RipplingIcon> createState() => _RipplingIconState();
+}
+
+class _RipplingIconState extends State<_RipplingIcon>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 1.0, end: 1.25).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        final double baseSize = widget.size * 1.8;
+        // Calculate a normalized value from 0.0 to 1.0 for the glow based on scale
+        final double glowProgress = (_animation.value - 1.0) / 0.25;
+        
+        return SizedBox(
+          width: baseSize,
+          height: baseSize,
+          child: Transform.scale(
+            scale: _animation.value,
+            child: Container(
+              width: baseSize,
+              height: baseSize,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8F5E9),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.5 * glowProgress),
+                    blurRadius: 15 * glowProgress,
+                    spreadRadius: 5 * glowProgress,
+                  ),
+                ],
+              ),
+              child: Icon(widget.icon, size: widget.size, color: AppColors.primary),
+            ),
+          ),
+        );
+      },
     );
   }
 }

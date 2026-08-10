@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_language.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'soil_type_screen.dart';
 
-class LandSizeScreen extends StatefulWidget {
+class LandSizeScreen extends ConsumerStatefulWidget {
   const LandSizeScreen({super.key});
 
   @override
-  State<LandSizeScreen> createState() => _LandSizeScreenState();
+  ConsumerState<LandSizeScreen> createState() => _LandSizeScreenState();
 }
 
-class _LandSizeScreenState extends State<LandSizeScreen> {
+class _LandSizeScreenState extends ConsumerState<LandSizeScreen> {
   int _acres = 2;
   int _extraUnits = 0;
   bool _isGuntas = true; // true = Guntas, false = Cents
 
   Widget _buildLanguagePill(BuildContext context) {
-    final currentLang = LanguageProvider().currentLanguage;
+    final currentLang = ref.watch(languageNotifierProvider);
 
     return PopupMenuButton<AppLanguage>(
       onSelected: (AppLanguage newLang) {
-        setState(() {
-          LanguageProvider().setLanguage(newLang);
-        });
+        ref.read(languageNotifierProvider.notifier).setLanguage(newLang);
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       itemBuilder: (context) => AppLanguage.values.map((lang) {
@@ -58,6 +58,8 @@ class _LandSizeScreenState extends State<LandSizeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -84,8 +86,8 @@ class _LandSizeScreenState extends State<LandSizeScreen> {
                   const SizedBox(height: 8),
 
                   // Title
-                  const Text(
-                    'How much land do\nyou have?',
+                  Text(
+                    l10n.landSizeTitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 30,
@@ -99,9 +101,9 @@ class _LandSizeScreenState extends State<LandSizeScreen> {
                   const SizedBox(height: 36),
 
                   // ACRES LABEL
-                  const Text(
-                    'ACRES',
-                    style: TextStyle(
+                  Text(
+                    l10n.acres,
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
@@ -245,7 +247,7 @@ class _LandSizeScreenState extends State<LandSizeScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                'Guntas',
+                                l10n.guntas,
                                 style: TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w800,
@@ -275,7 +277,7 @@ class _LandSizeScreenState extends State<LandSizeScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                'Cents',
+                                l10n.cents,
                                 style: TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w800,
@@ -303,7 +305,7 @@ class _LandSizeScreenState extends State<LandSizeScreen> {
                     child: Column(
                       children: [
                         Text(
-                          _isGuntas ? 'EXTRA GUNTAS' : 'EXTRA CENTS',
+                          _isGuntas ? l10n.extraGuntas : l10n.extraCents,
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
@@ -462,9 +464,9 @@ class _LandSizeScreenState extends State<LandSizeScreen> {
                         );
                       },
                       icon: const Icon(Icons.check_circle_outline_rounded, size: 22),
-                      label: const Text(
-                        'Next',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                      label: Text(
+                        l10n.next,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ),

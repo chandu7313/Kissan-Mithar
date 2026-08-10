@@ -60,6 +60,7 @@ model Farmer {
   consultations   Consultation[]
   notifications   Notification[]
   devices         Device[]
+  drafts          OfflineDraft[]
 
   @@map("farmers")
 }
@@ -81,6 +82,7 @@ model Expert {
 
   assignedOrchardRequests OrchardRequest[]
   consultations           Consultation[]
+  advisories              CropAdvisory[]
 
   @@map("experts")
 }
@@ -91,6 +93,8 @@ model Admin {
   name         String
   email        String   @unique
   passwordHash String?
+  photoUrl     String?
+  mobileNumber String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -98,20 +102,21 @@ model Admin {
 }
 
 model OrchardRequest {
-  id          String               @id @default(uuid())
-  farmerId    String
-  expertId    String?
-  status      OrchardRequestStatus @default(SUBMITTED)
-  photos      Json                 // { front: string, left: string, right: string, center: string }
-  gps         Json                 // { latitude: number, longitude: number, accuracy: number, village: string, district: string, state: string }
-  landDetails Json                 // { size: string, soilType: string, waterSources: string[], electricity: boolean, drip: boolean, existingCrops: string[] }
-  notes       String?
-  submittedAt DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  id           String               @id @default(uuid())
+  farmerId     String
+  expertId     String?
+  status       OrchardRequestStatus @default(SUBMITTED)
+  photos       Json                 // { front: string, left: string, right: string, center: string }
+  gps          Json                 // { latitude: number, longitude: number, accuracy: number, village: string, district: string, state: string }
+  landDetails  Json                 // { size: string, soilType: string, waterSources: string[], electricity: boolean, drip: boolean, existingCrops: string[] }
+  notes        String?
+  voiceNoteUrl String?
+  submittedAt  DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
 
-  farmer  Farmer         @relation(fields: [farmerId], references: [id], onDelete: Cascade)
-  expert  Expert?        @relation(fields: [expertId], references: [id], onDelete: SetNull)
-  report  OrchardReport?
+  farmer Farmer         @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert Expert?        @relation(fields: [expertId], references: [id], onDelete: SetNull)
+  report OrchardReport?
 
   @@index([farmerId])
   @@index([expertId])
@@ -120,18 +125,23 @@ model OrchardRequest {
 }
 
 model OrchardReport {
-  id                    String   @id @default(uuid())
-  orchardRequestId      String   @unique
-  pdfUrl                String?
-  summary               String
-  recommendedVarieties  Json     // Array of { crop: string, variety: string, yieldPerAcre: string, plantingSeason: string }
-  plantationLayout      Json     // { rowSpacingMeters: number, plantSpacingMeters: number, totalPlantsEstimate: number }
-  waterRequirement      String
-  soilTreatment         String
-  pestControl           String
-  estimatedBudget       Float
-  generatedAt           DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                     String   @id @default(uuid())
+  orchardRequestId       String   @unique
+  pdfUrl                 String?
+  summary                String
+  recommendedVarieties   Json     // Array of { crop: string, variety: string, yieldPerAcre: string, plantingSeason: string }
+  plantationLayout       Json     // { rowSpacingMeters: number, plantSpacingMeters: number, totalPlantsEstimate: number }
+  waterRequirement       String
+  soilTreatment          String
+  fertilizerSchedule     String?
+  pestControl            String
+  estimatedBudget        Float
+  projectedRoi           String?
+  implementationTimeline String?
+  governmentSchemes      String?
+  maintenanceCalendar    String?
+  generatedAt            DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   orchardRequest OrchardRequest @relation(fields: [orchardRequestId], references: [id], onDelete: Cascade)
 
@@ -139,21 +149,21 @@ model OrchardReport {
 }
 
 model Consultation {
-  id            String             @id @default(uuid())
-  farmerId      String
-  expertId      String?
-  mode          ConsultationMode   @default(VOICE)
-  category      String
-  scheduledAt   DateTime
-  language      String             @default("English")
-  status        ConsultationStatus @default(SCHEDULED)
-  notes         String?
-  mediaUrls     Json?              // string[]
-  voiceNoteUrl  String?
-  prescription  Json?              // { diagnosis: string, medicines: string[], followUpNotes: string }
-  followUpDate  DateTime?
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  id           String             @id @default(uuid())
+  farmerId     String
+  expertId     String?
+  mode         ConsultationMode   @default(VOICE)
+  category     String
+  scheduledAt  DateTime
+  language     String             @default("English")
+  status       ConsultationStatus @default(SCHEDULED)
+  notes        String?
+  mediaUrls    Json?              // string[]
+  voiceNoteUrl String?
+  prescription Json?              // { diagnosis: string, medicines: string[], followUpNotes: string }
+  followUpDate DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
 
   farmer Farmer  @relation(fields: [farmerId], references: [id], onDelete: Cascade)
   expert Expert? @relation(fields: [expertId], references: [id], onDelete: SetNull)
@@ -204,16 +214,16 @@ enum AuthAction {
 }
 
 model AuthAuditLog {
-  id         String     @id @default(uuid())
-  userId     String
-  userType   Role       @default(EXPERT)
-  userName   String?
-  userEmail  String?
-  action     AuthAction
-  ipAddress  String?
-  userAgent  String?
-  metadata   Json?
-  timestamp  DateTime   @default(now())
+  id        String     @id @default(uuid())
+  userId    String
+  userType  Role       @default(EXPERT)
+  userName  String?
+  userEmail String?
+  action    AuthAction
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+  timestamp DateTime   @default(now())
 
   @@index([userId])
   @@index([userType])
@@ -234,4 +244,58 @@ model EmailOtp {
   @@index([email])
   @@index([purpose])
   @@map("email_otps")
+}
+
+model MandiPrice {
+  id         String   @id @default(uuid())
+  commodity  String
+  variety    String?
+  market     String
+  district   String
+  state      String
+  minPrice   Float    // Price in Rs/Quintal
+  maxPrice   Float
+  modalPrice Float
+  priceDate  DateTime @default(now())
+  trend      String   @default("STABLE") // "UP" | "DOWN" | "STABLE"
+  createdAt  DateTime @default(now())
+
+  @@index([commodity])
+  @@index([market])
+  @@index([state])
+  @@map("mandi_prices")
+}
+
+model CropAdvisory {
+  id          String   @id @default(uuid())
+  expertId    String?
+  crop        String
+  title       String
+  description String
+  alertLevel  String   @default("NORMAL") // "NORMAL" | "WARNING" | "CRITICAL"
+  season      String   @default("KHARIF") // "KHARIF" | "RABI" | "ZAID" | "ALL_SEASON"
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  expert Expert? @relation(fields: [expertId], references: [id], onDelete: SetNull)
+
+  @@index([crop])
+  @@index([alertLevel])
+  @@map("crop_advisories")
+}
+
+model OfflineDraft {
+  id          String   @id @default(uuid())
+  farmerId    String
+  flowType    String   @default("ORCHARD_PLAN") // "ORCHARD_PLAN" | "CONSULTATION"
+  draftData   Json
+  isSynced    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  farmer Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  @@index([farmerId])
+  @@index([flowType])
+  @@map("offline_drafts")
 }

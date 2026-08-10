@@ -166,10 +166,10 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
 
       WeatherData freshData;
 
-      // 1. Try Backend Proxy endpoint: GET /api/weather?lat=&lng=
+      // 1. Try Backend Proxy endpoint: GET /weather?lat=&lng=
       try {
         final response = await _networkClient.get(
-          '/api/weather',
+          '/weather',
           queryParameters: {'lat': lat, 'lng': lng},
         );
 

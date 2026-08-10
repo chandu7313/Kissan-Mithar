@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import {
+  ClipboardList,
+  PhoneCall,
+  MapPin,
+  Clock,
+  FileCheck,
+  Zap,
+  Star,
+} from 'lucide-react';
 import { AnalyticsApi } from '../api/analytics.api.js';
 import { AnalyticsSummary } from '../types/index.js';
 import { StatCard } from '../components/common/StatCard.js';
@@ -26,6 +35,7 @@ export const DashboardPage: React.FC<Props> = ({
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       {/* Welcome Banner */}
       <div
+        className="desktop-banner"
         style={{
           background: 'linear-gradient(135deg, var(--primary-800) 0%, var(--primary-900) 100%)',
           color: 'white',
@@ -46,11 +56,21 @@ export const DashboardPage: React.FC<Props> = ({
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button onClick={onNavigateToRequests} className="btn-gold">
-            <span>📋</span> Review Surveys ({analytics.pendingReviews})
+          <button
+            onClick={onNavigateToRequests}
+            className="btn-gold"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+          >
+            <ClipboardList size={16} />
+            <span>Review Surveys ({analytics.pendingReviews})</span>
           </button>
-          <button onClick={onNavigateToConsultations} className="btn-secondary">
-            <span>📞</span> Consultations
+          <button
+            onClick={onNavigateToConsultations}
+            className="btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+          >
+            <PhoneCall size={15} />
+            <span>Consultations</span>
           </button>
         </div>
       </div>
@@ -66,40 +86,40 @@ export const DashboardPage: React.FC<Props> = ({
         <StatCard
           title="Total Survey Requests"
           value={analytics.totalRequests}
-          icon="🗺️"
+          icon={<ClipboardList size={20} color="var(--primary-600)" />}
           trend="+18% this month"
           trendPositive={true}
         />
         <StatCard
           title="Pending Expert Review"
           value={analytics.pendingReviews}
-          icon="⏳"
+          icon={<Clock size={20} color="#d97706" />}
           subtitle="Action required"
         />
         <StatCard
           title="Reports Delivered"
           value={analytics.reportsCompleted}
-          icon="📄"
+          icon={<FileCheck size={20} color="#2563eb" />}
           trend="+24% delivery"
           trendPositive={true}
         />
         <StatCard
           title="Avg Turnaround Time"
           value={`${analytics.avgTurnaroundDays} Days`}
-          icon="⚡"
+          icon={<Zap size={20} color="#7c3aed" />}
           subtitle="Target < 2.0 days"
         />
         <StatCard
           title="Farmer Satisfaction"
           value={`${analytics.farmerSatisfaction} / 5.0`}
-          icon="⭐"
+          icon={<Star size={20} fill="#eab308" color="#eab308" />}
           trend="99.2% positive"
           trendPositive={true}
         />
       </div>
 
-      {/* Charts & Breakdown Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
+      {/* Bottom Section: Pipeline and Crops */}
+      <div className="responsive-grid">
         {/* Status Distribution */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Orchard Request Pipeline by Status</h3>
@@ -121,8 +141,8 @@ export const DashboardPage: React.FC<Props> = ({
                         width: `${pct}%`,
                         backgroundColor:
                           status === 'PLAN_READY' ? 'var(--primary-600)' :
-                          status === 'UNDER_REVIEW' ? '#0284c7' :
-                          status === 'SUBMITTED' ? 'var(--accent-gold)' : '#94a3b8',
+                            status === 'UNDER_REVIEW' ? '#0284c7' :
+                              status === 'SUBMITTED' ? 'var(--accent-gold)' : '#94a3b8',
                         borderRadius: '4px',
                         transition: 'width 0.3s ease',
                       }}
@@ -136,14 +156,14 @@ export const DashboardPage: React.FC<Props> = ({
 
         {/* Top Demanded Crops */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Most Requested Horticultural Crops</h3>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Top Recommended Horticultural Crops</h3>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
             {analytics.cropDemand.map((item) => (
               <div key={item.crop} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
                   <span style={{ fontWeight: 600 }}>{item.crop}</span>
-                  <span style={{ color: 'var(--text-muted)' }}>{item.percentage}% of requests</span>
+                  <span style={{ color: 'var(--text-muted)' }}>{item.percentage}% of reports</span>
                 </div>
                 <div style={{ height: '8px', backgroundColor: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
                   <div

@@ -8,6 +8,7 @@ import { RequestsListPage } from './pages/RequestsListPage.js';
 import { RequestDetailPage } from './pages/RequestDetailPage.js';
 import { ReportBuilderPage } from './pages/ReportBuilderPage.js';
 import { ConsultationsPage } from './pages/ConsultationsPage.js';
+import { ExpertsPage } from './pages/ExpertsPage.js';
 
 export const App: React.FC = () => {
   const [session, setSession] = useState<UserSession | null>(AuthStore.getSession());
@@ -42,48 +43,46 @@ export const App: React.FC = () => {
   };
 
   const renderContent = () => {
-    if (activeTab === 'dashboard') {
-      return (
-        <DashboardPage
-          onNavigateToRequests={() => setActiveTab('requests')}
-          onNavigateToConsultations={() => setActiveTab('consultations')}
-        />
-      );
-    }
-
-    if (activeTab === 'consultations') {
-      return <ConsultationsPage />;
-    }
-
-    if (activeTab === 'requests') {
-      if (isBuildingReport && selectedRequest) {
-        return (
-          <ReportBuilderPage
-            request={selectedRequest}
-            onBack={() => setIsBuildingReport(false)}
+    return (
+      <>
+        <div style={{ display: activeTab === 'dashboard' ? 'block' : 'none', height: '100%' }}>
+          <DashboardPage
+            onNavigateToRequests={() => setActiveTab('requests')}
+            onNavigateToConsultations={() => setActiveTab('consultations')}
           />
-        );
-      }
+        </div>
 
-      if (selectedRequest) {
-        return (
-          <RequestDetailPage
-            request={selectedRequest}
-            onBack={handleBackToRequests}
-            onOpenReportBuilder={handleOpenReportBuilder}
-          />
-        );
-      }
+        <div style={{ display: activeTab === 'consultations' ? 'block' : 'none', height: '100%' }}>
+          <ConsultationsPage />
+        </div>
 
-      return (
-        <RequestsListPage
-          onSelectRequest={handleSelectRequest}
-          onOpenReportBuilder={handleOpenReportBuilder}
-        />
-      );
-    }
+        <div style={{ display: activeTab === 'requests' ? 'block' : 'none', height: '100%' }}>
+          {isBuildingReport && selectedRequest ? (
+            <ReportBuilderPage
+              request={selectedRequest}
+              onBack={() => setIsBuildingReport(false)}
+            />
+          ) : selectedRequest ? (
+            <RequestDetailPage
+              request={selectedRequest}
+              onBack={handleBackToRequests}
+              onOpenReportBuilder={handleOpenReportBuilder}
+            />
+          ) : (
+            <RequestsListPage
+              onSelectRequest={handleSelectRequest}
+              onOpenReportBuilder={handleOpenReportBuilder}
+            />
+          )}
+        </div>
 
-    return null;
+        {session.role === 'ADMIN' && (
+          <div style={{ display: activeTab === 'experts' ? 'block' : 'none', height: '100%' }}>
+            <ExpertsPage />
+          </div>
+        )}
+      </>
+    );
   };
 
   return (

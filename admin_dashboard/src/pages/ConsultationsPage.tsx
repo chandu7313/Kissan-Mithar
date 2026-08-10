@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Video,
+  Phone,
+  PhoneCall,
+  Clock,
+  ClipboardList,
+  Send,
+  CheckCircle2,
+} from 'lucide-react';
 import { ConsultationApi } from '../api/consultation.api.js';
 import { ConsultationItem } from '../types/index.js';
 
@@ -66,9 +75,13 @@ export const ConsultationsPage: React.FC = () => {
                         borderRadius: '9999px',
                         backgroundColor: c.mode === 'VIDEO' ? '#e0f2fe' : '#fef3c7',
                         color: c.mode === 'VIDEO' ? '#0369a1' : '#b45309',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
                       }}
                     >
-                      {c.mode === 'VIDEO' ? '🎥 VIDEO' : '📞 VOICE'}
+                      {c.mode === 'VIDEO' ? <Video size={11} /> : <Phone size={11} />}
+                      <span>{c.mode}</span>
                     </span>
                   </div>
 
@@ -76,9 +89,12 @@ export const ConsultationsPage: React.FC = () => {
                     Issue: {c.category} · {c.language}
                   </div>
 
-                  <div style={{ fontSize: '0.75rem', color: 'var(--primary-800)', fontWeight: 500 }}>
-                    ⏰ {new Date(c.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ·{' '}
-                    {new Date(c.scheduledAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                  <div style={{ fontSize: '0.75rem', color: 'var(--primary-800)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <Clock size={12} />
+                    <span>
+                      {new Date(c.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ·{' '}
+                      {new Date(c.scheduledAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    </span>
                   </div>
                 </div>
               );
@@ -100,8 +116,9 @@ export const ConsultationsPage: React.FC = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn-primary" style={{ padding: '0.5rem 0.875rem', fontSize: '0.8125rem' }}>
-                  📞 Launch Call
+                <button className="btn-primary" style={{ padding: '0.5rem 0.875rem', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                  <PhoneCall size={14} />
+                  <span>Launch Call</span>
                 </button>
               </div>
             </div>
@@ -136,8 +153,8 @@ export const ConsultationsPage: React.FC = () => {
             {/* Expert Prescription Pad */}
             <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '1.25rem' }}>📋</span>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--primary-900)' }}>
+                <ClipboardList size={18} color="var(--primary-700)" />
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--primary-900)', margin: 0 }}>
                   Official Agronomist Prescription
                 </h3>
               </div>
@@ -175,12 +192,14 @@ export const ConsultationsPage: React.FC = () => {
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
                 {prescribedSuccess && (
-                  <span style={{ fontSize: '0.8125rem', color: '#15803d', fontWeight: 600 }}>
-                    ✓ Prescription dispatched to farmer app!
+                  <span style={{ fontSize: '0.8125rem', color: '#15803d', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <CheckCircle2 size={14} color="#16a34a" />
+                    Prescription dispatched to farmer app!
                   </span>
                 )}
-                <button onClick={handleSavePrescription} className="btn-primary">
-                  <span>💊</span> Dispatch Prescription
+                <button onClick={handleSavePrescription} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                  <Send size={14} />
+                  <span>Dispatch Prescription</span>
                 </button>
               </div>
             </div>

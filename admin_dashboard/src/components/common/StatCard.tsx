@@ -4,7 +4,7 @@ interface Props {
   title: string;
   value: string | number;
   subtitle?: string;
-  icon?: string;
+  icon?: React.ReactNode;
   trend?: string;
   trendPositive?: boolean;
 }
@@ -23,7 +23,11 @@ export const StatCard: React.FC<Props> = ({
         <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-muted)' }}>
           {title}
         </span>
-        {icon && <span style={{ fontSize: '1.25rem' }}>{icon}</span>}
+        {icon && (
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {icon}
+          </span>
+        )}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>

@@ -1,9 +1,11 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../auth/providers/auth_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   final VoidCallback? onSplashComplete;
 
   const SplashScreen({
@@ -12,10 +14,10 @@ class SplashScreen extends StatefulWidget {
   });
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -44,13 +46,18 @@ class _SplashScreenState extends State<SplashScreen>
 
     _animationController.forward();
 
-    // Navigate to Language Selection after splash delay
+    // Navigate based on auth state after splash delay
     Future.delayed(const Duration(milliseconds: 2200), () {
       if (mounted) {
         if (widget.onSplashComplete != null) {
           widget.onSplashComplete!();
         } else {
-          context.go('/language');
+          final authState = ref.read(authProvider);
+          if (authState.isAuthenticated) {
+            context.go('/home');
+          } else {
+            context.go('/language');
+          }
         }
       }
     });

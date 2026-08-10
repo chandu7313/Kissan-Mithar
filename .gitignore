@@ -3,3 +3,4 @@ node_modules/
 build/
 .dart_tool/
 *.log
+.env

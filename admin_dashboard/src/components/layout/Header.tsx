@@ -1,4 +1,5 @@
 import React from 'react';
+import { ShieldCheck, UserCheck, LogOut, ChevronDown } from 'lucide-react';
 import { UserSession } from '../../types/index.js';
 import { AuthStore } from '../../services/authStore.js';
 
@@ -36,33 +37,30 @@ export const Header: React.FC<Props> = ({ session, onSessionChange, onOpenProfil
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>
+        <h2 className="desktop-header-title" style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>
           Horticulture Decision Support & Feasibility Hub
         </h2>
+        <div className="mobile-header-brand" style={{ alignItems: 'center', gap: '0.5rem' }}>
+          <img
+            src="/app_logo.png"
+            alt="Kisan Mithar"
+            style={{
+              height: '32px',
+              width: '32px',
+              objectFit: 'contain',
+              borderRadius: '6px',
+              backgroundColor: 'white',
+              padding: '2px',
+              boxShadow: '0 0 8px rgba(34, 197, 94, 0.4)',
+            }}
+          />
+          <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
+            KISAN MITHAR
+          </div>
+        </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        {/* Role Switcher */}
-        <button
-          onClick={toggleRole}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.375rem',
-            padding: '0.375rem 0.75rem',
-            borderRadius: '9999px',
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            backgroundColor: session.role === 'ADMIN' ? '#fef3c7' : '#dcfce7',
-            color: session.role === 'ADMIN' ? '#b45309' : '#15803d',
-            border: `1px solid ${session.role === 'ADMIN' ? '#fde68a' : '#bbf7d0'}`,
-            cursor: 'pointer',
-          }}
-          title="Click to toggle between Expert and Admin view"
-        >
-          <span>{session.role === 'ADMIN' ? '🛡️' : '👨‍⚕️'}</span>
-          <span>Role: {session.role} (Switch)</span>
-        </button>
 
         {/* User profile capsule (Clickable to open profile modal & audit logs) */}
         <div
@@ -81,44 +79,21 @@ export const Header: React.FC<Props> = ({ session, onSessionChange, onOpenProfil
           title="Click to view Profile & Session Audit History"
         >
           <img
-            src={session.avatarUrl || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200'}
+            src={session.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(session.name || 'User')}&background=15803d&color=fff&size=200`}
             alt={session.name}
             style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }}
           />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-main)' }}>
               {session.name}
             </span>
-            <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>
-              {session.role === 'ADMIN' ? 'Operations Admin' : 'Senior Agronomist'} ▾
+            <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '2px' }}>
+              {session.role === 'ADMIN' ? 'Operations Admin' : 'Senior Agronomist'}
+              <ChevronDown size={11} />
             </span>
           </div>
         </div>
 
-        {/* Direct Logout Button */}
-        <button
-          onClick={onLogout}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.375rem',
-            padding: '0.375rem 0.75rem',
-            borderRadius: '0.375rem',
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            backgroundColor: '#fee2e2',
-            color: '#dc2626',
-            border: '1px solid #fecaca',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#fca5a5')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fee2e2')}
-          title="Sign out of Expert Console"
-        >
-          <span>🚪</span>
-          <span>Logout</span>
-        </button>
       </div>
     </header>
   );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/activity/presentation/screens/my_activity_screen.dart';
+import '../../features/auth/presentation/screens/otp_verify_screen.dart';
+import '../../features/auth/presentation/screens/phone_auth_screen.dart';
 import '../../features/consultation/presentation/screens/add_consultation_details_screen.dart';
 import '../../features/consultation/presentation/screens/book_consultation_screen.dart';
 import '../../features/consultation/presentation/screens/consultation_detail_screen.dart';
@@ -29,6 +31,8 @@ class AppRoutes {
 
   static const String splash = 'splash';
   static const String languageSelect = 'languageSelect';
+  static const String phoneAuth = 'phoneAuth';
+  static const String otpVerify = 'otpVerify';
   static const String notificationPermission = 'notificationPermission';
   static const String home = 'home';
   static const String notifications = 'notifications';
@@ -74,6 +78,23 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
         return const NotificationPermissionScreen();
+      },
+    ),
+    GoRoute(
+      path: '/auth/phone',
+      name: AppRoutes.phoneAuth,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const PhoneAuthScreen(),
+    ),
+    GoRoute(
+      path: '/auth/otp',
+      name: AppRoutes.otpVerify,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        final phoneNumber = extra?['phoneNumber'] as String? ?? '';
+        final devOtp = extra?['devOtp'] as String?;
+        return OtpVerifyScreen(phoneNumber: phoneNumber, devOtp: devOtp);
       },
     ),
 

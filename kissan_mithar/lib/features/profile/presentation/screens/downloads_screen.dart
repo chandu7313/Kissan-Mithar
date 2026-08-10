@@ -330,7 +330,7 @@ class DownloadsScreen extends StatelessWidget {
                 // Share button
                 IconButton(
                   onPressed: () {
-                    Share.share('Sharing ${item.title} from Kissan Mithar');
+                    Share.share('Sharing ${item.title}');
                   },
                   icon: const Icon(
                     Icons.share_rounded,

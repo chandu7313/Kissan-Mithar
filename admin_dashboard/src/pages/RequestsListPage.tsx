@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Search, ArrowUpRight, Eye } from 'lucide-react';
 import { OrchardApi } from '../api/orchard.api.js';
-import { OrchardRequest, OrchardStatus } from '../types/index.js';
+import { OrchardRequest } from '../types/index.js';
 import { StatusBadge } from '../components/common/StatusBadge.js';
 
 interface Props {
@@ -77,8 +78,8 @@ export const RequestsListPage: React.FC<Props> = ({
         }}
       >
         {/* Search input */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 260px' }}>
-          <span style={{ color: 'var(--text-muted)' }}>🔍</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 260px', position: 'relative' }}>
+          <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem' }} />
           <input
             type="text"
             placeholder="Search by farmer name, phone, village, or ID..."
@@ -86,7 +87,7 @@ export const RequestsListPage: React.FC<Props> = ({
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               width: '100%',
-              padding: '0.5rem 0.75rem',
+              padding: '0.5rem 0.75rem 0.5rem 2.25rem',
               borderRadius: '0.375rem',
               border: '1px solid var(--border-light)',
               fontSize: '0.875rem',
@@ -239,16 +240,18 @@ export const RequestsListPage: React.FC<Props> = ({
                       <button
                         onClick={() => onSelectRequest(req)}
                         className="btn-secondary"
-                        style={{ padding: '0.375rem 0.75rem', fontSize: '0.75rem' }}
+                        style={{ padding: '0.375rem 0.75rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                       >
-                        Inspect
+                        <Eye size={13} />
+                        <span>Inspect</span>
                       </button>
                       <button
                         onClick={() => onOpenReportBuilder(req)}
                         className="btn-primary"
-                        style={{ padding: '0.375rem 0.75rem', fontSize: '0.75rem' }}
+                        style={{ padding: '0.375rem 0.75rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                       >
-                        Plan & Report ↗
+                        <span>Plan & Report</span>
+                        <ArrowUpRight size={13} />
                       </button>
                     </div>
                   </td>

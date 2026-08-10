@@ -1,4 +1,18 @@
 import React, { useState } from 'react';
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  User,
+  Sprout,
+  Mic,
+  Zap,
+  UserCheck,
+  MapPin,
+  Camera,
+  Droplets,
+  CheckCircle2,
+  XCircle,
+} from 'lucide-react';
 import { OrchardRequest, OrchardStatus } from '../types/index.js';
 import { StatusBadge } from '../components/common/StatusBadge.js';
 import { ImageGallery } from '../components/common/ImageGallery.js';
@@ -37,8 +51,13 @@ export const RequestDetailPage: React.FC<Props> = ({
       {/* Top Breadcrumb & Action Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={onBack} className="btn-secondary" style={{ padding: '0.5rem 0.875rem' }}>
-            ← Back to Surveys
+          <button
+            onClick={onBack}
+            className="btn-secondary"
+            style={{ padding: '0.5rem 0.875rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+          >
+            <ArrowLeft size={16} />
+            <span>Back to Surveys</span>
           </button>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -51,8 +70,14 @@ export const RequestDetailPage: React.FC<Props> = ({
           </div>
         </div>
 
-        <button onClick={() => onOpenReportBuilder(request)} className="btn-gold">
-          <span>🌿</span> Open Agronomy Report Builder ↗
+        <button
+          onClick={() => onOpenReportBuilder(request)}
+          className="btn-gold"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+        >
+          <Sprout size={16} />
+          <span>Open Agronomy Report Builder</span>
+          <ArrowUpRight size={15} />
         </button>
       </div>
 
@@ -66,9 +91,13 @@ export const RequestDetailPage: React.FC<Props> = ({
             border: '1px solid #bbf7d0',
             fontWeight: 600,
             fontSize: '0.875rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
           }}
         >
-          ✓ {feedbackMsg}
+          <CheckCircle2 size={16} color="#16a34a" />
+          <span>{feedbackMsg}</span>
         </div>
       )}
 
@@ -78,7 +107,10 @@ export const RequestDetailPage: React.FC<Props> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Farmer Contact Card */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600 }}>👨‍🌾 Farmer Information</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <User size={18} color="var(--primary-700)" />
+              <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, margin: 0 }}>Farmer Information</h3>
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
               <div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Full Name</span>
@@ -101,7 +133,10 @@ export const RequestDetailPage: React.FC<Props> = ({
 
           {/* Land & Soil Characteristics */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600 }}>🌱 Land & Soil Parameters</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Sprout size={18} color="var(--primary-700)" />
+              <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, margin: 0 }}>Land & Soil Parameters</h3>
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.875rem' }}>
               <div style={{ backgroundColor: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem' }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Total Survey Area</span>
@@ -126,9 +161,16 @@ export const RequestDetailPage: React.FC<Props> = ({
 
               <div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Drip & Power Status</span>
-                <div style={{ fontWeight: 500 }}>
-                  {request.landDetails.drip ? '💧 Drip installed' : '❌ No drip yet'} ·{' '}
-                  {request.landDetails.electricity ? '⚡ 3-Phase Power' : 'No power'}
+                <div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.375rem', flexWrap: 'wrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                    {request.landDetails.drip ? <Droplets size={13} color="#0284c7" /> : <XCircle size={13} color="#dc2626" />}
+                    {request.landDetails.drip ? 'Drip installed' : 'No drip yet'}
+                  </span>
+                  <span>·</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                    {request.landDetails.electricity ? <Zap size={13} color="#eab308" /> : null}
+                    {request.landDetails.electricity ? '3-Phase Power' : 'No power'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -145,7 +187,10 @@ export const RequestDetailPage: React.FC<Props> = ({
 
           {/* Farmer Notes & Voice Note */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600 }}>🎙️ Farmer Audio & Special Request</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Mic size={18} color="var(--primary-700)" />
+              <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, margin: 0 }}>Farmer Audio & Special Request</h3>
+            </div>
             <AudioPlayer url={request.voiceNoteUrl} title={`${request.farmer?.name}'s Spoken Instructions`} />
 
             {request.notes && (
@@ -160,9 +205,12 @@ export const RequestDetailPage: React.FC<Props> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Quick Status Transition & Assignment Action Card */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', border: '1px solid var(--primary-200)', backgroundColor: '#f0fdf4' }}>
-            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, color: 'var(--primary-900)' }}>
-              ⚡ Agronomist Action Center
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Zap size={18} color="var(--primary-800)" />
+              <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, color: 'var(--primary-900)', margin: 0 }}>
+                Agronomist Action Center
+              </h3>
+            </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary-800)' }}>
@@ -195,7 +243,7 @@ export const RequestDetailPage: React.FC<Props> = ({
                 Assigned Expert:
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', backgroundColor: 'white', padding: '0.625rem 0.75rem', borderRadius: '0.5rem', border: '1px solid var(--primary-200)' }}>
-                <span>👨‍⚕️</span>
+                <UserCheck size={16} color="var(--primary-700)" />
                 <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>Dr. Sunil Rao (Horticulture Lead)</div>
               </div>
             </div>
@@ -203,13 +251,19 @@ export const RequestDetailPage: React.FC<Props> = ({
 
           {/* GPS Coordinates Preview */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600 }}>📍 Field GPS Location</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <MapPin size={18} color="var(--primary-700)" />
+              <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, margin: 0 }}>Field GPS Location</h3>
+            </div>
             <MapPreview gps={request.gps} />
           </div>
 
           {/* Uploaded Photos Gallery */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{ fontSize: '1.0625rem', fontWeight: 600 }}>📸 Multi-Angle Land Survey Photos</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Camera size={18} color="var(--primary-700)" />
+              <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, margin: 0 }}>Multi-Angle Land Survey Photos</h3>
+            </div>
             <ImageGallery photos={request.photos} />
           </div>
         </div>

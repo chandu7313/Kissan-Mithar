@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Camera, X } from 'lucide-react';
 
 interface Props {
   photos: {
@@ -32,9 +33,14 @@ export const ImageGallery: React.FC<Props> = ({ photos }) => {
           border: '1px dashed #cbd5e1',
           color: 'var(--text-muted)',
           fontSize: '0.875rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.5rem',
         }}
       >
-        📷 No land survey photos uploaded yet
+        <Camera size={18} />
+        <span>No land survey photos uploaded yet</span>
       </div>
     );
   }
@@ -133,12 +139,14 @@ export const ImageGallery: React.FC<Props> = ({ photos }) => {
                 borderRadius: '50%',
                 backgroundColor: 'white',
                 border: 'none',
-                fontWeight: 700,
                 cursor: 'pointer',
                 boxShadow: 'var(--shadow-md)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              ✕
+              <X size={18} />
             </button>
           </div>
         </div>

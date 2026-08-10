@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/localization/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../notifications/providers/notifications_provider.dart';
 
 class MainShellScreen extends ConsumerWidget {
@@ -45,7 +45,7 @@ class MainShellScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final selectedIndex = _calculateSelectedIndex(context);
     final unreadCount = ref.watch(notificationsProvider).unreadCount;
 
@@ -125,7 +125,7 @@ class MainShellScreen extends ConsumerWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.symmetric(vertical: 2), // Reduced to fix 2px overflow
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,

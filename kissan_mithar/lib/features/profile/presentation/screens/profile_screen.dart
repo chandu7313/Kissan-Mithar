@@ -195,8 +195,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final villageCtrl = TextEditingController(text: profile.village);
     final districtCtrl = TextEditingController(text: profile.district);
     final stateCtrl = TextEditingController(text: profile.stateName);
-    final landCtrl =
-        TextEditingController(text: profile.landAcres.toStringAsFixed(1));
+    final landCtrl = TextEditingController(
+        text: profile.landAcres > 0 ? profile.landAcres.toStringAsFixed(1) : '');
     final cropCtrl = TextEditingController(text: profile.primaryCrop);
 
     showModalBottomSheet(
@@ -265,8 +265,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             village: villageCtrl.text.trim(),
                             district: districtCtrl.text.trim(),
                             stateName: stateCtrl.text.trim(),
-                            landAcres: double.tryParse(landCtrl.text) ??
-                                profile.landAcres,
+                            landAcres: double.tryParse(landCtrl.text) ?? 0.0,
                             primaryCrop: cropCtrl.text.trim(),
                           );
                       if (success && ctx.mounted) {
@@ -520,7 +519,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 '12.5 MB used'),
             const SizedBox(height: 14),
             _buildSettingsRow(Icons.info_outline_rounded, 'App Version',
-                'KISSAN MITHAR v1.0.0'),
+                'v1.0.0'),
             const SizedBox(height: 14),
             _buildSettingsRow(
               Icons.shield_outlined,
@@ -748,22 +747,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        title: const Row(
-          children: [
-            Icon(Icons.agriculture_rounded,
-                color: AppColors.primaryGreen, size: 26),
-            SizedBox(width: 8),
-            Text(
-              'KISSAN MITHAR',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: AppColors.primaryGreen,
-                letterSpacing: -0.3,
-              ),
-            ),
-          ],
-        ),
+
         actions: [
           // Edit Profile Fab
           IconButton(
@@ -862,47 +846,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.location_on_rounded,
-                          size: 16, color: AppColors.textSecondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${profile.village}, ${profile.district}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
                   Text(
-                    profile.stateName,
+                    profile.phoneNumber,
                     style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                       color: AppColors.textSecondary,
                     ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  // ── 3. Farm Stats Row ──
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      _buildFarmInfoChip(Icons.landscape_rounded, 'Land Size',
-                          '${profile.landAcres} Acres'),
-                      _buildFarmInfoChip(Icons.eco_rounded, 'Primary Crop',
-                          profile.primaryCrop),
-                      _buildFarmInfoChip(
-                          Icons.phone_rounded, 'Phone', profile.phoneNumber),
-                    ],
                   ),
 
                   const SizedBox(height: 24),
@@ -1026,7 +976,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                   // ── 6. App Version Footer ──
                   const Text(
-                    'KISSAN MITHAR v1.0.0',
+                    'v1.0.0',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -1035,7 +985,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'Made with ❤️ for Indian Farmers',
+                    'Made for Indian Farmers',
                     style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
@@ -1070,7 +1020,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     // Try to load the app logo, or default to icon
     return Image.asset(
-      'assets/images/app_logo.png',
+      'assets/images/profile-image.png',
       fit: BoxFit.cover,
       errorBuilder: (context, error, stack) => _defaultAvatarIcon(),
     );

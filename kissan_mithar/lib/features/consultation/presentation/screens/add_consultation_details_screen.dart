@@ -180,110 +180,11 @@ class _AddConsultationDetailsScreenState
     }
   }
 
-  Widget _buildSummaryCard(ConsultationBookingDraft draft) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F8F2),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primaryGreen.withAlpha(90), width: 1.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(draft.mode.icon, color: AppColors.primaryGreen, size: 22),
-              const SizedBox(width: 8),
-              Text(
-                '${draft.mode.label} Session',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primaryGreen,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFC7CEC7)),
-                ),
-                child: Text(
-                  draft.language,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Divider(height: 1, color: Color(0xFFC7CEC7)),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Category',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    draft.category,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Text(
-                    'Time Slot',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    draft.timeSlot,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     final bookingState = ref.watch(consultationBookingProvider);
-    final draft = bookingState.value ?? const ConsultationBookingDraft();
+    final draft = bookingState.valueOrNull ?? const ConsultationBookingDraft();
     final isLoading = bookingState.isLoading;
 
     return Scaffold(
@@ -324,70 +225,7 @@ class _AddConsultationDetailsScreenState
                     ),
                   ),
 
-                  const SizedBox(height: 18),
-
-                  // Session Summary Box
-                  _buildSummaryCard(draft),
-
-                  const SizedBox(height: 22),
-
-                  // 1. Text Message Section
-                  const Text(
-                    '1. Describe the Problem (Optional)',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFC7CEC7), width: 1.2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(5),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _messageController,
-                      onChanged: _onMessageChanged,
-                      maxLines: 3,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                      decoration: InputDecoration(
-                        hintText:
-                            'Type crop symptoms, duration of issue, or current fertilizer used...',
-                        hintStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFFA5ACA5),
-                        ),
-                        contentPadding: const EdgeInsets.all(16),
-                        border: InputBorder.none,
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.mic_none_rounded,
-                              color: AppColors.primaryGreen),
-                          tooltip: 'Speak to type',
-                          onPressed: () {
-                            _messageController.text =
-                                'Leaves turning yellow with dark spots at base.';
-                            _onMessageChanged(_messageController.text);
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 22),
+                  // Removed summary card and text message section
 
                   // 2. Photo & Video Upload Card
                   MediaPickerCard(

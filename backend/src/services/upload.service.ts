@@ -11,7 +11,6 @@ export class UploadService {
     const paramsToSign = {
       folder,
       timestamp,
-      upload_preset: env.CLOUDINARY_UPLOAD_PRESET,
     };
 
     const signature = cloudinary.utils.api_sign_request(
@@ -24,7 +23,6 @@ export class UploadService {
       signature,
       apiKey: env.CLOUDINARY_API_KEY,
       cloudName: env.CLOUDINARY_CLOUD_NAME,
-      uploadPreset: env.CLOUDINARY_UPLOAD_PRESET,
       folder,
     };
   }

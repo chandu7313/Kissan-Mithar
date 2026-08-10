@@ -33,7 +33,7 @@ class _ConsultationDetailScreenState
 
   void _sharePrescription(ConsultationItem item) {
     final buffer = StringBuffer();
-    buffer.writeln('🌾 KISSAN MITHAR - Consultation Advisory');
+    buffer.writeln('🌾 Consultation Advisory');
     buffer.writeln('Booking ID: ${item.id}');
     buffer.writeln('Expert: ${item.expertName} (${item.expertRole})');
     buffer.writeln('Date: ${item.scheduledDate}, ${item.scheduledTime}');
@@ -150,7 +150,9 @@ class _ConsultationDetailScreenState
             icon: const Icon(Icons.share_rounded,
                 color: AppColors.primaryGreen, size: 24),
             onPressed: () {
-              detailAsync.whenData((item) => _sharePrescription(item));
+              detailAsync.whenData((item) {
+                if (item != null) _sharePrescription(item);
+              });
             },
             tooltip: 'Share Advisory',
           ),
@@ -162,6 +164,9 @@ class _ConsultationDetailScreenState
             constraints: const BoxConstraints(maxWidth: 500),
             child: detailAsync.when(
               data: (item) {
+                if (item == null) {
+                  return const Center(child: Text('Consultation not found'));
+                }
                 _reminderEnabled = item.reminderEnabled;
                 final isUpcoming = item.status == ConsultationStatus.upcoming;
 

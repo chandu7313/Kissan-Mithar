@@ -1,4 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  KeyRound,
+  RefreshCw,
+  ShieldCheck,
+  CheckCircle2,
+  AlertTriangle,
+  ArrowRight,
+  ArrowLeft,
+  Sparkles,
+} from 'lucide-react';
 import { UserSession } from '../types/index.js';
 import { AuthStore } from '../services/authStore.js';
 import { AuthApi } from '../api/auth.api.js';
@@ -13,13 +27,13 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
   const [isForgotPassword, setIsForgotPassword] = useState<boolean>(false);
 
   // Form Fields
-  const [email, setEmail] = useState<string>('sunil.rao@kissanmithar.in');
-  const [password, setPassword] = useState<string>('Kisan@123');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [otp, setOtp] = useState<string>('');
 
   // Reset Password Fields
-  const [resetEmail, setResetEmail] = useState<string>('sunil.rao@kissanmithar.in');
+  const [resetEmail, setResetEmail] = useState<string>('');
   const [resetOtp, setResetOtp] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -118,18 +132,19 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
         });
       }
 
-      const role = res.user?.role || (email.includes('admin') ? 'ADMIN' : 'EXPERT');
+      const role = res.user?.role;
+      if (!role || !res.user?.userId) {
+        throw new Error('Invalid user payload returned from server.');
+      }
 
       const session: UserSession = {
-        userId: res.user?.userId || (role === 'ADMIN' ? 'ADMIN-001' : 'EXPERT-001'),
-        name: res.user?.name || (role === 'ADMIN' ? 'Kisan Mithar Ops Admin' : 'Dr. Sunil Rao'),
+        userId: res.user.userId,
+        name: res.user.name,
         role: role,
-        phoneNumber: res.user?.phoneNumber || (role === 'ADMIN' ? '+919999900000' : '+919811122233'),
-        token: res.token || `jwt_${Date.now()}`,
-        avatarUrl:
-          role === 'ADMIN'
-            ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'
-            : 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200',
+        phoneNumber: res.user.phoneNumber,
+        token: res.token,
+        avatarUrl: res.user.photoUrl || 
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(res.user.name || 'User')}&background=15803d&color=fff&size=200`,
       };
 
       AuthStore.setSession(session);
@@ -247,7 +262,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
               gap: '0.5rem',
             }}
           >
-            <span>⚠️</span>
+            <AlertTriangle size={16} color="#dc2626" />
             <span>{errorMessage}</span>
           </div>
         )}
@@ -266,7 +281,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
               gap: '0.5rem',
             }}
           >
-            <span>✅</span>
+            <CheckCircle2 size={16} color="#16a34a" />
             <span>{successMessage}</span>
           </div>
         )}
@@ -286,7 +301,10 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
               justifyContent: 'space-between',
             }}
           >
-            <span>🔑 OTP: <strong>{devOtpHint}</strong></span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+              <KeyRound size={14} color="#2563eb" />
+              <span>OTP: <strong>{devOtpHint}</strong></span>
+            </div>
             <button
               type="button"
               onClick={() => {
@@ -318,21 +336,28 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
               <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
                 Email Address
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email (e.g. sunil.rao@kissanmithar.in)"
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.625rem 0.75rem',
-                  borderRadius: '0.5rem',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '0.875rem',
-                  boxSizing: 'border-box',
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.625rem 0.75rem 0.625rem 2.25rem',
+                    borderRadius: '0.5rem',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.875rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <Mail
+                  size={16}
+                  color="#94a3b8"
+                  style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}
+                />
+              </div>
             </div>
 
             {/* Field 2: Password (Default) OR OTP (When selected) */}
@@ -373,12 +398,17 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                     required
                     style={{
                       width: '100%',
-                      padding: '0.625rem 2.5rem 0.625rem 0.75rem',
+                      padding: '0.625rem 2.5rem 0.625rem 2.25rem',
                       borderRadius: '0.5rem',
                       border: '1px solid #cbd5e1',
                       fontSize: '0.875rem',
                       boxSizing: 'border-box',
                     }}
+                  />
+                  <Lock
+                    size={16}
+                    color="#94a3b8"
+                    style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}
                   />
                   <button
                     type="button"
@@ -392,11 +422,13 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                       border: 'none',
                       color: '#64748b',
                       cursor: 'pointer',
-                      fontSize: '1rem',
+                      padding: 0,
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
                     title={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? '🙈' : '👁️'}
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
 
@@ -414,9 +446,13 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                       cursor: 'pointer',
                       padding: 0,
                       textDecoration: 'underline',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
                     }}
                   >
-                    📨 Login via OTP to Mail instead
+                    <KeyRound size={13} />
+                    <span>Login via OTP</span>
                   </button>
                 </div>
               </div>
@@ -462,9 +498,13 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                       fontSize: '0.75rem',
                       fontWeight: 700,
                       cursor: otpCountdown > 0 || loading ? 'not-allowed' : 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.375rem',
                     }}
                   >
-                    {otpCountdown > 0 ? `Resend OTP in ${otpCountdown}s` : otpSent ? 'Resend OTP' : 'Send OTP to Mail'}
+                    <Mail size={13} />
+                    <span>{otpCountdown > 0 ? `Resend OTP in ${otpCountdown}s` : otpSent ? 'Resend OTP' : 'Send OTP to Mail'}</span>
                   </button>
 
                   <button
@@ -479,9 +519,13 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                       cursor: 'pointer',
                       padding: 0,
                       textDecoration: 'underline',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
                     }}
                   >
-                    🔑 Login with Password
+                    <Lock size={13} />
+                    <span>Login with Password</span>
                   </button>
                 </div>
               </div>
@@ -499,9 +543,13 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                 fontWeight: 700,
                 justifyContent: 'center',
                 marginTop: '0.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
               }}
             >
-              {loading ? 'Authenticating...' : loginMethod === 'PASSWORD' ? 'Sign In' : 'Verify OTP & Sign In'}
+              <span>{loading ? 'Authenticating...' : loginMethod === 'PASSWORD' ? 'Sign In' : 'Verify OTP & Sign In'}</span>
+              <ArrowRight size={16} />
             </button>
           </form>
         ) : (
@@ -511,7 +559,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
           <form onSubmit={handleResetPasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                <span>🔄</span>
+                <RefreshCw size={15} color="#15803d" />
                 <span style={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>Reset Password</span>
               </div>
               <button
@@ -521,9 +569,20 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                   setErrorMessage(null);
                   setSuccessMessage(null);
                 }}
-                style={{ background: 'none', border: 'none', fontSize: '0.75rem', color: '#15803d', fontWeight: 600, cursor: 'pointer' }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '0.75rem',
+                  color: '#15803d',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                }}
               >
-                Back to Login ➔
+                <span>Back to Login</span>
+                <ArrowRight size={13} />
               </button>
             </div>
 
@@ -533,21 +592,28 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                 Registered Email Address
               </label>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input
-                  type="email"
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                  placeholder="Enter email"
-                  required
-                  style={{
-                    flex: 1,
-                    padding: '0.5rem 0.75rem',
-                    borderRadius: '0.375rem',
-                    border: '1px solid #cbd5e1',
-                    fontSize: '0.8125rem',
-                    boxSizing: 'border-box',
-                  }}
-                />
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="Enter email"
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem 0.75rem 0.5rem 2rem',
+                      borderRadius: '0.375rem',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.8125rem',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                  <Mail
+                    size={14}
+                    color="#94a3b8"
+                    style={{ position: 'absolute', left: '0.625rem', top: '50%', transform: 'translateY(-50%)' }}
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={() => handleSendOtp('RESET_PASSWORD')}
@@ -562,9 +628,13 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                     fontWeight: 700,
                     cursor: otpCountdown > 0 || loading ? 'not-allowed' : 'pointer',
                     whiteSpace: 'nowrap',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
                   }}
                 >
-                  {otpCountdown > 0 ? `Resend (${otpCountdown}s)` : 'Send OTP'}
+                  <Mail size={12} />
+                  <span>{otpCountdown > 0 ? `Resend (${otpCountdown}s)` : 'Send OTP'}</span>
                 </button>
               </div>
             </div>
@@ -610,12 +680,17 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                   required
                   style={{
                     width: '100%',
-                    padding: '0.5rem 2.25rem 0.5rem 0.75rem',
+                    padding: '0.5rem 2.25rem 0.5rem 2rem',
                     borderRadius: '0.375rem',
                     border: '1px solid #cbd5e1',
                     fontSize: '0.8125rem',
                     boxSizing: 'border-box',
                   }}
+                />
+                <Lock
+                  size={14}
+                  color="#94a3b8"
+                  style={{ position: 'absolute', left: '0.625rem', top: '50%', transform: 'translateY(-50%)' }}
                 />
                 <button
                   type="button"
@@ -629,9 +704,11 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
                     border: 'none',
                     color: '#64748b',
                     cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
                   }}
                 >
-                  {showNewPassword ? '🙈' : '👁️'}
+                  {showNewPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
               </div>
             </div>
@@ -641,21 +718,28 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
               <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
                 Confirm Password
               </label>
-              <input
-                type={showNewPassword ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re-enter new password"
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.5rem 0.75rem',
-                  borderRadius: '0.375rem',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '0.8125rem',
-                  boxSizing: 'border-box',
-                }}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showNewPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter new password"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem 0.75rem 0.5rem 2rem',
+                    borderRadius: '0.375rem',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.8125rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <Lock
+                  size={14}
+                  color="#94a3b8"
+                  style={{ position: 'absolute', left: '0.625rem', top: '50%', transform: 'translateY(-50%)' }}
+                />
+              </div>
             </div>
 
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
@@ -692,7 +776,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
             gap: '0.375rem',
           }}
         >
-          <span>🔒</span>
+          <ShieldCheck size={14} color="#16a34a" />
           <span>Secured via Authentication & Audit Trail</span>
         </div>
       </div>

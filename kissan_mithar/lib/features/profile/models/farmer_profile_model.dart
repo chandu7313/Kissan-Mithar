@@ -36,8 +36,8 @@ class FarmerProfile {
       village: 'Khed',
       district: 'Pune',
       stateName: 'Maharashtra',
-      landAcres: 2.5,
-      primaryCrop: 'Mango & Guava',
+      landAcres: 0.0,
+      primaryCrop: '',
       languageCode: 'en',
       createdAt: DateTime.now().subtract(const Duration(days: 90)),
       updatedAt: DateTime.now(),
@@ -55,8 +55,8 @@ class FarmerProfile {
       stateName: json['state']?.toString() ?? json['state_name']?.toString() ?? '',
       landAcres: (json['land_acres'] as num?)?.toDouble() ??
           (json['land_size'] as num?)?.toDouble() ??
-          2.0,
-      primaryCrop: json['primary_crop']?.toString() ?? 'Paddy & Mango',
+          0.0,
+      primaryCrop: json['primary_crop']?.toString() ?? '',
       languageCode: json['language_code']?.toString() ?? json['language']?.toString() ?? 'en',
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'].toString())

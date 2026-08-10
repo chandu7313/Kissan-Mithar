@@ -11,6 +11,10 @@ import '../../../core/services/offline_sync_service.dart';
 class OrchardDraftState {
   final int currentStep; // 0: Photos, 1: Location, 2: Land Details
 
+  // Step 0: Survey Map
+  final String? surveyMapPath;
+  final String? surveyMapType; // 'PDF', 'Camera', 'Gallery'
+
   // Step 1: Photos
   final String? frontPhoto;
   final String? leftPhoto;
@@ -29,7 +33,7 @@ class OrchardDraftState {
   // Step 3: Land Details
   final String landSize; // '<1 Acre', '1-3 Acres', '3-5 Acres', 'Above 5 Acres'
   final List<String> waterSources; // 'Borewell', 'Canal', 'Drip', 'Rain'
-  final String soilType; // 'Red Soil', 'Black Soil', 'Sandy Soil'
+  final List<String> soilTypes; // 'Red Soil', 'Black Soil', 'Sandy Soil'
   final List<String> existingCrops; // 'Cotton', 'Soybean', 'Paddy', 'Sugarcane', 'Vegetables', 'None / Fallow'
   final bool hasElectricity;
   final bool hasDripIrrigation;
@@ -53,6 +57,8 @@ class OrchardDraftState {
 
   const OrchardDraftState({
     this.currentStep = 0,
+    this.surveyMapPath,
+    this.surveyMapType,
     this.frontPhoto,
     this.leftPhoto,
     this.rightPhoto,
@@ -65,8 +71,8 @@ class OrchardDraftState {
     this.stateName = 'Telangana',
     this.isLocating = false,
     this.landSize = '1-3 Acres',
-    this.waterSources = const ['Borewell', 'Canal'],
-    this.soilType = 'Red Soil (Lal Mitti)',
+    this.waterSources = const [],
+    this.soilTypes = const [],
     this.existingCrops = const ['Cotton', 'Soybean'],
     this.hasElectricity = true,
     this.hasDripIrrigation = false,
@@ -101,10 +107,12 @@ class OrchardDraftState {
 
   bool get isStep1Valid => capturedPhotosCount > 0;
   bool get isStep2Valid => village.isNotEmpty && district.isNotEmpty;
-  bool get isStep3Valid => landSize.isNotEmpty && soilType.isNotEmpty;
+  bool get isStep3Valid => landSize.isNotEmpty && soilTypes.isNotEmpty;
 
   OrchardDraftState copyWith({
     int? currentStep,
+    String? surveyMapPath,
+    String? surveyMapType,
     String? frontPhoto,
     String? leftPhoto,
     String? rightPhoto,
@@ -118,7 +126,7 @@ class OrchardDraftState {
     bool? isLocating,
     String? landSize,
     List<String>? waterSources,
-    String? soilType,
+    List<String>? soilTypes,
     List<String>? existingCrops,
     bool? hasElectricity,
     bool? hasDripIrrigation,
@@ -141,6 +149,8 @@ class OrchardDraftState {
   }) {
     return OrchardDraftState(
       currentStep: currentStep ?? this.currentStep,
+      surveyMapPath: surveyMapPath ?? this.surveyMapPath,
+      surveyMapType: surveyMapType ?? this.surveyMapType,
       frontPhoto: frontPhoto ?? this.frontPhoto,
       leftPhoto: leftPhoto ?? this.leftPhoto,
       rightPhoto: rightPhoto ?? this.rightPhoto,
@@ -154,7 +164,7 @@ class OrchardDraftState {
       isLocating: isLocating ?? this.isLocating,
       landSize: landSize ?? this.landSize,
       waterSources: waterSources ?? this.waterSources,
-      soilType: soilType ?? this.soilType,
+      soilTypes: soilTypes ?? this.soilTypes,
       existingCrops: existingCrops ?? this.existingCrops,
       hasElectricity: hasElectricity ?? this.hasElectricity,
       hasDripIrrigation: hasDripIrrigation ?? this.hasDripIrrigation,
@@ -191,7 +201,7 @@ class OrchardDraftState {
       'stateName': stateName,
       'landSize': landSize,
       'waterSources': waterSources,
-      'soilType': soilType,
+      'soilTypes': soilTypes,
       'existingCrops': existingCrops,
       'hasElectricity': hasElectricity,
       'hasDripIrrigation': hasDripIrrigation,
@@ -221,8 +231,8 @@ class OrchardDraftState {
       district: json['district'] ?? 'Nizamabad',
       stateName: json['stateName'] ?? 'Telangana',
       landSize: json['landSize'] ?? '1-3 Acres',
-      waterSources: List<String>.from(json['waterSources'] ?? ['Borewell', 'Canal']),
-      soilType: json['soilType'] ?? 'Red Soil (Lal Mitti)',
+      waterSources: json['waterSources'] != null ? List<String>.from(json['waterSources']) : [],
+      soilTypes: json['soilTypes'] != null ? List<String>.from(json['soilTypes']) : [],
       existingCrops: List<String>.from(json['existingCrops'] ?? ['Cotton', 'Soybean']),
       hasElectricity: json['hasElectricity'] ?? true,
       hasDripIrrigation: json['hasDripIrrigation'] ?? false,
@@ -241,7 +251,7 @@ class OrchardDraftState {
 
 class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
   final NetworkClient _networkClient;
-  static const String _storageKey = 'kissan_mithar_orchard_draft_v1';
+  static const String _storageKey = 'kissan_mithar_orchard_draft_v2';
 
   OrchardPlanningNotifier({NetworkClient? networkClient})
       : _networkClient = networkClient ?? NetworkClient(),
@@ -251,14 +261,14 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
 
   // --- Step Navigation ---
   void setStep(int step) {
-    if (step >= 0 && step <= 2) {
+    if (step >= 0 && step <= 3) {
       state = state.copyWith(currentStep: step);
       saveDraftToStorage();
     }
   }
 
   void nextStep() {
-    if (state.currentStep < 2) {
+    if (state.currentStep < 3) {
       state = state.copyWith(currentStep: state.currentStep + 1);
       saveDraftToStorage();
     }
@@ -269,6 +279,44 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
       state = state.copyWith(currentStep: state.currentStep - 1);
       saveDraftToStorage();
     }
+  }
+
+  // --- Step 0: Survey Map ---
+  void setSurveyMap(String path, String type) {
+    state = state.copyWith(surveyMapPath: path, surveyMapType: type);
+    saveDraftToStorage();
+  }
+
+  void clearSurveyMap() {
+    state = OrchardDraftState(
+      currentStep: state.currentStep,
+      frontPhoto: state.frontPhoto,
+      leftPhoto: state.leftPhoto,
+      rightPhoto: state.rightPhoto,
+      centerPhoto: state.centerPhoto,
+      galleryPhotos: state.galleryPhotos,
+      latitude: state.latitude,
+      longitude: state.longitude,
+      village: state.village,
+      district: state.district,
+      stateName: state.stateName,
+      isLocating: state.isLocating,
+      landSize: state.landSize,
+      waterSources: state.waterSources,
+      soilTypes: state.soilTypes,
+      existingCrops: state.existingCrops,
+      hasElectricity: state.hasElectricity,
+      hasDripIrrigation: state.hasDripIrrigation,
+      budget: state.budget,
+      preferredOrchards: state.preferredOrchards,
+      needExpertSuggestion: state.needExpertSuggestion,
+      expectedGoal: state.expectedGoal,
+      voiceNotePath: state.voiceNotePath,
+      voiceDurationSeconds: state.voiceDurationSeconds,
+      isRecordingVoice: state.isRecordingVoice,
+      isPlayingVoice: state.isPlayingVoice,
+    );
+    saveDraftToStorage();
   }
 
   // --- Step 1: Photos ---
@@ -408,8 +456,14 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
     saveDraftToStorage();
   }
 
-  void setSoilType(String soil) {
-    state = state.copyWith(soilType: soil);
+  void toggleSoilType(String soil) {
+    final updated = List<String>.from(state.soilTypes);
+    if (updated.contains(soil)) {
+      updated.remove(soil);
+    } else {
+      updated.add(soil);
+    }
+    state = state.copyWith(soilTypes: updated);
     saveDraftToStorage();
   }
 
@@ -522,67 +576,41 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
         debugPrint('Image upload note: $uploadError');
       }
 
-      final generatedId = 'KM-2023-${(1000 + (DateTime.now().millisecond * 7) % 9000).toInt()}';
       final now = DateTime.now();
       final dateStr = '${now.day} ${_monthName(now.month)} ${now.year}';
 
       final payload = {
-        'request_id': generatedId,
         'photos': {
-          'front': frontUrl ?? 'https://images.unsplash.com/photo-1500382017468-9049fed747ef',
-          'left': leftUrl ?? 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854',
-          'right': rightUrl ?? 'https://images.unsplash.com/photo-1464226184884-fa280b87c399',
-          'center': centerUrl ?? 'https://images.unsplash.com/photo-1592417817098-8f3d6ef23a07',
-          'gallery': state.galleryPhotos,
+          'front': ?frontUrl,
+          'left': ?leftUrl,
+          'right': ?rightUrl,
+          'center': ?centerUrl,
         },
-        'location': {
+        'gps': {
           'latitude': state.latitude,
           'longitude': state.longitude,
           'village': state.village,
           'district': state.district,
           'state': state.stateName,
         },
-        'land_details': {
-          'land_size': state.landSize,
-          'soil_type': state.soilType,
-          'water_sources': state.waterSources,
-          'existing_crops': state.existingCrops,
-          'has_electricity': state.hasElectricity,
-          'has_drip_irrigation': state.hasDripIrrigation,
-          'budget': state.budget,
-          'preferred_orchards': state.needExpertSuggestion ? ['Expert Suggestion'] : state.preferredOrchards,
-          'expected_goal': state.expectedGoal,
+        'landDetails': {
+          'size': state.landSize,
+          'soilTypes': state.soilTypes,
+          'waterSources': state.waterSources,
+          'existingCrops': state.existingCrops,
+          'electricity': state.hasElectricity,
+          'drip': state.hasDripIrrigation,
         },
-        'status': 'submitted',
-        'created_at': now.toIso8601String(),
+        'notes': 'Budget: ${state.budget}, Goals: ${state.expectedGoal}, Orchards: ${state.preferredOrchards.join(", ")}',
       };
 
-      // 2. Insert to Supabase if configured
-      final supabase = EnvConfig.supabaseClient;
-      if (supabase != null) {
-        try {
-          await supabase.from('orchard_requests').insert(payload);
-          debugPrint('Orchard request synced to Supabase: $generatedId');
-        } catch (supabaseError) {
-          debugPrint('Supabase insert note (table may need creation): $supabaseError');
-        }
-      }
-
-      // 3. Fallback network client call with offline queue fallback
-      try {
-        final res = await _networkClient.post('/api/orchard-requests', data: payload);
-        if (res.statusCode != 200 && res.statusCode != 201) {
-          await OfflineSyncService().enqueueRequest(
-            requestId: generatedId,
-            payload: payload,
-          );
-        }
-      } catch (_) {
-        // Enqueue to offline sync engine for automatic background upload
-        await OfflineSyncService().enqueueRequest(
-          requestId: generatedId,
-          payload: payload,
-        );
+      final res = await _networkClient.post<dynamic>('/orchard-requests', data: payload);
+      final responseData = res.data;
+      
+      String generatedId = 'Unknown';
+      if (responseData is Map<String, dynamic> && responseData['success'] == true) {
+        final data = responseData['data'] as Map<String, dynamic>;
+        generatedId = data['id']?.toString() ?? 'Unknown';
       }
 
       state = state.copyWith(
@@ -602,6 +630,53 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
       );
       return false;
     }
+  }
+
+  Future<void> fetchMyRequests() async {
+    try {
+      final res = await _networkClient.get<dynamic>('/orchard-requests/my-requests');
+      final responseData = res.data;
+      if (responseData is Map<String, dynamic> && responseData['success'] == true) {
+        final listData = responseData['data'] as List<dynamic>?;
+        if (listData != null && listData.isNotEmpty) {
+          final firstItem = listData.first as Map<String, dynamic>;
+          final id = firstItem['id']?.toString() ?? 'Unknown';
+          final statusStr = firstItem['status'] as String?;
+          int stage = 0;
+          switch (statusStr) {
+            case 'SUBMITTED':
+              stage = 0;
+              break;
+            case 'UNDER_REVIEW':
+              stage = 1;
+              break;
+            case 'EXPERT_ASSIGNED':
+              stage = 2;
+              break;
+            case 'PLAN_READY':
+              stage = 3;
+              break;
+            case 'COMPLETED':
+              stage = 4;
+              break;
+            default:
+              stage = 0;
+          }
+          state = state.copyWith(
+            requestId: id,
+            currentStage: stage,
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch my requests: $e');
+    }
+  }
+
+  Future<void> fetchRequestStatus(String id) async {
+    // Just a placeholder to fulfill the expected method if needed by tracking screens.
+    // In our simplified flow we just use fetchMyRequests to get the latest.
+    await fetchMyRequests();
   }
 
   void advanceStage() {

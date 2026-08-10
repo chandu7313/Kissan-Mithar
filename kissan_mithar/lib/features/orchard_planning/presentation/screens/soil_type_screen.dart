@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'upload_survey_screen.dart';
 
 class SoilTypeScreen extends StatefulWidget {
@@ -17,39 +18,41 @@ class SoilTypeScreen extends StatefulWidget {
 class _SoilTypeScreenState extends State<SoilTypeScreen> {
   int _selectedSoilIndex = 0; // Default selected: Red Soil
 
-  final List<Map<String, dynamic>> _soils = [
-    {
-      'title': 'Red Soil',
-      'sub': 'Lal Mitti',
-      'color': const Color(0xFFB75438),
-      'patternColor': const Color(0xFF8D341C),
-      'icon': Icons.terrain_rounded,
-    },
-    {
-      'title': 'Black Soil',
-      'sub': 'Kali Mitti',
-      'color': const Color(0xFF2C2E2D),
-      'patternColor': const Color(0xFF1E1F1E),
-      'icon': Icons.grain_rounded,
-    },
-    {
-      'title': 'Sandy Soil',
-      'sub': 'Balui Mitti',
-      'color': const Color(0xFFD4B37F),
-      'patternColor': const Color(0xFFC49A5A),
-      'icon': Icons.bubble_chart_rounded,
-    },
-    {
-      'title': 'Clay Soil',
-      'sub': 'Chikni Mitti',
-      'color': const Color(0xFF795548),
-      'patternColor': const Color(0xFF5D4037),
-      'icon': Icons.spa_rounded,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    final List<Map<String, dynamic>> soils = [
+      {
+        'title': l10n.redSoil,
+        'sub': l10n.lalMitti,
+        'color': const Color(0xFFB75438),
+        'patternColor': const Color(0xFF8D341C),
+        'icon': Icons.terrain_rounded,
+      },
+      {
+        'title': l10n.blackSoil,
+        'sub': l10n.kaliMitti,
+        'color': const Color(0xFF2C2E2D),
+        'patternColor': const Color(0xFF1E1F1E),
+        'icon': Icons.grain_rounded,
+      },
+      {
+        'title': l10n.sandySoil,
+        'sub': l10n.baluiMitti,
+        'color': const Color(0xFFD4B37F),
+        'patternColor': const Color(0xFFC49A5A),
+        'icon': Icons.bubble_chart_rounded,
+      },
+      {
+        'title': l10n.claySoil,
+        'sub': l10n.chikniMitti,
+        'color': const Color(0xFF795548),
+        'patternColor': const Color(0xFF5D4037),
+        'icon': Icons.spa_rounded,
+      },
+    ];
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -83,8 +86,8 @@ class _SoilTypeScreenState extends State<SoilTypeScreen> {
                   const SizedBox(height: 8),
 
                   // Header
-                  const Text(
-                    'What is your soil type?',
+                  Text(
+                    l10n.soilTypeTitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 26,
@@ -96,10 +99,10 @@ class _SoilTypeScreenState extends State<SoilTypeScreen> {
 
                   const SizedBox(height: 10),
 
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      'Select the type that best matches your land to get accurate farming advice.',
+                      l10n.soilTypeSubtitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15,
@@ -121,9 +124,9 @@ class _SoilTypeScreenState extends State<SoilTypeScreen> {
                       mainAxisSpacing: 14,
                       childAspectRatio: 0.92,
                     ),
-                    itemCount: _soils.length,
+                    itemCount: soils.length,
                     itemBuilder: (context, index) {
-                      final soil = _soils[index];
+                      final soil = soils[index];
                       final isSelected = _selectedSoilIndex == index;
 
                       return InkWell(
@@ -263,22 +266,22 @@ class _SoilTypeScreenState extends State<SoilTypeScreen> {
                           ),
                         ),
                         const SizedBox(width: 14),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Not Sure?',
-                                style: TextStyle(
+                                l10n.notSure,
+                                style: const TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.textPrimary,
                                 ),
                               ),
-                              SizedBox(height: 2),
+                              const SizedBox(height: 2),
                               Text(
-                                'Ask our experts to identify it for you.',
-                                style: TextStyle(
+                                l10n.askExperts,
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.textSecondary,
                                 ),
@@ -316,20 +319,20 @@ class _SoilTypeScreenState extends State<SoilTypeScreen> {
                           MaterialPageRoute(
                             builder: (context) => UploadSurveyScreen(
                               landSize: widget.landSize,
-                              soilType: _soils[_selectedSoilIndex]['title'] as String,
+                              soilType: soils[_selectedSoilIndex]['title'] as String,
                             ),
                           ),
                         );
                       },
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Continue',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                            l10n.continueText,
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
                           ),
-                          SizedBox(width: 8),
-                          Icon(Icons.arrow_forward_rounded, size: 20),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward_rounded, size: 20),
                         ],
                       ),
                     ),

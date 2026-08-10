@@ -291,7 +291,7 @@ class _UploadSurveyScreenState extends State<UploadSurveyScreen> {
                                       _selectedFileType = null;
                                     });
                                   },
-                                  child: const Text('Change File', style: TextStyle(color: Color(0xFFC62828))),
+                                  child: Text(l10n.changeFile, style: const TextStyle(color: Color(0xFFC62828))),
                                 ),
                               ],
                             ),

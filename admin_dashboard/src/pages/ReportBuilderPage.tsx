@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ArrowLeft, Download, Send, CheckCircle2 } from 'lucide-react';
 import { OrchardReport, OrchardRequest } from '../types/index.js';
 import { PdfGenerator } from '../services/pdfGenerator.js';
 import { OrchardApi } from '../api/orchard.api.js';
@@ -120,7 +121,7 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
     await OrchardApi.submitReport(request.id, report);
     await OrchardApi.updateStatus(request.id, 'PLAN_READY');
     setIsSaving(false);
-    setStatusBanner('✓ Report successfully saved & delivered to Farmer App! Mobile push notification triggered.');
+    setStatusBanner('Report successfully saved & delivered to Farmer App! Mobile push notification triggered.');
   };
 
   return (
@@ -128,8 +129,13 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
       {/* Action Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={onBack} className="btn-secondary" style={{ padding: '0.5rem 0.875rem' }}>
-            ← Back to Request
+          <button
+            onClick={onBack}
+            className="btn-secondary"
+            style={{ padding: '0.5rem 0.875rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+          >
+            <ArrowLeft size={16} />
+            <span>Back to Request</span>
           </button>
           <div>
             <h1 style={{ fontSize: '1.375rem', fontWeight: 700 }}>Orchard Architecture & Feasibility Report Builder</h1>
@@ -140,11 +146,22 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button onClick={handleDownloadPdf} className="btn-secondary">
-            <span>📥</span> Download PDF
+          <button
+            onClick={handleDownloadPdf}
+            className="btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+          >
+            <Download size={15} />
+            <span>Download PDF</span>
           </button>
-          <button onClick={handleSaveAndDeliver} disabled={isSaving} className="btn-primary">
-            <span>🚀</span> {isSaving ? 'Publishing...' : 'Save & Publish to Farmer App'}
+          <button
+            onClick={handleSaveAndDeliver}
+            disabled={isSaving}
+            className="btn-primary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+          >
+            <Send size={15} />
+            <span>{isSaving ? 'Publishing...' : 'Save & Publish to Farmer App'}</span>
           </button>
         </div>
       </div>
@@ -159,9 +176,13 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
             border: '1px solid #bbf7d0',
             fontWeight: 600,
             fontSize: '0.9375rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
           }}
         >
-          {statusBanner}
+          <CheckCircle2 size={18} color="#16a34a" />
+          <span>{statusBanner}</span>
         </div>
       )}
 

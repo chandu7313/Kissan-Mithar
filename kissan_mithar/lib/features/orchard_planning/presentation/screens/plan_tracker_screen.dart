@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/routing/app_router.dart';
+import '../../../../shared/widgets/farmer_app_bar.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../providers/orchard_planning_provider.dart';
 import 'orchard_plan_report_screen.dart';
 
-class PlanTrackerScreen extends ConsumerWidget {
+class PlanTrackerScreen extends ConsumerStatefulWidget {
   final String? landSize;
   final String? soilType;
   final bool? hasMap;
@@ -19,48 +21,46 @@ class PlanTrackerScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PlanTrackerScreen> createState() => _PlanTrackerScreenState();
+}
+
+class _PlanTrackerScreenState extends ConsumerState<PlanTrackerScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the latest requests/status when the tracker screen is opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(orchardPlanningProvider.notifier).fetchMyRequests();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(orchardPlanningProvider);
     final notifier = ref.read(orchardPlanningProvider.notifier);
 
-    final displayLandSize = landSize ?? state.landSize;
+    final displayLandSize = widget.landSize ?? state.landSize;
     final stage = state.currentStage; // 0: Submitted, 1: Under Review, 2: Expert Assigned, 3: Plan Ready, 4: Completed
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF9F2),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.goNamed(AppRoutes.home);
-            }
-          },
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.eco_rounded, color: AppColors.primary, size: 26),
-            SizedBox(width: 8),
-            Text(
-              'Kissan Mithar',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-          ],
-        ),
-        actions: [
+      appBar: FarmerAppBar(
+        showBrandTitle: false,
+        showTractorIcon: false,
+        onBackTap: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.goNamed(AppRoutes.home);
+          }
+        },
+        customActions: [
           TextButton.icon(
             onPressed: () => notifier.advanceStage(),
             icon: const Icon(Icons.fast_forward_rounded, size: 18, color: AppColors.primary),
-            label: const Text(
-              'Demo Next',
+            label: Text(
+              l10n.demoNext,
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primary),
             ),
           ),
@@ -74,8 +74,8 @@ class PlanTrackerScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              const Text(
-                'Plan Status',
+              Text(
+                l10n.planStatus,
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -83,8 +83,8 @@ class PlanTrackerScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Track the progress of your customized orchard plan.',
+              Text(
+                l10n.trackProgress,
                 style: TextStyle(fontSize: 15, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 24),
@@ -109,40 +109,40 @@ class PlanTrackerScreen extends ConsumerWidget {
                     _buildStepperStage(
                       stageIndex: 0,
                       currentStage: stage,
-                      title: 'Submitted',
-                      subtitle: 'Farm details and photos received',
+                      title: l10n.stageSubmittedTitle,
+                      subtitle: l10n.stageSubmittedSub,
                       icon: Icons.check_rounded,
                       isLast: false,
                     ),
                     _buildStepperStage(
                       stageIndex: 1,
                       currentStage: stage,
-                      title: 'Under Review',
-                      subtitle: 'Checking soil & climate requirements',
+                      title: l10n.stageReviewTitle,
+                      subtitle: l10n.stageReviewSub,
                       icon: Icons.search_rounded,
                       isLast: false,
                     ),
                     _buildStepperStage(
                       stageIndex: 2,
                       currentStage: stage,
-                      title: 'Expert Assigned',
-                      subtitle: 'An agronomist is working on it',
+                      title: l10n.stageExpertTitle,
+                      subtitle: l10n.stageExpertSub,
                       icon: Icons.person_rounded,
                       isLast: false,
                     ),
                     _buildStepperStage(
                       stageIndex: 3,
                       currentStage: stage,
-                      title: 'Plan Ready',
-                      subtitle: 'Customized layout & roadmap ready',
+                      title: l10n.stageReadyTitle,
+                      subtitle: l10n.stageReadySub,
                       icon: Icons.agriculture_rounded,
                       isLast: false,
                     ),
                     _buildStepperStage(
                       stageIndex: 4,
                       currentStage: stage,
-                      title: 'Completed',
-                      subtitle: 'Final plan delivered & consultation active',
+                      title: l10n.stageCompletedTitle,
+                      subtitle: l10n.stageCompletedSub,
                       icon: Icons.task_alt_rounded,
                       isLast: true,
                     ),
@@ -183,8 +183,8 @@ class PlanTrackerScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Submission Summary',
+                          Text(
+                            l10n.submissionSummary,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -197,7 +197,7 @@ class PlanTrackerScreen extends ConsumerWidget {
                               const Icon(Icons.straighten_rounded, size: 16, color: AppColors.textSecondary),
                               const SizedBox(width: 6),
                               Text(
-                                'Land Size: $displayLandSize',
+                                '${l10n.landSizeLabel}: $displayLandSize',
                                 style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                               ),
                             ],
@@ -208,7 +208,7 @@ class PlanTrackerScreen extends ConsumerWidget {
                               const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.textSecondary),
                               const SizedBox(width: 6),
                               Text(
-                                'Submitted on: ${state.submittedDate}',
+                                '${l10n.submittedOn}: ${state.submittedDate}',
                                 style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                               ),
                             ],
@@ -241,8 +241,8 @@ class PlanTrackerScreen extends ConsumerWidget {
                       );
                     },
                     icon: const Icon(Icons.description_rounded, size: 24),
-                    label: const Text(
-                      'View Your Ready Plan',
+                    label: Text(
+                      l10n.viewYourReadyPlan,
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -260,8 +260,8 @@ class PlanTrackerScreen extends ConsumerWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: () => context.goNamed(AppRoutes.home),
-                  child: const Text(
-                    'Back to Home',
+                  child: Text(
+                    l10n.backToHome,
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),

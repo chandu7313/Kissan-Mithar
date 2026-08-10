@@ -11,6 +11,7 @@ export interface AuthUserPayload {
   expertId?: string;
   adminId?: string;
   name?: string;
+  photoUrl?: string;
 }
 
 export interface AuthenticatedRequest extends Request {
@@ -22,7 +23,7 @@ export interface CloudinarySignPayload {
   signature: string;
   apiKey: string;
   cloudName: string;
-  uploadPreset: string;
+  uploadPreset?: string;
   folder: string;
 }
 

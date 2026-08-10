@@ -1,40 +1,39 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/services/sms_service.dart';
 import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../shared/widgets/large_button.dart';
+import '../../providers/auth_provider.dart';
 
-class OtpVerifyScreen extends StatefulWidget {
+class OtpVerifyScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
-  final String sentOtp;
+  final String? devOtp; // Dev convenience — shows in console
 
   const OtpVerifyScreen({
     super.key,
     this.phoneNumber = '+91 98765 43210',
-    this.sentOtp = '123456',
+    this.devOtp,
   });
 
   @override
-  State<OtpVerifyScreen> createState() => _OtpVerifyScreenState();
+  ConsumerState<OtpVerifyScreen> createState() => _OtpVerifyScreenState();
 }
 
-class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
+class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
   final List<TextEditingController> _controllers =
       List.generate(6, (_) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
   int _remainingSeconds = 43;
-  late String _currentExpectedOtp;
   Timer? _timer;
+  bool _isVerifying = false;
 
   @override
   void initState() {
     super.initState();
-    _currentExpectedOtp = widget.sentOtp;
     _startTimer();
   }
 
@@ -53,14 +52,14 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   }
 
   Future<void> _resendOtp() async {
-    final newOtp = (100000 + Random().nextInt(900000)).toString();
-    _currentExpectedOtp = newOtp;
     _startTimer();
-    await SmsService.sendOtp(phoneNumber: widget.phoneNumber, otp: newOtp);
+    final devOtp = await ref.read(authProvider.notifier).sendOtp(widget.phoneNumber);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('A new OTP has been sent!'),
+      SnackBar(
+        content: Text(devOtp != null
+            ? 'A new OTP has been sent! (Dev: $devOtp)'
+            : 'A new OTP has been sent!'),
         backgroundColor: AppColors.primaryGreen,
       ),
     );
@@ -78,8 +77,39 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     super.dispose();
   }
 
-  void _onVerify() {
-    context.go('/home');
+  Future<void> _onVerify() async {
+    final enteredOtp = _controllers.map((c) => c.text).join();
+    if (enteredOtp.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter the complete 6-digit OTP'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isVerifying = true);
+
+    // Call backend to verify OTP and get JWT token
+    final success = await ref.read(authProvider.notifier).verifyOtpAndLogin(
+      phoneNumber: widget.phoneNumber,
+      otp: enteredOtp,
+    );
+
+    if (!mounted) return;
+    setState(() => _isVerifying = false);
+
+    if (success) {
+      context.go('/notification-permission');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invalid OTP. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -90,7 +120,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: FarmerAppBar(
-        onBackTap: () => Navigator.pop(context),
+        onBackTap: () => context.pop(),
         showTractorIcon: true,
         showBrandTitle: true,
         showLanguagePill: true,
@@ -170,6 +200,26 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                       letterSpacing: 0.2,
                     ),
                   ),
+
+                  // Dev OTP hint
+                  if (widget.devOtp != null) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF3E0),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Dev OTP: ${widget.devOtp}',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFE65100),
+                        ),
+                      ),
+                    ),
+                  ],
 
                   const SizedBox(height: 36),
 
@@ -281,13 +331,13 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
 
                   // Verify Button
                   LargeButton(
-                    label: 'Verify',
-                    leadingIcon: const Icon(
-                      Icons.verified_outlined,
+                    label: _isVerifying ? 'Verifying...' : 'Verify',
+                    leadingIcon: Icon(
+                      _isVerifying ? Icons.hourglass_top_rounded : Icons.verified_outlined,
                       color: Colors.white,
                       size: 22,
                     ),
-                    onPressed: _onVerify,
+                    onPressed: _isVerifying ? null : _onVerify,
                   ),
 
                   const SizedBox(height: 20),

@@ -151,4 +151,186 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get skip => 'ఇది నా దగ్గర లేదు — దాటవేయి';
+
+  @override
+  String get selectLanguage => 'Select Language / భాష चुनें';
+
+  @override
+  String get popularBadge => 'జనాదరణ పొందినవి';
+
+  @override
+  String get askExperts => 'మా నిపుణులను అడగండి.';
+
+  @override
+  String get editLocation => 'స్థానాన్ని సవరించండి';
+
+  @override
+  String get villageTown => 'గ్రామం / పట్టణం';
+
+  @override
+  String get district => 'జిల్లా';
+
+  @override
+  String get state => 'రాష్ట్రం';
+
+  @override
+  String get cancel => 'రద్దు చేయండి';
+
+  @override
+  String get save => 'భద్రపరుచు';
+
+  @override
+  String get selectFarmOnMap => 'మ్యాప్‌లో వ్యవసాయ క్షేత్రాన్ని ఎంచుకోండి';
+
+  @override
+  String get dragPinToMark =>
+      'మీ వ్యవసాయ సరిహద్దును గుర్తించడానికి పిన్‌ను లాగండి.';
+
+  @override
+  String get interactiveMapCoords => 'ఇంటరాక్టివ్ మ్యాప్ కోఆర్డినేట్స్';
+
+  @override
+  String get farmCoordinatesUpdated => 'వ్యవసాయ కోఆర్డినేట్స్ నవీకరించబడ్డాయి!';
+
+  @override
+  String get confirmLocation => 'స్థానాన్ని నిర్ధారించండి';
+
+  @override
+  String get surveyMapSubtitle =>
+      'మీ పంచాయతీ కార్యదర్శి నుండి సర్వే మ్యాప్ ఉందా? ఇక్కడ జోడించండి.';
+
+  @override
+  String get noFileSelected => 'ఫైల్ ఎంచుకోబడలేదు';
+
+  @override
+  String get pdfUploaded => 'PDF అప్‌లోడ్ చేయబడింది';
+
+  @override
+  String get imageSelected => 'చిత్రం ఎంచుకోబడింది';
+
+  @override
+  String get remove => 'తొలగించండి';
+
+  @override
+  String get step => 'దశ';
+
+  @override
+  String get of => '/';
+
+  @override
+  String get submittingFarmDetails => 'వ్యవసాయ వివరాలను సమర్పిస్తున్నాము...';
+
+  @override
+  String get submitFarmPlan => 'తోట ప్రణాళికను సమర్పించండి';
+
+  @override
+  String get nextStep => 'తదుపరి దశ';
+
+  @override
+  String get takePhotosOfLand => 'మీ భూమి ఫోటోలు తీయండి';
+
+  @override
+  String get frontView => 'ముందు వైపు';
+
+  @override
+  String get leftView => 'ఎడమ వైపు';
+
+  @override
+  String get rightView => 'కుడి వైపు';
+
+  @override
+  String get backView => 'వెనుక వైపు';
+
+  @override
+  String get uploadFromGalleryInstead => 'గ్యాలరీ నుండి అప్‌లోడ్ చేయండి';
+
+  @override
+  String get additionalPhotosSelected => 'అదనపు ఫోటో(లు) ఎంచుకోబడ్డాయి';
+
+  @override
+  String get voiceNote => 'వాయిస్ నోట్ (0:15)';
+
+  @override
+  String get tapPlayToListen => 'వినడానికి ప్లే నొక్కండి';
+
+  @override
+  String get lalMitti => 'ఎర్ర మట్టి';
+
+  @override
+  String get kaliMitti => 'నల్ల మట్టి';
+
+  @override
+  String get baluiMitti => 'ఇసుక మట్టి';
+
+  @override
+  String get chikniMitti => 'బంక మట్టి';
+
+  @override
+  String get planDownloaded => 'ప్రణాళిక డౌన్‌లోడ్ చేయబడింది';
+
+  @override
+  String get ok => 'సరే';
+
+  @override
+  String get changeFile => 'ఫైల్ మార్చండి';
+
+  @override
+  String get demoNext => 'తదుపరి';
+
+  @override
+  String get planStatus => 'ప్రణాళిక స్థితి';
+
+  @override
+  String get trackProgress => 'మీ తోట ప్రణాళిక పురోగతిని ట్రాక్ చేయండి.';
+
+  @override
+  String get stageSubmittedTitle => 'సమర్పించబడింది';
+
+  @override
+  String get stageSubmittedSub => 'వ్యవసాయ వివరాలు మరియు ఫోటోలు అందుకున్నాము';
+
+  @override
+  String get stageReviewTitle => 'సమీక్షలో ఉంది';
+
+  @override
+  String get stageReviewSub => 'నేల & వాతావరణ అవసరాలను తనిఖీ చేస్తున్నాము';
+
+  @override
+  String get stageExpertTitle => 'నిపుణుడు నియమించబడ్డాడు';
+
+  @override
+  String get stageExpertSub => 'వ్యవసాయ నిపుణుడు పని చేస్తున్నారు';
+
+  @override
+  String get stageReadyTitle => 'ప్రణాళిక సిద్ధంగా ఉంది';
+
+  @override
+  String get stageReadySub => 'అనుకూలీకరించిన లేఅవుట్ సిద్ధంగా ఉంది';
+
+  @override
+  String get stageCompletedTitle => 'పూర్తయింది';
+
+  @override
+  String get stageCompletedSub => 'తుది ప్రణాళిక డెలివరీ చేయబడింది';
+
+  @override
+  String get submissionSummary => 'సమర్పణ సారాంశం';
+
+  @override
+  String get landSizeLabel => 'భూమి పరిమాణం';
+
+  @override
+  String get submittedOn => 'సమర్పించిన తేదీ';
+
+  @override
+  String get viewYourReadyPlan => 'మీ సిద్ధమైన ప్రణాళికను చూడండి';
+
+  @override
+  String get backToHome => 'హోమ్‌కు తిరిగి వెళ్లండి';
+
+  @override
+  String get landMeasurement => 'భూమి కొలత';
+
+  @override
+  String get acreGuntaCent => '1 ఎకరం = 40 గుంటలు = 100 సెంట్లు';
 }

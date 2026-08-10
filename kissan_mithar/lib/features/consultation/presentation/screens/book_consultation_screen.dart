@@ -17,6 +17,7 @@ class BookConsultationScreen extends ConsumerWidget {
       subtitle: 'Insects, fungal rot, blight',
       icon: Icons.bug_report_rounded,
       accentColor: Color(0xFFC62828),
+      backgroundImage: 'assets/images/pest-desease.png',
     ),
     const IssueCategory(
       id: 'soil',
@@ -24,6 +25,7 @@ class BookConsultationScreen extends ConsumerWidget {
       subtitle: 'Nutrients, salinity, pH',
       icon: Icons.terrain_rounded,
       accentColor: Color(0xFF5D4037),
+      backgroundImage: 'assets/images/soil-testing.png',
     ),
     const IssueCategory(
       id: 'water',
@@ -31,6 +33,7 @@ class BookConsultationScreen extends ConsumerWidget {
       subtitle: 'Irrigation, pump pressure',
       icon: Icons.water_drop_rounded,
       accentColor: Color(0xFF1565C0),
+      backgroundImage: 'assets/images/water-drip.png',
     ),
     const IssueCategory(
       id: 'crops',
@@ -38,6 +41,7 @@ class BookConsultationScreen extends ConsumerWidget {
       subtitle: 'Varieties, sowing guide',
       icon: Icons.agriculture_rounded,
       accentColor: Color(0xFF2E7D32),
+      backgroundImage: 'assets/images/crop-planning.png',
     ),
     const IssueCategory(
       id: 'growth',
@@ -45,6 +49,7 @@ class BookConsultationScreen extends ConsumerWidget {
       subtitle: 'Flower drop, fruit size',
       icon: Icons.eco_rounded,
       accentColor: Color(0xFFEF6C00),
+      backgroundImage: 'assets/images/growth-flowering.png',
     ),
     const IssueCategory(
       id: 'market',
@@ -52,6 +57,7 @@ class BookConsultationScreen extends ConsumerWidget {
       subtitle: 'Mandi rates, buyer links',
       icon: Icons.storefront_rounded,
       accentColor: Color(0xFF6A1B9A),
+      backgroundImage: 'assets/images/market-prices.png',
     ),
   ];
 
@@ -140,7 +146,7 @@ class BookConsultationScreen extends ConsumerWidget {
   Widget _buildCategoryGrid(
     BuildContext context,
     WidgetRef ref,
-    String selectedCategory,
+    List<String> selectedCategories,
   ) {
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
@@ -150,85 +156,169 @@ class BookConsultationScreen extends ConsumerWidget {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.6,
+        childAspectRatio: 1.45,
       ),
       itemBuilder: (context, index) {
         final cat = _categories[index];
-        final isSelected = cat.title == selectedCategory;
+        final isSelected = selectedCategories.contains(cat.title);
 
         return InkWell(
           onTap: () => ref
               .read(consultationBookingProvider.notifier)
-              .setCategory(cat.title),
-          borderRadius: BorderRadius.circular(14),
+              .toggleCategory(cat.title),
+          borderRadius: BorderRadius.circular(16),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
-            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isSelected
-                  ? const Color(0xFFE8F5E9)
-                  : AppColors.surface,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isSelected
                     ? AppColors.primaryGreen
-                    : const Color(0xFFC7CEC7),
-                width: isSelected ? 2.0 : 1.2,
+                    : const Color(0xFFD5D5D5),
+                width: isSelected ? 3.5 : 1.2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withAlpha(5),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  color: isSelected
+                      ? AppColors.primaryGreen.withAlpha(30)
+                      : Colors.black.withAlpha(8),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: cat.accentColor.withAlpha(25),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(cat.icon, color: cat.accentColor, size: 24),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        cat.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: isSelected
-                              ? AppColors.primaryGreen
-                              : AppColors.textPrimary,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(isSelected ? 13.5 : 14.8),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Background image
+                  if (cat.backgroundImage != null)
+                    Image.asset(
+                      cat.backgroundImage!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => Container(
+                        color: cat.accentColor.withAlpha(20),
+                        child: Center(
+                          child: Icon(cat.icon, size: 40, color: cat.accentColor.withAlpha(80)),
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        cat.subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary,
+                    ),
+
+                  // Gradient overlay for text readability (Darker on the left, fading to right)
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Colors.black.withAlpha(180),
+                            Colors.black.withAlpha(120),
+                            Colors.transparent,
+                          ],
+                          stops: const [0.0, 0.6, 1.0],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-                if (isSelected)
-                  const Icon(Icons.check_circle_rounded,
-                      color: AppColors.primaryGreen, size: 18),
-              ],
+
+                  // Icon badge + text, vertically centered
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Icon in rounded container
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF2EFE9), // Off-white/cream color matching the snapshot
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(30),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Icon(cat.icon, color: cat.accentColor, size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          // Title + subtitle
+                          Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  cat.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 2,
+                                        color: Colors.black87,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  cat.subtitle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white.withAlpha(230),
+                                    shadows: const [
+                                      Shadow(
+                                        blurRadius: 2,
+                                        color: Colors.black87,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Green check badge on selection, positioned on the right
+                          if (isSelected)
+                            Container(
+                              margin: const EdgeInsets.only(left: 4),
+                              padding: const EdgeInsets.all(2),
+                              decoration: const BoxDecoration(
+                                color: AppColors.primaryGreen,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Green tint overlay for selected state
+                  if (isSelected)
+                    Positioned.fill(
+                      child: Container(
+                        color: AppColors.primaryGreen.withAlpha(50),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         );
@@ -239,7 +329,7 @@ class BookConsultationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookingState = ref.watch(consultationBookingProvider);
-    final draft = bookingState.value ?? const ConsultationBookingDraft();
+    final draft = bookingState.valueOrNull ?? const ConsultationBookingDraft();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -374,108 +464,14 @@ class BookConsultationScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildCategoryGrid(context, ref, draft.category),
-
-                  const SizedBox(height: 26),
-
-                  // 3. Preferred Time Slot Section
-                  const Text(
-                    '3. Preferred Time Slot',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: _timeSlots.map((slot) {
-                      final isSelected = draft.timeSlot == slot;
-                      return ChoiceChip(
-                        label: Text(slot),
-                        selected: isSelected,
-                        onSelected: (_) => ref
-                            .read(consultationBookingProvider.notifier)
-                            .setTimeSlot(slot),
-                        selectedColor: AppColors.primaryGreen,
-                        backgroundColor: AppColors.surface,
-                        labelStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: isSelected ? Colors.white : AppColors.textPrimary,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(
-                            color: isSelected
-                                ? AppColors.primaryGreen
-                                : const Color(0xFFC7CEC7),
-                            width: 1.4,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
-                      );
-                    }).toList(),
-                  ),
-
-                  const SizedBox(height: 26),
-
-                  // 4. Preferred Language Section
-                  const Text(
-                    '4. Preferred Language',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: _languages.map((lang) {
-                      final isSelected = draft.language.startsWith(lang.split(' ').first);
-                      return ChoiceChip(
-                        label: Text(lang),
-                        selected: isSelected,
-                        onSelected: (_) => ref
-                            .read(consultationBookingProvider.notifier)
-                            .setLanguage(lang.split(' ').first),
-                        selectedColor: AppColors.primaryGreen,
-                        backgroundColor: AppColors.surface,
-                        labelStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: isSelected ? Colors.white : AppColors.textPrimary,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(
-                            color: isSelected
-                                ? AppColors.primaryGreen
-                                : const Color(0xFFC7CEC7),
-                            width: 1.4,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
-                      );
-                    }).toList(),
-                  ),
+                  _buildCategoryGrid(context, ref, draft.categories),
 
                   const SizedBox(height: 36),
 
                   // Next Button
                   LargeButton(
-                    label: 'Next: Add Crop Details',
-                    leadingIcon: const Icon(
-                      Icons.arrow_forward_rounded,
-                      color: Colors.white,
-                      size: 22,
-                    ),
+                    label: 'Next',
+                    leadingIcon: const _AnimatedArrow(),
                     onPressed: () {
                       context.push('/consultation/add-details');
                     },
@@ -487,6 +483,54 @@ class BookConsultationScreen extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _AnimatedArrow extends StatefulWidget {
+  const _AnimatedArrow();
+
+  @override
+  State<_AnimatedArrow> createState() => _AnimatedArrowState();
+}
+
+class _AnimatedArrowState extends State<_AnimatedArrow> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0, end: 6).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(_animation.value, 0),
+          child: child,
+        );
+      },
+      child: const Icon(
+        Icons.arrow_forward_rounded,
+        color: Colors.white,
+        size: 22,
       ),
     );
   }

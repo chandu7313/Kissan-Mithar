@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import {
+  X,
+  Phone,
+  Star,
+  Sprout,
+  Clock,
+  RefreshCw,
+  LogIn,
+  LogOut,
+} from 'lucide-react';
 import { UserSession } from '../../types/index.js';
 import { AuthApi, AuthAuditRecord } from '../../api/auth.api.js';
+import { AuthStore } from '../../services/authStore.js';
 
 interface Props {
   session: UserSession;
@@ -13,6 +24,8 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
   const [logs, setLogs] = useState<AuthAuditRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -43,6 +56,33 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
       onLogout();
     }
   };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      // 1. Upload to Cloudinary
+      const uploadedUrl = await AuthApi.uploadProfilePicture(file);
+      // 2. Update Backend
+      await AuthApi.updateProfile(uploadedUrl);
+      // 3. Update session locally to reflect immediately
+      const updatedSession = { ...session, avatarUrl: uploadedUrl };
+      AuthStore.setSession(updatedSession);
+      alert('Profile picture updated successfully!');
+      window.location.reload();
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Failed to upload profile picture. Please try again.');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
 
   if (!isOpen) return null;
 
@@ -103,14 +143,15 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
             style={{
               background: 'none',
               border: 'none',
-              fontSize: '1.25rem',
               color: 'var(--text-muted)',
               cursor: 'pointer',
               padding: '0.25rem 0.5rem',
               borderRadius: '0.375rem',
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
-            ✕
+            <X size={20} />
           </button>
         </div>
 
@@ -126,17 +167,54 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
             border: '1px solid #e2e8f0',
           }}
         >
-          <img
-            src={session.avatarUrl || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200'}
-            alt={session.name}
-            style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '50%',
-              objectFit: 'cover',
-              border: '3px solid var(--primary-500)',
-            }}
-          />
+          <div style={{ position: 'relative', width: '64px', height: '64px', cursor: 'pointer' }} onClick={() => !isUploading && fileInputRef.current?.click()}>
+            <img
+              src={session.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(session.name || 'User')}&background=15803d&color=fff&size=200`}
+              alt={session.name}
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '3px solid var(--primary-500)',
+                opacity: isUploading ? 0.5 : 1,
+                transition: 'opacity 0.2s',
+              }}
+            />
+            {/* Hover Edit Overlay */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0, left: 0, right: 0, bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: isUploading ? 1 : 0,
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                if (!isUploading) e.currentTarget.style.opacity = '1';
+              }}
+              onMouseLeave={(e) => {
+                if (!isUploading) e.currentTarget.style.opacity = '0';
+              }}
+            >
+              {isUploading ? (
+                <RefreshCw size={20} color="white" className="spin-animation" />
+              ) : (
+                <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: 600 }}>Edit</span>
+              )}
+            </div>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              accept="image/*" 
+              onChange={handleFileChange} 
+            />
+          </div>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>
@@ -159,9 +237,18 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
               {session.role === 'ADMIN' ? 'Head of Agronomy & Platform Operations' : 'Senior Horticultural Consultant & Soil Specialist'}
             </div>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', fontSize: '0.75rem', color: '#64748b' }}>
-              <span>📞 {session.phoneNumber || '+91 98111 22233'}</span>
-              <span>⭐ 4.9 Rating (140+ Plans)</span>
-              <span>🌱 12 Yrs Exp</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <Phone size={12} color="#15803d" />
+                {session.phoneNumber || '+91 98111 22233'}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <Star size={12} fill="#eab308" color="#eab308" />
+                4.9 Rating (140+ Plans)
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <Sprout size={12} color="#16a34a" />
+                12 Yrs Exp
+              </span>
             </div>
           </div>
         </div>
@@ -170,7 +257,7 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1rem' }}>🕒</span>
+              <Clock size={16} color="var(--primary-600)" />
               <h4 style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-main)', margin: 0 }}>
                 Authentication & Session Audit Trail
               </h4>
@@ -184,9 +271,13 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
                 border: 'none',
                 cursor: 'pointer',
                 fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
               }}
             >
-              🔄 Refresh
+              <RefreshCw size={12} />
+              <span>Refresh</span>
             </button>
           </div>
 
@@ -207,6 +298,7 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
                 No authentication activity logged yet.
               </div>
             ) : (
+            <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ backgroundColor: '#f1f5f9', color: '#475569', borderBottom: '1px solid #e2e8f0' }}>
@@ -243,7 +335,8 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
                               color: isLogin ? '#166534' : '#991b1b',
                             }}
                           >
-                            {isLogin ? '🟢 LOGIN' : '🔴 LOGOUT'}
+                            {isLogin ? <LogIn size={11} /> : <LogOut size={11} />}
+                            <span>{log.action}</span>
                           </span>
                         </td>
                         <td style={{ padding: '0.5rem 0.75rem', color: '#334155', fontWeight: 500 }}>
@@ -270,6 +363,7 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
                   })}
                 </tbody>
               </table>
+            </div>
             )}
           </div>
         </div>
@@ -321,8 +415,8 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
                 if (!isLoggingOut) e.currentTarget.style.backgroundColor = '#dc2626';
               }}
             >
-              <span>🚪</span>
-              {isLoggingOut ? 'Logging out...' : 'Sign Out'}
+              <LogOut size={14} />
+              <span>{isLoggingOut ? 'Logging out...' : 'Sign Out'}</span>
             </button>
           </div>
         </div>

@@ -32,6 +32,7 @@ export class ConsultationController {
       const farmerId = role === 'FARMER' ? req.user?.farmerId : undefined;
       const expertId = role === 'EXPERT' ? req.user?.expertId : undefined;
 
+      // For ADMIN role, return all consultations
       const history = await ConsultationService.getHistory({
         farmerId,
         expertId,
@@ -39,6 +40,7 @@ export class ConsultationController {
 
       res.status(200).json({
         success: true,
+        count: history.length,
         data: history,
       });
     } catch (error) {
@@ -54,6 +56,21 @@ export class ConsultationController {
       res.status(200).json({
         success: true,
         data: consultation,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const updated = await ConsultationService.update(id, req.body);
+
+      res.status(200).json({
+        success: true,
+        message: 'Consultation updated',
+        data: updated,
       });
     } catch (error) {
       next(error);

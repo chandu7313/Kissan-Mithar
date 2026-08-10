@@ -24,28 +24,22 @@ export const Layout: React.FC<Props> = ({
   const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+    <div className="layout-wrapper">
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenProfile={() => setIsProfileModalOpen(true)}
         onLogout={onLogout}
+        session={session}
       />
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+      <div className="content-wrapper">
         <Header
           session={session}
           onSessionChange={onSessionChange}
           onOpenProfile={() => setIsProfileModalOpen(true)}
           onLogout={onLogout}
         />
-        <main
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '2rem',
-            backgroundColor: 'var(--bg-main)',
-          }}
-        >
+        <main className="main-content">
           {children}
         </main>
       </div>

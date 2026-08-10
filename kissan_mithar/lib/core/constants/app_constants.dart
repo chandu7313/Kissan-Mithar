@@ -1,7 +1,9 @@
+import '../config/env_config.dart';
+
 class AppConstants {
   AppConstants._();
 
-  static const String baseUrl = 'https://api.kissanmithar.in/v1';
+  static String get baseUrl => EnvConfig.apiBaseUrl;
   static const int connectTimeoutMs = 15000;
   static const int receiveTimeoutMs = 15000;
 

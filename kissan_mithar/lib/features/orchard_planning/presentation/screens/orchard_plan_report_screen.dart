@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../shared/widgets/farmer_app_bar.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../providers/orchard_planning_provider.dart';
 
@@ -16,7 +18,7 @@ class OrchardPlanReportScreen extends ConsumerWidget {
       '💰 Estimated Cost: ₹45,000\n'
       '📅 Timeline: 12-14 Months\n'
       '📈 Annual ROI: 25% - 30%\n'
-      '🌿 Soil Suitability: High (${state.soilType})\n\n'
+      '🌿 Soil Suitability: High (${state.soilTypes.join(', ')})\n\n'
       'Designed with expert agronomy guidance on Kisan Mithar app.',
       subject: 'Kisan Mithar - Orchard Plan Report',
     );
@@ -31,7 +33,7 @@ class OrchardPlanReportScreen extends ConsumerWidget {
           children: [
             Icon(Icons.download_done_rounded, color: AppColors.primary),
             SizedBox(width: 8),
-            Text('Plan Downloaded', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(l10n.planDownloaded, style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         content: const Text(
@@ -44,7 +46,7 @@ class OrchardPlanReportScreen extends ConsumerWidget {
               foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('OK'),
+            child: Text(l10n.ok),
           ),
         ],
       ),
@@ -177,27 +179,16 @@ class OrchardPlanReportScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF9F2),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.eco_rounded, color: AppColors.primary, size: 26),
-            SizedBox(width: 8),
-            Text(
-              'Kissan Mithar',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
-            ),
-          ],
-        ),
+      appBar: FarmerAppBar(
+        showBrandTitle: false,
+        showTractorIcon: false,
+        onBackTap: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/home');
+          }
+        },
       ),
       body: SafeArea(
         child: SingleChildScrollView(

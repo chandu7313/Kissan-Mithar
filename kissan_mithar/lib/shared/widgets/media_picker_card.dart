@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../core/constants/app_colors.dart';
+import 'pulsing_wrapper.dart';
 
 class MediaPickerCard extends StatefulWidget {
   final List<String> initialMediaPaths;
@@ -17,9 +18,9 @@ class MediaPickerCard extends StatefulWidget {
     this.initialMediaPaths = const [],
     required this.onMediaChanged,
     this.maxItems = 4,
-    this.title = 'Add Photos or Video of Crop Issue',
+    this.title = 'Add Photos of Crop Issue',
     this.hintText = 'Upload clear photos of leaves, stems, or pests for better diagnosis',
-    this.allowVideo = true,
+    this.allowVideo = false,
   });
 
   @override
@@ -285,6 +286,7 @@ class _MediaPickerCardState extends State<MediaPickerCard> {
                   ),
                 ),
               ),
+              const SizedBox(width: 10),
               Text(
                 '${_mediaPaths.length}/${widget.maxItems}',
                 style: const TextStyle(
@@ -319,38 +321,59 @@ class _MediaPickerCardState extends State<MediaPickerCard> {
                 (index) => _buildThumbnail(_mediaPaths[index], index),
               ),
               if (_mediaPaths.length < widget.maxItems)
-                InkWell(
-                  onTap: _showMediaSourceSheet,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: 90,
-                    height: 90,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1EFEA),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.primaryGreen,
-                        style: BorderStyle.solid,
-                        width: 1.5,
-                      ),
-                    ),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add_photo_alternate_rounded,
-                            color: AppColors.primaryGreen, size: 30),
-                        SizedBox(height: 4),
-                        Text(
-                          'Add Media',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primaryGreen,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PulsingWrapper(
+                      isPulsing: _mediaPaths.isEmpty, // Only pulse if no photos added yet
+                      child: InkWell(
+                        onTap: () => _pickImage(ImageSource.camera),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          width: 90,
+                          height: 90,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF1EFEA),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: AppColors.primaryGreen,
+                              style: BorderStyle.solid,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.camera_alt_rounded,
+                                  color: AppColors.primaryGreen, size: 30),
+                              SizedBox(height: 4),
+                              Text(
+                                'Take Photo',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primaryGreen,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: () => _pickImage(ImageSource.gallery),
+                      child: const Text(
+                        'Upload from gallery',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryGreen,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
             ],
           ),

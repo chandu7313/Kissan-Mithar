@@ -65,24 +65,28 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
       final response = await _networkClient.get<dynamic>('/notifications');
-      final data = response.data;
+      final responseData = response.data;
 
-      if (data is List && data.isNotEmpty) {
-        final parsed = data
-            .map((e) => NotificationItem.fromJson(e as Map<String, dynamic>))
-            .toList();
-        state = state.copyWith(
-          items: parsed,
-          unreadCount: parsed.where((i) => !i.isRead).length,
-          isLoading: false,
-        );
-      } else {
-        // Retain current mock / cache
-        state = state.copyWith(
-          isLoading: false,
-          unreadCount: state.items.where((i) => !i.isRead).length,
-        );
+      if (responseData is Map<String, dynamic> && responseData['success'] == true) {
+        final listData = responseData['data'] as List<dynamic>?;
+        if (listData != null) {
+          final parsed = listData
+              .map((e) => NotificationItem.fromJson(e as Map<String, dynamic>))
+              .toList();
+          state = state.copyWith(
+            items: parsed,
+            unreadCount: parsed.where((i) => !i.isRead).length,
+            isLoading: false,
+          );
+          return;
+        }
       }
+      
+      // Keep existing items if fetch fails gracefully
+      state = state.copyWith(
+        isLoading: false,
+        unreadCount: state.items.where((i) => !i.isRead).length,
+      );
     } catch (_) {
       // Graceful offline fallback
       state = state.copyWith(
@@ -106,11 +110,10 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
       unreadCount: updatedList.where((i) => !i.isRead).length,
     );
 
-    // 2. Call backend PATCH /api/notifications/:id/read
+    // 2. Call backend PATCH /notifications/:id/read
     try {
       await _networkClient.patch<dynamic>(
         '/notifications/$notificationId/read',
-        data: {'is_read': true},
       );
     } catch (e) {
       debugPrint('Mark-as-read backend fallback: $e');
@@ -128,9 +131,8 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
     );
 
     try {
-      await _networkClient.post<dynamic>(
+      await _networkClient.patch<dynamic>(
         '/notifications/read-all',
-        data: {'all': true},
       );
     } catch (e) {
       debugPrint('Mark all read backend fallback: $e');

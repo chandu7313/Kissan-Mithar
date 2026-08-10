@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/localization/app_language.dart';
 
-class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
+class FarmerAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final Widget? leading;
   final bool showBrandTitle;
   final bool showTractorIcon;
   final bool showLanguagePill;
   final bool showProfileAvatar;
   final bool showGlobeInLanguagePill;
+  final String? title;
   final List<Widget>? customActions;
   final VoidCallback? onMenuTap;
   final VoidCallback? onBackTap;
@@ -22,6 +24,7 @@ class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showLanguagePill = true,
     this.showProfileAvatar = false,
     this.showGlobeInLanguagePill = false,
+    this.title,
     this.customActions,
     this.onMenuTap,
     this.onBackTap,
@@ -31,66 +34,64 @@ class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(60);
 
-  void _showLanguageDialog(BuildContext context) {
+  void _showLanguageDialog(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
-        final current = LanguageProvider().currentLanguage;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 44,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Select Language / భాషను ఎంచుకోండి',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ...AppLanguage.values.map((lang) {
-                final isSelected = lang == current;
-                return ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+        final current = ref.watch(languageNotifierProvider);
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Select Language / भाषा चुनें',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF1B2A1C),
                   ),
-                  tileColor: isSelected ? AppColors.primaryGreen.withAlpha(20) : null,
-                  leading: isSelected
-                      ? const Icon(Icons.check_circle, color: AppColors.primaryGreen)
-                      : const Icon(Icons.radio_button_unchecked, color: AppColors.textMuted),
-                  title: Text(
-                    lang.label,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                      color: isSelected ? AppColors.primaryGreen : AppColors.textPrimary,
+                ),
+                const SizedBox(height: 16),
+                ...AppLanguage.values.map((lang) {
+                  final isSelected = lang == current;
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      color: isSelected ? const Color(0xFFE8F5E9) : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isSelected ? const Color(0xFF1B6327) : Colors.grey.shade200,
+                        width: isSelected ? 2 : 1,
+                      ),
                     ),
-                  ),
-                  subtitle: Text(lang.englishName),
-                  onTap: () {
-                    LanguageProvider().setLanguage(lang);
-                    Navigator.pop(ctx);
-                  },
-                );
-              }),
-              const SizedBox(height: 12),
-            ],
+                    child: ListTile(
+                      title: Text(
+                        '${lang.nativeName} (${lang.englishName})',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                          color: isSelected ? const Color(0xFF1B6327) : const Color(0xFF1B2A1C),
+                        ),
+                      ),
+                      trailing: isSelected
+                          ? const Icon(Icons.check_circle_rounded, color: Color(0xFF1B6327))
+                          : null,
+                      onTap: () {
+                        ref.read(languageNotifierProvider.notifier).setLanguage(lang);
+                        Navigator.pop(ctx);
+                      },
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
         );
       },
@@ -98,15 +99,12 @@ class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final langProvider = LanguageProvider();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentLanguage = ref.watch(languageNotifierProvider);
 
-    return ListenableBuilder(
-      listenable: langProvider,
-      builder: (context, _) {
-        return AppBar(
-          backgroundColor: AppColors.background,
-          elevation: 0,
+    return AppBar(
+      backgroundColor: AppColors.background,
+      elevation: 0,
           scrolledUnderElevation: 0,
           centerTitle: false,
           leadingWidth: leading != null ? 56 : (onBackTap != null ? 56 : (onMenuTap != null ? 56 : 0)),
@@ -131,7 +129,7 @@ class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
                   height: 32,
                   width: 32,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  errorBuilder: (_, _, _) => const Icon(
                     Icons.agriculture_rounded,
                     color: AppColors.primaryGreen,
                     size: 28,
@@ -139,17 +137,14 @@ class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 8),
               ],
-              if (showBrandTitle)
-                const Flexible(
-                  child: Text(
-                    'KISSAN MITHAR',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.primaryGreen,
-                      letterSpacing: -0.3,
-                    ),
+              if (title != null)
+                Text(
+                  title!,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.5,
                   ),
                 ),
             ],
@@ -160,32 +155,44 @@ class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 12),
                 child: InkWell(
-                  onTap: () => _showLanguageDialog(context),
+                  onTap: () => _showLanguageDialog(context, ref),
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppColors.pillBg,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: showGlobeInLanguagePill ? AppColors.border : Colors.transparent,
-                        width: 1,
-                      ),
+                      border: Border.all(color: const Color(0xFF1B6327).withAlpha(40)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(8),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (showGlobeInLanguagePill) ...[
-                          const Icon(Icons.language_rounded, size: 16, color: AppColors.textPrimary),
-                          const SizedBox(width: 6),
-                        ],
+                        const Icon(
+                          Icons.language_rounded,
+                          size: 16,
+                          color: Color(0xFF1B6327),
+                        ),
+                        const SizedBox(width: 5),
                         Text(
-                          langProvider.currentLanguage.label,
+                          currentLanguage.nativeName,
                           style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1B6327),
                           ),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(
+                          Icons.arrow_drop_down,
+                          size: 18,
+                          color: Color(0xFF1B6327),
                         ),
                       ],
                     ),
@@ -207,14 +214,12 @@ class FarmerAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     child: const CircleAvatar(
                       backgroundColor: Color(0xFFE8F5E9),
-                      child: Icon(Icons.person, color: AppColors.primaryGreen, size: 24),
+                      backgroundImage: AssetImage('assets/images/profile-image.png'),
                     ),
                   ),
                 ),
               ),
           ],
         );
-      },
-    );
   }
 }

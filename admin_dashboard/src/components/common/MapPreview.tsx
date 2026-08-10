@@ -1,4 +1,5 @@
 import React from 'react';
+import { MapPin, ExternalLink } from 'lucide-react';
 
 interface Props {
   gps: {
@@ -28,7 +29,7 @@ export const MapPreview: React.FC<Props> = ({ gps }) => {
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '1.25rem' }}>📍</span>
+          <MapPin size={20} color="var(--primary-700)" />
           <div>
             <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>
               {gps.village || 'Survey Land'}, {gps.district || ''}
@@ -53,9 +54,13 @@ export const MapPreview: React.FC<Props> = ({ gps }) => {
             borderRadius: '0.375rem',
             backgroundColor: 'var(--primary-50)',
             border: '1px solid var(--primary-200)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.25rem',
           }}
         >
-          Open Google Maps ↗
+          <span>Open Google Maps</span>
+          <ExternalLink size={12} />
         </a>
       </div>
 

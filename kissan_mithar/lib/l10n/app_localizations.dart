@@ -383,6 +383,366 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'I don\'t have this — Skip'**
   String get skip;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language / भाषा चुनें'**
+  String get selectLanguage;
+
+  /// No description provided for @popularBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'POPULAR'**
+  String get popularBadge;
+
+  /// No description provided for @askExperts.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask our experts to identify it for you.'**
+  String get askExperts;
+
+  /// No description provided for @editLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Location'**
+  String get editLocation;
+
+  /// No description provided for @villageTown.
+  ///
+  /// In en, this message translates to:
+  /// **'Village / Town'**
+  String get villageTown;
+
+  /// No description provided for @district.
+  ///
+  /// In en, this message translates to:
+  /// **'District'**
+  String get district;
+
+  /// No description provided for @state.
+  ///
+  /// In en, this message translates to:
+  /// **'State'**
+  String get state;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @selectFarmOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Farm on Map'**
+  String get selectFarmOnMap;
+
+  /// No description provided for @dragPinToMark.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the pin to mark your farm boundary.'**
+  String get dragPinToMark;
+
+  /// No description provided for @interactiveMapCoords.
+  ///
+  /// In en, this message translates to:
+  /// **'Interactive Map Coordinates'**
+  String get interactiveMapCoords;
+
+  /// No description provided for @farmCoordinatesUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm coordinates updated!'**
+  String get farmCoordinatesUpdated;
+
+  /// No description provided for @confirmLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Location'**
+  String get confirmLocation;
+
+  /// No description provided for @surveyMapSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Have a survey map from your Panchayat Secretary? Add it here.'**
+  String get surveyMapSubtitle;
+
+  /// No description provided for @noFileSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No file selected'**
+  String get noFileSelected;
+
+  /// No description provided for @pdfUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF Uploaded'**
+  String get pdfUploaded;
+
+  /// No description provided for @imageSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Selected'**
+  String get imageSelected;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @step.
+  ///
+  /// In en, this message translates to:
+  /// **'Step'**
+  String get step;
+
+  /// No description provided for @of.
+  ///
+  /// In en, this message translates to:
+  /// **'of'**
+  String get of;
+
+  /// No description provided for @submittingFarmDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting Farm Details...'**
+  String get submittingFarmDetails;
+
+  /// No description provided for @submitFarmPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Farm Plan'**
+  String get submitFarmPlan;
+
+  /// No description provided for @nextStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Step'**
+  String get nextStep;
+
+  /// No description provided for @takePhotosOfLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photos of Your Land'**
+  String get takePhotosOfLand;
+
+  /// No description provided for @frontView.
+  ///
+  /// In en, this message translates to:
+  /// **'Front View'**
+  String get frontView;
+
+  /// No description provided for @leftView.
+  ///
+  /// In en, this message translates to:
+  /// **'Left View'**
+  String get leftView;
+
+  /// No description provided for @rightView.
+  ///
+  /// In en, this message translates to:
+  /// **'Right View'**
+  String get rightView;
+
+  /// No description provided for @backView.
+  ///
+  /// In en, this message translates to:
+  /// **'Back View'**
+  String get backView;
+
+  /// No description provided for @uploadFromGalleryInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload from Gallery instead'**
+  String get uploadFromGalleryInstead;
+
+  /// No description provided for @additionalPhotosSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'additional photo(s) selected from gallery'**
+  String get additionalPhotosSelected;
+
+  /// No description provided for @voiceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice Note (0:15)'**
+  String get voiceNote;
+
+  /// No description provided for @tapPlayToListen.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap play to listen'**
+  String get tapPlayToListen;
+
+  /// No description provided for @lalMitti.
+  ///
+  /// In en, this message translates to:
+  /// **'Lal Mitti'**
+  String get lalMitti;
+
+  /// No description provided for @kaliMitti.
+  ///
+  /// In en, this message translates to:
+  /// **'Kali Mitti'**
+  String get kaliMitti;
+
+  /// No description provided for @baluiMitti.
+  ///
+  /// In en, this message translates to:
+  /// **'Balui Mitti'**
+  String get baluiMitti;
+
+  /// No description provided for @chikniMitti.
+  ///
+  /// In en, this message translates to:
+  /// **'Chikni Mitti'**
+  String get chikniMitti;
+
+  /// No description provided for @planDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Downloaded'**
+  String get planDownloaded;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @changeFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Change File'**
+  String get changeFile;
+
+  /// No description provided for @demoNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo Next'**
+  String get demoNext;
+
+  /// No description provided for @planStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Status'**
+  String get planStatus;
+
+  /// No description provided for @trackProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Track the progress of your customized orchard plan.'**
+  String get trackProgress;
+
+  /// No description provided for @stageSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get stageSubmittedTitle;
+
+  /// No description provided for @stageSubmittedSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm details and photos received'**
+  String get stageSubmittedSub;
+
+  /// No description provided for @stageReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Review'**
+  String get stageReviewTitle;
+
+  /// No description provided for @stageReviewSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking soil & climate requirements'**
+  String get stageReviewSub;
+
+  /// No description provided for @stageExpertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expert Assigned'**
+  String get stageExpertTitle;
+
+  /// No description provided for @stageExpertSub.
+  ///
+  /// In en, this message translates to:
+  /// **'An agronomist is working on it'**
+  String get stageExpertSub;
+
+  /// No description provided for @stageReadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Ready'**
+  String get stageReadyTitle;
+
+  /// No description provided for @stageReadySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Customized layout & roadmap ready'**
+  String get stageReadySub;
+
+  /// No description provided for @stageCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get stageCompletedTitle;
+
+  /// No description provided for @stageCompletedSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Final plan delivered & consultation active'**
+  String get stageCompletedSub;
+
+  /// No description provided for @submissionSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Summary'**
+  String get submissionSummary;
+
+  /// No description provided for @landSizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Size'**
+  String get landSizeLabel;
+
+  /// No description provided for @submittedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted on'**
+  String get submittedOn;
+
+  /// No description provided for @viewYourReadyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'View Your Ready Plan'**
+  String get viewYourReadyPlan;
+
+  /// No description provided for @backToHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Home'**
+  String get backToHome;
+
+  /// No description provided for @landMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'Land Measurement'**
+  String get landMeasurement;
+
+  /// No description provided for @acreGuntaCent.
+  ///
+  /// In en, this message translates to:
+  /// **'1 Acre = 40 Guntas = 100 Cents'**
+  String get acreGuntaCent;
 }
 
 class _AppLocalizationsDelegate

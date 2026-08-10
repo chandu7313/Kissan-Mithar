@@ -1,4 +1,14 @@
 import React from 'react';
+import {
+  BarChart3,
+  Trees,
+  Stethoscope,
+  ClipboardList,
+  LogOut,
+  Circle,
+  Users,
+} from 'lucide-react';
+import { UserSession } from '../../types/index.js';
 
 interface Props {
   activeTab: string;
@@ -6,6 +16,7 @@ interface Props {
   pendingCount?: number;
   onOpenProfile?: () => void;
   onLogout?: () => void;
+  session?: UserSession;
 }
 
 export const Sidebar: React.FC<Props> = ({
@@ -14,26 +25,23 @@ export const Sidebar: React.FC<Props> = ({
   pendingCount = 12,
   onOpenProfile,
   onLogout,
+  session,
 }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard & Analytics', icon: '📊' },
-    { id: 'requests', label: 'Orchard Surveys', icon: '🌾', badge: pendingCount },
-    { id: 'consultations', label: 'Consultations Hub', icon: '👨‍⚕️' },
+    { id: 'dashboard', label: 'Dashboard & Analytics', icon: BarChart3 },
+    { id: 'requests', label: 'Orchard Surveys', icon: Trees, badge: pendingCount },
+    { id: 'consultations', label: 'Consultations Hub', icon: Stethoscope },
   ];
 
+  if (session?.role === 'ADMIN') {
+    navItems.push({ id: 'experts', label: 'Expert Management', icon: Users });
+  }
+
   return (
-    <aside
-      style={{
-        width: '260px',
-        backgroundColor: 'var(--bg-sidebar)',
-        color: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        flexShrink: 0,
-      }}
-    >
+    <aside className="sidebar-wrapper">
       {/* Brand Header */}
       <div
+        className="sidebar-brand-text"
         style={{
           padding: '1.25rem 1.25rem',
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
@@ -69,6 +77,7 @@ export const Sidebar: React.FC<Props> = ({
       <nav style={{ padding: '1rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.375rem', flex: 1 }}>
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
+          const IconComp = item.icon;
           return (
             <button
               key={item.id}
@@ -96,8 +105,8 @@ export const Sidebar: React.FC<Props> = ({
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '1.125rem' }}>{item.icon}</span>
-                <span>{item.label}</span>
+                <IconComp size={18} color={isActive ? '#ffffff' : '#94a3b8'} />
+                <span className="sidebar-nav-text">{item.label}</span>
               </div>
               {item.badge !== undefined && item.badge > 0 && (
                 <span
@@ -140,27 +149,27 @@ export const Sidebar: React.FC<Props> = ({
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
-            <span style={{ fontSize: '1.125rem' }}>📋</span>
-            <span>Profile & Audit Logs</span>
+            <ClipboardList size={18} color="#94a3b8" />
+            <span className="sidebar-nav-text">Profile & Audit Logs</span>
           </button>
         )}
       </nav>
 
       {/* System Status & Logout Footer */}
       <div
+        className="sidebar-footer"
         style={{
           padding: '1rem 1.25rem',
           borderTop: '1px solid rgba(255, 255, 255, 0.1)',
           fontSize: '0.75rem',
           color: '#64748b',
-          display: 'flex',
           flexDirection: 'column',
           gap: '0.75rem',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#4ade80' }}>
-            <span>●</span> PostgreSQL Online
+            <Circle size={8} fill="#4ade80" /> System Online
           </div>
           <span style={{ color: '#94a3b8' }}>v1.0.0</span>
         </div>
@@ -186,7 +195,7 @@ export const Sidebar: React.FC<Props> = ({
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(220, 38, 38, 0.25)')}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(220, 38, 38, 0.15)')}
           >
-            <span>🚪</span>
+            <LogOut size={14} />
             <span>Sign Out</span>
           </button>
         )}

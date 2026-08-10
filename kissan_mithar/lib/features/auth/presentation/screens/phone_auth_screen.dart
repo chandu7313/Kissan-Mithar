@@ -1,21 +1,22 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/services/sms_service.dart';
+import '../../../../core/routing/app_router.dart';
 import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../shared/widgets/farmer_illustration_banner.dart';
 import '../../../../shared/widgets/large_button.dart';
-import 'otp_verify_screen.dart';
+import '../../providers/auth_provider.dart';
 
-class PhoneAuthScreen extends StatefulWidget {
+class PhoneAuthScreen extends ConsumerStatefulWidget {
   const PhoneAuthScreen({super.key});
 
   @override
-  State<PhoneAuthScreen> createState() => _PhoneAuthScreenState();
+  ConsumerState<PhoneAuthScreen> createState() => _PhoneAuthScreenState();
 }
 
-class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
+class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
   final TextEditingController _phoneController = TextEditingController();
   bool _isSending = false;
 
@@ -27,23 +28,41 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
   Future<void> _onSendOtp() async {
     final phone = _phoneController.text.trim();
-    final displayNumber = phone.isNotEmpty ? '+91 $phone' : '+91 98765 43210';
-    final randomOtp = (100000 + Random().nextInt(900000)).toString();
+    if (phone.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid 10-digit mobile number'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
+    final displayNumber = '+91$phone';
     setState(() => _isSending = true);
-    await SmsService.sendOtp(phoneNumber: displayNumber, otp: randomOtp);
+
+    // Call backend to send OTP
+    final devOtp = await ref.read(authProvider.notifier).sendOtp(displayNumber);
+
     if (!mounted) return;
     setState(() => _isSending = false);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OtpVerifyScreen(
-          phoneNumber: displayNumber,
-          sentOtp: randomOtp,
+    if (devOtp != null) {
+      context.pushNamed(
+        AppRoutes.otpVerify,
+        extra: {
+          'phoneNumber': displayNumber,
+          'devOtp': devOtp,
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to send OTP. Please try again.'),
+          backgroundColor: Colors.red,
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -51,7 +70,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: FarmerAppBar(
-        onBackTap: () => Navigator.pop(context),
+        onBackTap: () => context.pop(),
         showTractorIcon: true,
         showBrandTitle: true,
         showLanguagePill: true,
@@ -195,13 +214,13 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
                   // Send OTP Button
                   LargeButton(
-                    label: 'Send OTP',
-                    leadingIcon: const Icon(
-                      Icons.send_rounded,
+                    label: _isSending ? 'Sending...' : 'Send OTP',
+                    leadingIcon: Icon(
+                      _isSending ? Icons.hourglass_top_rounded : Icons.send_rounded,
                       color: Colors.white,
                       size: 20,
                     ),
-                    onPressed: _onSendOtp,
+                    onPressed: _isSending ? null : _onSendOtp,
                   ),
 
                   const SizedBox(height: 24),

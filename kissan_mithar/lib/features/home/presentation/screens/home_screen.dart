@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_language.dart';
-import '../../../../core/localization/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../../notifications/models/notification_model.dart';
 import '../../../notifications/providers/notifications_provider.dart';
@@ -14,7 +14,7 @@ class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   String _getGreetingText(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final hour = DateTime.now().hour;
     if (hour >= 5 && hour < 12) {
       return l10n.goodMorning;
@@ -26,6 +26,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   void _showLanguageDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currentLang = ref.read(languageNotifierProvider);
 
     showModalBottomSheet(
@@ -42,9 +43,9 @@ class HomeScreen extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Select Language / भाषा चुनें',
-                  style: TextStyle(
+                Text(
+                  l10n.selectLanguage,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF1B2A1C),
@@ -92,7 +93,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final currentLang = ref.watch(languageNotifierProvider);
     final profile = ref.watch(profileProvider);
     final auth = ref.watch(authProvider);
@@ -102,7 +103,7 @@ class HomeScreen extends ConsumerWidget {
     final farmerName = profile.name.isNotEmpty
         ? profile.name
         : (auth.userName ?? 'Ramesh Patel');
-    final greetingPrefix = _getGreetingText(context);
+
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -136,7 +137,7 @@ class HomeScreen extends ConsumerWidget {
                         child: Image.asset(
                           'assets/images/app_logo.png',
                           fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) => const Icon(
+                          errorBuilder: (_, _, _) => const Icon(
                             Icons.agriculture_rounded,
                             color: Color(0xFF1B6327),
                             size: 28,
@@ -150,14 +151,7 @@ class HomeScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '$greetingPrefix,',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+
                           Text(
                             farmerName,
                             style: const TextStyle(
@@ -220,12 +214,7 @@ class HomeScreen extends ConsumerWidget {
 
                 const SizedBox(height: 20),
 
-                // 2. Weather Summary Card (Watches weatherProvider)
-                _buildWeatherSummaryCard(context, weather, l10n),
-
-                const SizedBox(height: 24),
-
-                // 3. Section Title: Quick Services
+                // 2. Section Title: Quick Services
                 Text(
                   l10n.quickActions,
                   style: const TextStyle(
@@ -237,7 +226,6 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 14),
 
-                // 4. Exactly 3 Large Navigation Buttons
                 // Button 1: Orchard Planning
                 _buildLargeNavButton(
                   context: context,
@@ -245,7 +233,8 @@ class HomeScreen extends ConsumerWidget {
                   subtitle: l10n.orchardPlanningSubtitle,
                   icon: Icons.park_rounded,
                   gradientColors: const [Color(0xFF1B6327), Color(0xFF2E7D32)],
-                  badgeText: 'POPULAR',
+                  badgeText: l10n.popularBadge,
+                  bgImage: 'assets/images/orchard.jpg',
                   onTap: () => context.push('/orchard/land-size'),
                 ),
                 const SizedBox(height: 14),
@@ -255,9 +244,9 @@ class HomeScreen extends ConsumerWidget {
                   context: context,
                   title: l10n.expertConsultation,
                   subtitle: l10n.expertConsultationSubtitle,
-                  icon: Icons.support_agent_rounded,
+                  icon: Icons.call_rounded,
                   gradientColors: const [Color(0xFF0F5B9E), Color(0xFF1C75BC)],
-                  badgeText: 'ONLINE',
+                  bgImage: 'assets/images/consultation.png',
                   onTap: () => context.push('/consultation'),
                 ),
                 const SizedBox(height: 14),
@@ -269,8 +258,14 @@ class HomeScreen extends ConsumerWidget {
                   subtitle: l10n.liveWeatherSubtitle,
                   icon: Icons.thunderstorm_rounded,
                   gradientColors: const [Color(0xFFD67E1B), Color(0xFFE89A3C)],
+                  bgImage: 'assets/images/weather.jpg',
                   onTap: () => context.push('/weather'),
                 ),
+
+                const SizedBox(height: 24),
+
+                // 3. Weather Summary Card (Watches weatherProvider)
+                _buildWeatherSummaryCard(context, weather, l10n),
 
                 const SizedBox(height: 28),
 
@@ -436,14 +431,11 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Icon(
-                  weather.rainProbability > 50
-                      ? Icons.water_drop_rounded
-                      : Icons.wb_sunny_rounded,
-                  color: weather.rainProbability > 50
-                      ? const Color(0xFF81D4FA)
-                      : const Color(0xFFFFD54F),
-                  size: 50,
+                Image.asset(
+                  'assets/images/weather-logo.webp',
+                  width: 105,
+                  height: 105,
+                  fit: BoxFit.contain,
                 ),
               ],
             ),
@@ -548,115 +540,150 @@ class HomeScreen extends ConsumerWidget {
     required IconData icon,
     required List<Color> gradientColors,
     String? badgeText,
+    String? bgImage,
     required VoidCallback onTap,
   }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
+    return Container(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: gradientColors,
-            ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: gradientColors.first.withAlpha(60),
-                blurRadius: 14,
-                offset: const Offset(0, 5),
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: gradientColors.first.withAlpha(60),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
           ),
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 74), // Well above 56dp min target
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-            child: Row(
-              children: [
-                // Circular Icon Box
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(45),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Icon(icon, color: Colors.white, size: 28),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            // Background Image
+            if (bgImage != null)
+              Positioned.fill(
+                child: Image.asset(
+                  bgImage,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.centerRight,
                 ),
-                const SizedBox(width: 16),
-                // Title and Subtitle
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              title,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: -0.2,
-                              ),
-                            ),
-                          ),
-                          if (badgeText != null) ...[
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+              ),
+            // Gradient Overlay
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: bgImage != null
+                        ? [
+                            gradientColors.first,
+                            gradientColors.first.withOpacity(0.9),
+                            gradientColors.last.withOpacity(0.0),
+                          ]
+                        : gradientColors,
+                    stops: bgImage != null ? const [0.0, 0.45, 1.0] : null,
+                  ),
+                ),
+              ),
+            ),
+            // Button Content
+            Container(
+              constraints: const BoxConstraints(minHeight: 74),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              child: Row(
+                children: [
+                  // Circular Icon Box
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(45),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  // Title and Subtitle
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
                               child: Text(
-                                badgeText,
-                                style: TextStyle(
-                                  fontSize: 9,
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w900,
-                                  color: gradientColors.first,
+                                  color: Colors.white,
+                                  letterSpacing: -0.2,
                                 ),
                               ),
                             ),
+                            if (badgeText != null) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  badgeText,
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w900,
+                                    color: gradientColors.first,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
-                        ],
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        subtitle,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white70,
-                          height: 1.25,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 3),
+                        Text(
+                          subtitle,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white70,
+                            height: 1.25,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                // Forward Arrow
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(30),
-                    shape: BoxShape.circle,
+                  const SizedBox(width: 8),
+                  // Forward Arrow
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(30),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Colors.white,
+                      size: 14,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: Colors.white,
-                    size: 14,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            // Tap Ripple Effect over everything
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: onTap,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

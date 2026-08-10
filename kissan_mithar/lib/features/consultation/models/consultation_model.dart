@@ -31,6 +31,7 @@ class IssueCategory {
   final String subtitle;
   final IconData icon;
   final Color accentColor;
+  final String? backgroundImage;
 
   const IssueCategory({
     required this.id,
@@ -38,6 +39,7 @@ class IssueCategory {
     required this.subtitle,
     required this.icon,
     required this.accentColor,
+    this.backgroundImage,
   });
 }
 
@@ -223,7 +225,7 @@ class ConsultationItem {
 
 class ConsultationBookingDraft {
   final CommunicationMode mode;
-  final String category;
+  final List<String> categories;
   final String timeSlot;
   final String language;
   final String message;
@@ -233,7 +235,7 @@ class ConsultationBookingDraft {
 
   const ConsultationBookingDraft({
     this.mode = CommunicationMode.voiceCall,
-    this.category = 'Pest & Disease',
+    this.categories = const [],
     this.timeSlot = 'Today, 4:00 PM',
     this.language = 'Telugu',
     this.message = '',
@@ -244,7 +246,7 @@ class ConsultationBookingDraft {
 
   ConsultationBookingDraft copyWith({
     CommunicationMode? mode,
-    String? category,
+    List<String>? categories,
     String? timeSlot,
     String? language,
     String? message,
@@ -255,7 +257,7 @@ class ConsultationBookingDraft {
   }) {
     return ConsultationBookingDraft(
       mode: mode ?? this.mode,
-      category: category ?? this.category,
+      categories: categories ?? this.categories,
       timeSlot: timeSlot ?? this.timeSlot,
       language: language ?? this.language,
       message: message ?? this.message,

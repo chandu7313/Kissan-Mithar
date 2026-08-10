@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/localization/app_language.dart';
+import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../models/notification_model.dart';
 import '../../providers/notifications_provider.dart';
 import '../../services/notification_service.dart';
@@ -25,50 +25,6 @@ class NotificationsScreen extends ConsumerStatefulWidget {
 }
 
 class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
-  Widget _buildLanguagePill(BuildContext context) {
-    final currentLang = LanguageProvider().currentLanguage;
-
-    return PopupMenuButton<AppLanguage>(
-      onSelected: (AppLanguage newLang) {
-        setState(() {
-          LanguageProvider().setLanguage(newLang);
-        });
-      },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      itemBuilder: (context) => AppLanguage.values.map((lang) {
-        return PopupMenuItem<AppLanguage>(
-          value: lang,
-          child: Text(
-            '${lang.nativeLabel} (${lang.label})',
-            style: TextStyle(
-              fontWeight:
-                  lang == currentLang ? FontWeight.bold : FontWeight.normal,
-              color: lang == currentLang
-                  ? AppColors.primaryGreen
-                  : AppColors.textPrimary,
-            ),
-          ),
-        );
-      }).toList(),
-      child: Container(
-        margin: const EdgeInsets.only(right: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: const Color(0xFFE2E6E2),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          currentLang.nativeLabel,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildFilterChip(
     String label,
     String filterKey,
@@ -287,20 +243,11 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        centerTitle: false,
-        title: const Text(
-          'Notifications',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
-            letterSpacing: -0.5,
-          ),
-        ),
-        actions: [
+      appBar: FarmerAppBar(
+        showBrandTitle: false,
+        showTractorIcon: false,
+        title: 'Notifications',
+        customActions: [
           if (unreadCount > 0)
             TextButton.icon(
               onPressed: () {
@@ -320,7 +267,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 ),
               ),
             ),
-          _buildLanguagePill(context),
         ],
       ),
       body: RefreshIndicator(

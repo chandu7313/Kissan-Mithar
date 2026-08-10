@@ -21,16 +21,16 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
     _selectedLanguage = ref.read(languageNotifierProvider);
   }
 
-  IconData _getIconForLanguage(AppLanguage lang) {
+  String _getLetterForLanguage(AppLanguage lang) {
     switch (lang) {
       case AppLanguage.telugu:
-        return Icons.temple_hindu_rounded;
+        return 'అ';
       case AppLanguage.hindi:
-        return Icons.menu_book_rounded;
+        return 'अ';
       case AppLanguage.english:
-        return Icons.public_rounded;
+        return 'A';
       case AppLanguage.kannada:
-        return Icons.account_balance_rounded;
+        return 'ಕ';
     }
   }
 
@@ -145,10 +145,14 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
-                                      _getIconForLanguage(lang),
-                                      size: 38,
-                                      color: isSelected ? Colors.white : AppColors.primaryGreen,
+                                    Text(
+                                      _getLetterForLanguage(lang),
+                                      style: TextStyle(
+                                        fontSize: 38,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1,
+                                        color: isSelected ? Colors.white : AppColors.primaryGreen,
+                                      ),
                                     ),
                                     const SizedBox(height: 12),
                                     Text(
@@ -171,12 +175,12 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
 
                   const SizedBox(height: 36),
 
-                  // Bottom Button: Continue to Notification Permission / Home
+                  // Bottom Button: Continue to Phone Auth
                   LargeButton(
                     label: 'Continue',
                     trailingIcon: const Icon(Icons.arrow_forward, color: Colors.white, size: 22),
                     onPressed: () async {
-                      context.go('/notification-permission');
+                      context.push('/auth/phone');
                     },
                   ),
 

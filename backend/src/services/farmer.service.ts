@@ -17,83 +17,64 @@ export class FarmerService {
    * Retrieves profile for the authenticated farmer
    */
   static async getProfile(farmerId: string) {
-    try {
-      const farmer = await prisma.farmer.findUnique({
-        where: { id: farmerId },
-        include: {
-          devices: true,
-          _count: {
-            select: {
-              orchardRequests: true,
-              consultations: true,
-              notifications: { where: { isRead: false } },
-            },
+    const farmer = await prisma.farmer.findUnique({
+      where: { id: farmerId },
+      include: {
+        devices: true,
+        _count: {
+          select: {
+            orchardRequests: true,
+            consultations: true,
+            notifications: { where: { isRead: false } },
           },
         },
-      });
+      },
+    });
 
-      if (!farmer) {
-        // Fallback default
-        return {
-          id: farmerId,
-          name: 'Ramesh Patel',
-          phoneNumber: '+91 98765 43210',
-          photoUrl: null,
-          village: 'Khed',
-          district: 'Pune',
-          state: 'Maharashtra',
-          landAcres: 2.5,
-          primaryCrop: 'Mango & Guava',
-          languageCode: 'en',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-      }
-
-      return farmer;
-    } catch {
-      return {
-        id: farmerId,
-        name: 'Ramesh Patel',
-        phoneNumber: '+91 98765 43210',
-        photoUrl: null,
-        village: 'Khed',
-        district: 'Pune',
-        state: 'Maharashtra',
-        landAcres: 2.5,
-        primaryCrop: 'Mango & Guava',
-        languageCode: 'en',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    if (!farmer) {
+      throw new AppError('Farmer profile not found', 404);
     }
+
+    return farmer;
+  }
+
+  /**
+   * Lists all farmers (Admin/Expert view)
+   */
+  static async listAll(filter?: { state?: string; limit?: number }) {
+    return await prisma.farmer.findMany({
+      where: {
+        ...(filter?.state ? { state: { contains: filter.state, mode: 'insensitive' as any } } : {}),
+      },
+      include: {
+        _count: {
+          select: {
+            orchardRequests: true,
+            consultations: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: filter?.limit || 100,
+    });
   }
 
   /**
    * Updates profile fields for the farmer
    */
   static async updateProfile(farmerId: string, data: UpdateFarmerDto) {
-    try {
-      return await prisma.farmer.update({
-        where: { id: farmerId },
-        data: {
-          name: data.name,
-          photoUrl: data.photoUrl,
-          village: data.village,
-          district: data.district,
-          state: data.state,
-          landAcres: data.landAcres,
-          primaryCrop: data.primaryCrop,
-          languageCode: data.languageCode,
-        },
-      });
-    } catch (err: any) {
-      console.warn('[FarmerService] DB update fallback:', err.message);
-      return {
-        id: farmerId,
-        ...data,
-        updatedAt: new Date().toISOString(),
-      };
-    }
+    return await prisma.farmer.update({
+      where: { id: farmerId },
+      data: {
+        name: data.name,
+        photoUrl: data.photoUrl,
+        village: data.village,
+        district: data.district,
+        state: data.state,
+        landAcres: data.landAcres,
+        primaryCrop: data.primaryCrop,
+        languageCode: data.languageCode,
+      },
+    });
   }
 }

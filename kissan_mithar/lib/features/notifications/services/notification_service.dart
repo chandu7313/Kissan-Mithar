@@ -80,7 +80,7 @@ class NotificationService {
     try {
       final token = await getFcmToken();
       final payload = {
-        'fcm_token': token,
+        'fcmToken': token,
         'platform': defaultTargetPlatform.name,
         'app_version': '1.0.0',
         'language': language ?? 'en',
@@ -155,9 +155,9 @@ class NotificationService {
     final route = resolveDeepLinkRoute(data);
 
     if (router != null) {
-      router.go(route);
+      router.push(route);
     } else if (context != null && context.mounted) {
-      context.go(route);
+      context.push(route);
     }
   }
 

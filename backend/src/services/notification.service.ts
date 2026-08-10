@@ -19,41 +19,21 @@ export class NotificationService {
     const { farmerId, title, body, type = 'INFO', deepLink, data = {} } = params;
 
     // 1. Store in Database
-    let savedNotification = null;
-    try {
-      savedNotification = await prisma.notification.create({
-        data: {
-          farmerId,
-          title,
-          body,
-          type,
-          deepLink,
-        },
-      });
-    } catch (dbError) {
-      console.warn('[NotificationService] DB save fallback:', dbError);
-      savedNotification = {
-        id: `NOTIF-${Date.now()}`,
+    const savedNotification = await prisma.notification.create({
+      data: {
         farmerId,
         title,
         body,
         type,
         deepLink,
-        isRead: false,
-        createdAt: new Date(),
-      };
-    }
+      },
+    });
 
     // 2. Fetch registered FCM tokens for farmer
-    let devices: Array<{ fcmToken: string }> = [];
-    try {
-      devices = await prisma.device.findMany({
-        where: { farmerId },
-        select: { fcmToken: true },
-      });
-    } catch {
-      // Fallback
-    }
+    const devices = await prisma.device.findMany({
+      where: { farmerId },
+      select: { fcmToken: true },
+    });
 
     // 3. Dispatch via FCM
     const messaging = getFirebaseMessaging();
@@ -90,42 +70,39 @@ export class NotificationService {
    * Retrieves notification list for a farmer
    */
   static async getFarmerNotifications(farmerId: string, limit = 20) {
-    try {
-      return await prisma.notification.findMany({
-        where: { farmerId },
-        orderBy: { createdAt: 'desc' },
-        take: limit,
-      });
-    } catch {
-      return [];
-    }
+    return await prisma.notification.findMany({
+      where: { farmerId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
   }
 
   /**
    * Marks a single notification as read
    */
   static async markAsRead(notificationId: string, farmerId: string) {
-    try {
-      return await prisma.notification.updateMany({
-        where: { id: notificationId, farmerId },
-        data: { isRead: true },
-      });
-    } catch {
-      return { count: 1 };
-    }
+    return await prisma.notification.updateMany({
+      where: { id: notificationId, farmerId },
+      data: { isRead: true },
+    });
   }
 
   /**
    * Marks all notifications as read for a farmer
    */
   static async markAllAsRead(farmerId: string) {
-    try {
-      return await prisma.notification.updateMany({
-        where: { farmerId, isRead: false },
-        data: { isRead: true },
-      });
-    } catch {
-      return { count: 0 };
-    }
+    return await prisma.notification.updateMany({
+      where: { farmerId, isRead: false },
+      data: { isRead: true },
+    });
+  }
+
+  /**
+   * Get unread notification count for a farmer
+   */
+  static async getUnreadCount(farmerId: string) {
+    return await prisma.notification.count({
+      where: { farmerId, isRead: false },
+    });
   }
 }

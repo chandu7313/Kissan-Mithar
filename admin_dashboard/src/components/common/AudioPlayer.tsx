@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Mic, Play, Pause } from 'lucide-react';
 
 interface Props {
   url?: string;
@@ -25,7 +26,8 @@ export const AudioPlayer: React.FC<Props> = ({ url, title = 'Farmer Voice Note' 
           gap: '0.5rem',
         }}
       >
-        <span>🎙️</span> No voice recording attached for this survey
+        <Mic size={16} color="var(--text-muted)" />
+        <span>No voice recording attached for this survey</span>
       </div>
     );
   }
@@ -82,11 +84,10 @@ export const AudioPlayer: React.FC<Props> = ({ url, title = 'Farmer Voice Note' 
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          fontSize: '0.875rem',
           flexShrink: 0,
         }}
       >
-        {isPlaying ? '⏸' : '▶'}
+        {isPlaying ? <Pause size={16} fill="white" /> : <Play size={16} fill="white" style={{ marginLeft: '2px' }} />}
       </button>
 
       <div style={{ flex: 1 }}>
