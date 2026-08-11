@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:video_player/video_player.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../core/localization/app_language.dart';
@@ -17,13 +18,17 @@ class OrchardGuidedFlowScreen extends ConsumerStatefulWidget {
   const OrchardGuidedFlowScreen({super.key});
 
   @override
-  ConsumerState<OrchardGuidedFlowScreen> createState() => _OrchardGuidedFlowScreenState();
+  ConsumerState<OrchardGuidedFlowScreen> createState() =>
+      _OrchardGuidedFlowScreenState();
 }
 
-class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScreen> {
+class _OrchardGuidedFlowScreenState
+    extends ConsumerState<OrchardGuidedFlowScreen> {
   late final PageController _pageController;
   final ImagePicker _picker = ImagePicker();
   final StepVoiceGuideService _voiceGuide = StepVoiceGuideService();
+
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   @override
   void initState() {
@@ -68,9 +73,13 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
       );
       if (photo != null) {
         if (angle == 'surveyMap') {
-          ref.read(orchardPlanningProvider.notifier).setSurveyMap(photo.path, 'Camera');
+          ref
+              .read(orchardPlanningProvider.notifier)
+              .setSurveyMap(photo.path, 'Camera');
         } else {
-          ref.read(orchardPlanningProvider.notifier).setPhoto(angle, photo.path);
+          ref
+              .read(orchardPlanningProvider.notifier)
+              .setPhoto(angle, photo.path);
         }
       }
     } catch (e) {
@@ -86,7 +95,9 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
       );
 
       if (result != null && result.files.single.path != null) {
-        ref.read(orchardPlanningProvider.notifier).setSurveyMap(result.files.single.path!, 'PDF');
+        ref
+            .read(orchardPlanningProvider.notifier)
+            .setSurveyMap(result.files.single.path!, 'PDF');
       }
     } catch (e) {
       debugPrint('Error picking pdf: $e');
@@ -103,15 +114,22 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
       for (final img in images) {
         ref.read(orchardPlanningProvider.notifier).addGalleryPhoto(img.path);
       }
-      if (images.isNotEmpty && ref.read(orchardPlanningProvider).frontPhoto == null) {
-        ref.read(orchardPlanningProvider.notifier).setPhoto('front', images.first.path);
+      if (images.isNotEmpty &&
+          ref.read(orchardPlanningProvider).frontPhoto == null) {
+        ref
+            .read(orchardPlanningProvider.notifier)
+            .setPhoto('front', images.first.path);
       }
     } catch (e) {
       debugPrint('Error picking gallery images: $e');
     }
   }
 
-  void _showEditLocationDialog(BuildContext context, OrchardDraftState state, OrchardPlanningNotifier notifier) {
+  void _showEditLocationDialog(
+    BuildContext context,
+    OrchardDraftState state,
+    OrchardPlanningNotifier notifier,
+  ) {
     final villageCtrl = TextEditingController(text: state.village);
     final districtCtrl = TextEditingController(text: state.district);
     final stateCtrl = TextEditingController(text: state.stateName);
@@ -120,11 +138,17 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.edit_location_alt_rounded, color: AppColors.primary),
-            SizedBox(width: 8),
-            Text(l10n.editLocation, style: const TextStyle(fontWeight: FontWeight.bold)),
+            const Icon(
+              Icons.edit_location_alt_rounded,
+              color: AppColors.primary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              l10n.editLocation,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         content: SingleChildScrollView(
@@ -187,7 +211,11 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
     );
   }
 
-  void _showMapPickerModal(BuildContext context, OrchardDraftState state, OrchardPlanningNotifier notifier) {
+  void _showMapPickerModal(
+    BuildContext context,
+    OrchardDraftState state,
+    OrchardPlanningNotifier notifier,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -230,12 +258,18 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.map_rounded, size: 80, color: Colors.green.shade700.withOpacity(0.3)),
+                            Icon(
+                              Icons.map_rounded,
+                              size: 80,
+                              color: Colors.green.shade700.withOpacity(0.3),
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               'Interactive Map Coordinates:\n${state.latitude.toStringAsFixed(4)}° N, ${state.longitude.toStringAsFixed(4)}° E',
                               textAlign: TextAlign.center,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -260,7 +294,9 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 onPressed: () {
                   Navigator.pop(ctx);
@@ -268,7 +304,13 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                     SnackBar(content: Text(l10n.farmCoordinatesUpdated)),
                   );
                 },
-                child: Text(l10n.confirmLocation, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(
+                  l10n.confirmLocation,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],
@@ -284,63 +326,70 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
     bool isSmall = false,
   }) {
     return InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: isSmall ? 12 : 20, horizontal: 8),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFB0BEC5), width: 1.2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(5),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: isSmall
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icon, color: const Color(0xFF1B6327), size: 20),
-                    const SizedBox(width: 6),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    icon == Icons.camera_alt_outlined
-                        ? _RipplingIcon(icon: icon, size: 30)
-                        : Icon(icon, color: const Color(0xFF1B6327), size: 32),
-                    const SizedBox(height: 10),
-                    Text(
-                      label,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        height: 1.2,
-                      ),
-                    ),
-                  ],
-                ),
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          vertical: isSmall ? 12 : 20,
+          horizontal: 8,
         ),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFB0BEC5), width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(5),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: isSmall
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, color: const Color(0xFF1B6327), size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  icon == Icons.camera_alt_outlined
+                      ? _RipplingIcon(icon: icon, size: 30)
+                      : Icon(icon, color: const Color(0xFF1B6327), size: 32),
+                  const SizedBox(height: 10),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                      height: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 
-  Widget _buildStep0SurveyMap(BuildContext context, OrchardDraftState state, OrchardPlanningNotifier notifier) {
+  Widget _buildStep0SurveyMap(
+    BuildContext context,
+    OrchardDraftState state,
+    OrchardPlanningNotifier notifier,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
       child: Column(
@@ -406,7 +455,9 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: state.surveyMapPath != null ? const Color(0xFF1B6327) : const Color(0xFFB0BEC5),
+                color: state.surveyMapPath != null
+                    ? const Color(0xFF1B6327)
+                    : const Color(0xFFB0BEC5),
                 width: 1.5,
                 strokeAlign: BorderSide.strokeAlignCenter,
               ),
@@ -436,13 +487,17 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          state.surveyMapType == 'PDF' ? Icons.picture_as_pdf : Icons.check_circle_outline_rounded,
+                          state.surveyMapType == 'PDF'
+                              ? Icons.picture_as_pdf
+                              : Icons.check_circle_outline_rounded,
                           size: 48,
                           color: const Color(0xFF1B6327),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          state.surveyMapType == 'PDF' ? l10n.pdfUploaded : l10n.imageSelected,
+                          state.surveyMapType == 'PDF'
+                              ? l10n.pdfUploaded
+                              : l10n.imageSelected,
                           style: const TextStyle(
                             fontSize: 16,
                             color: Color(0xFF1B6327),
@@ -465,9 +520,15 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                           onPressed: () {
                             notifier.clearSurveyMap();
                           },
-                          icon: const Icon(Icons.delete_outline, color: Colors.red),
-                          label: Text(l10n.remove, style: const TextStyle(color: Colors.red)),
-                        )
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
+                          label: Text(
+                            l10n.remove,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
                       ],
                     ),
             ),
@@ -532,7 +593,10 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      l10n.step + ' ${state.currentStep + 1} ' + l10n.of + ' 4',
+                      l10n.step +
+                          ' ${state.currentStep + 1} ' +
+                          l10n.ofText +
+                          ' 4',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -578,7 +642,9 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                     value: stepProgress,
                     minHeight: 8,
                     backgroundColor: const Color(0xFFE9E8E1),
-                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppColors.primary,
+                    ),
                   ),
                 ),
               ],
@@ -604,7 +670,9 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
               color: Colors.white,
-              border: Border(top: BorderSide(color: Color(0xFFE9E8E1), width: 1.5)),
+              border: Border(
+                top: BorderSide(color: Color(0xFFE9E8E1), width: 1.5),
+              ),
             ),
             child: SafeArea(
               child: SizedBox(
@@ -628,11 +696,14 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                             // Step 4 -> Final Submit
                             final success = await notifier.submitOrchardPlan();
                             if (success && context.mounted) {
-                              context.pushNamed(AppRoutes.planTracker, extra: {
-                                'landSize': state.landSize,
-                                'soilType': state.soilTypes.join(', '),
-                                'hasMap': state.surveyMapPath != null,
-                              });
+                              context.pushNamed(
+                                AppRoutes.planTracker,
+                                extra: {
+                                  'landSize': state.landSize,
+                                  'soilType': state.soilTypes.join(', '),
+                                  'hasMap': state.surveyMapPath != null,
+                                },
+                              );
                             }
                           }
                         },
@@ -643,12 +714,18 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                             SizedBox(
                               width: 24,
                               height: 24,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
                             ),
                             SizedBox(width: 16),
                             Text(
                               'Submitting Farm Details...',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         )
@@ -656,12 +733,19 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              state.currentStep == 3 ? l10n.submitFarmPlan : l10n.nextStep,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              state.currentStep == 3
+                                  ? l10n.submitFarmPlan
+                                  : l10n.nextStep,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Icon(
-                              state.currentStep == 3 ? Icons.send_rounded : Icons.arrow_forward_rounded,
+                              state.currentStep == 3
+                                  ? Icons.send_rounded
+                                  : Icons.arrow_forward_rounded,
                               size: 24,
                             ),
                           ],
@@ -678,7 +762,11 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
   // ==========================================
   // STEP 1: LAND PHOTOS
   // ==========================================
-  Widget _buildStep1Photos(BuildContext context, OrchardDraftState state, OrchardPlanningNotifier notifier) {
+  Widget _buildStep1Photos(
+    BuildContext context,
+    OrchardDraftState state,
+    OrchardPlanningNotifier notifier,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
@@ -692,8 +780,15 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
 
+          // Looping Guide Video (No Controls, Silent)
+          const _LoopingGuideVideo(
+            // Using a placeholder sample video. Replace with actual guide video URL.
+            videoUrl:
+                'https://res.cloudinary.com/dazwmir34/video/upload/v1786373178/in_this_only_land_should_be_sh_zp4q59.mp4',
+          ),
+          const SizedBox(height: 24),
 
           // 2x2 Photo Capture Grid
           Padding(
@@ -706,10 +801,30 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               crossAxisSpacing: 16,
               childAspectRatio: 1.15,
               children: [
-                _buildPhotoCard(l10n.frontView, 'front', state.frontPhoto, notifier),
-                _buildPhotoCard(l10n.leftView, 'left', state.leftPhoto, notifier),
-                _buildPhotoCard(l10n.rightView, 'right', state.rightPhoto, notifier),
-                _buildPhotoCard(l10n.backView, 'center', state.centerPhoto, notifier),
+                _buildPhotoCard(
+                  l10n.frontView,
+                  'front',
+                  state.frontPhoto,
+                  notifier,
+                ),
+                _buildPhotoCard(
+                  l10n.leftView,
+                  'left',
+                  state.leftPhoto,
+                  notifier,
+                ),
+                _buildPhotoCard(
+                  l10n.rightView,
+                  'right',
+                  state.rightPhoto,
+                  notifier,
+                ),
+                _buildPhotoCard(
+                  l10n.backView,
+                  'center',
+                  state.centerPhoto,
+                  notifier,
+                ),
               ],
             ),
           ),
@@ -722,8 +837,13 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF6D4E45),
                 side: const BorderSide(color: Color(0xFF6D4E45), width: 1.5),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: _pickFromGallery,
               icon: const Icon(Icons.photo_library_rounded, size: 22),
@@ -737,9 +857,17 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
           if (state.galleryPhotos.isNotEmpty) ...[
             const SizedBox(height: 16),
             Text(
-              '${state.galleryPhotos.length} ' + l10n.additionalPhotosSelected.replaceAll('{count}', state.galleryPhotos.length.toString()),
+              '${state.galleryPhotos.length} ' +
+                  l10n.additionalPhotosSelected.replaceAll(
+                    '{count}',
+                    state.galleryPhotos.length.toString(),
+                  ),
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 13, color: AppColors.primary, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
           const SizedBox(height: 20),
@@ -748,7 +876,12 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
     );
   }
 
-  Widget _buildPhotoCard(String title, String angle, String? imagePath, OrchardPlanningNotifier notifier) {
+  Widget _buildPhotoCard(
+    String title,
+    String angle,
+    String? imagePath,
+    OrchardPlanningNotifier notifier,
+  ) {
     final hasImage = imagePath != null && imagePath.isNotEmpty;
 
     return Container(
@@ -784,13 +917,19 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: (imagePath.startsWith('http') || imagePath.startsWith('https'))
+                          child:
+                              (imagePath.startsWith('http') ||
+                                  imagePath.startsWith('https'))
                               ? Image.network(
                                   imagePath,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
                                   errorBuilder: (_, _, _) => const Center(
-                                    child: Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 40),
+                                    child: Icon(
+                                      Icons.check_circle_rounded,
+                                      color: AppColors.primary,
+                                      size: 40,
+                                    ),
                                   ),
                                 )
                               : Image.file(
@@ -798,7 +937,11 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                                   width: double.infinity,
                                   fit: BoxFit.cover,
                                   errorBuilder: (_, _, _) => const Center(
-                                    child: Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 40),
+                                    child: Icon(
+                                      Icons.check_circle_rounded,
+                                      color: AppColors.primary,
+                                      size: 40,
+                                    ),
                                   ),
                                 ),
                         ),
@@ -813,7 +956,11 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                                 color: Colors.black54,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.refresh_rounded, color: Colors.white, size: 16),
+                              child: const Icon(
+                                Icons.refresh_rounded,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                             ),
                           ),
                         ),
@@ -842,8 +989,8 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Tap to capture',
+                  Text(
+                    AppLocalizations.of(context)!.tapToCapture,
                     style: TextStyle(
                       fontSize: 11,
                       color: AppColors.textSecondary,
@@ -861,27 +1008,22 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
   // ==========================================
   // STEP 2: LOCATION
   // ==========================================
-  Widget _buildStep2Location(BuildContext context, OrchardDraftState state, OrchardPlanningNotifier notifier) {
+  Widget _buildStep2Location(
+    BuildContext context,
+    OrchardDraftState state,
+    OrchardPlanningNotifier notifier,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Where is your land?',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.whereIsYourLand,
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Help us locate your farm to match weather, microclimate, and local market prices accurately.',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.textSecondary,
-              height: 1.4,
             ),
           ),
           const SizedBox(height: 24),
@@ -918,7 +1060,11 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.satellite_alt_rounded, size: 64, color: Colors.green.shade800.withOpacity(0.4)),
+                          Icon(
+                            Icons.satellite_alt_rounded,
+                            size: 64,
+                            color: Colors.green.shade800.withOpacity(0.4),
+                          ),
                           const SizedBox(height: 8),
                           Text(
                             'GPS: ${state.latitude.toStringAsFixed(4)}° N, ${state.longitude.toStringAsFixed(4)}° E',
@@ -954,19 +1100,31 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
-              onPressed: state.isLocating ? null : () => notifier.autoDetectLocation(),
+              onPressed: state.isLocating
+                  ? null
+                  : () => notifier.autoDetectLocation(),
               icon: state.isLocating
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
                     )
                   : const Icon(Icons.my_location_rounded, size: 24),
               label: Text(
-                state.isLocating ? 'Detecting Location...' : 'Auto-Detect Location',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                state.isLocating
+                    ? AppLocalizations.of(context)!.detectingLocation
+                    : AppLocalizations.of(context)!.autoDetectLocation,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -980,13 +1138,15 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF6D4E45),
                 side: const BorderSide(color: Color(0xFF6D4E45), width: 1.5),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
               onPressed: () => _showMapPickerModal(context, state, notifier),
               icon: const Icon(Icons.map_rounded, size: 24),
-              label: const Text(
-                'Choose on Map',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              label: Text(
+                AppLocalizations.of(context)!.chooseOnMap,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -1017,15 +1177,19 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                     color: const Color(0xFFE8F5E9),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.home_work_rounded, color: AppColors.primary, size: 28),
+                  child: const Icon(
+                    Icons.home_work_rounded,
+                    color: AppColors.primary,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Detected Location',
+                      Text(
+                        AppLocalizations.of(context)!.detectedLocation,
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
@@ -1036,22 +1200,38 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                       const SizedBox(height: 4),
                       Text(
                         'Village: ${state.village}',
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                       Text(
                         'District: ${state.district}',
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                       Text(
                         'State: ${state.stateName}',
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.edit_rounded, color: AppColors.secondary),
-                  onPressed: () => _showEditLocationDialog(context, state, notifier),
+                  icon: const Icon(
+                    Icons.edit_rounded,
+                    color: AppColors.secondary,
+                  ),
+                  onPressed: () =>
+                      _showEditLocationDialog(context, state, notifier),
                 ),
               ],
             ),
@@ -1065,16 +1245,24 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
   // ==========================================
   // STEP 3: LAND DETAILS
   // ==========================================
-  Widget _buildStep3LandDetails(BuildContext context, OrchardDraftState state, OrchardPlanningNotifier notifier) {
-    final currencyFormatter = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+  Widget _buildStep3LandDetails(
+    BuildContext context,
+    OrchardDraftState state,
+    OrchardPlanningNotifier notifier,
+  ) {
+    final currencyFormatter = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹',
+      decimalDigits: 0,
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Tell us about your land',
+          Text(
+            AppLocalizations.of(context)!.tellUsAboutYourLand,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -1090,17 +1278,36 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
             spacing: 12,
             runSpacing: 12,
             children: [
-              _buildFilterChip('< 1 Acre', state.landSize == '<1 Acre', () => notifier.setLandSize('<1 Acre')),
-              _buildFilterChip('1 - 3 Acres', state.landSize == '1-3 Acres', () => notifier.setLandSize('1-3 Acres')),
-              _buildFilterChip('3 - 5 Acres', state.landSize == '3-5 Acres', () => notifier.setLandSize('3-5 Acres')),
-              _buildFilterChip('Above 5 Acres', state.landSize == 'Above 5 Acres', () => notifier.setLandSize('Above 5 Acres')),
+              _buildFilterChip(
+                '< 1 Acre',
+                state.landSize == '<1 Acre',
+                () => notifier.setLandSize('<1 Acre'),
+              ),
+              _buildFilterChip(
+                '1 - 3 Acres',
+                state.landSize == '1-3 Acres',
+                () => notifier.setLandSize('1-3 Acres'),
+              ),
+              _buildFilterChip(
+                '3 - 5 Acres',
+                state.landSize == '3-5 Acres',
+                () => notifier.setLandSize('3-5 Acres'),
+              ),
+              _buildFilterChip(
+                'Above 5 Acres',
+                state.landSize == 'Above 5 Acres',
+                () => notifier.setLandSize('Above 5 Acres'),
+              ),
             ],
           ),
 
           const SizedBox(height: 28),
 
           // 2. Water Availability (Multi-select)
-          _buildSectionHeader('2. Water Availability', Icons.water_drop_rounded),
+          _buildSectionHeader(
+            '2. Water Availability',
+            Icons.water_drop_rounded,
+          ),
           const SizedBox(height: 12),
           GridView.count(
             crossAxisCount: 3,
@@ -1165,8 +1372,11 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
               _buildImageCard(
                 title: 'Sandy Soil',
                 imageUrl: 'assets/images/sandy soil.png',
-                isSelected: state.soilTypes.contains('Sandy Soil (Balui Mitti)'),
-                onTap: () => notifier.toggleSoilType('Sandy Soil (Balui Mitti)'),
+                isSelected: state.soilTypes.contains(
+                  'Sandy Soil (Balui Mitti)',
+                ),
+                onTap: () =>
+                    notifier.toggleSoilType('Sandy Soil (Balui Mitti)'),
               ),
               _buildImageCard(
                 title: 'Forest Soil',
@@ -1198,7 +1408,10 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
           const SizedBox(height: 28),
 
           // 4. Voice Note
-          _buildSectionHeader('4. Voice Note for Expert (Optional)', Icons.mic_rounded),
+          _buildSectionHeader(
+            '4. Voice Note for Expert (Optional)',
+            Icons.mic_rounded,
+          ),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(16),
@@ -1216,7 +1429,10 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                         onTap: () {
                           if (state.isRecordingVoice) {
                             notifier.setRecordingVoice(false);
-                            notifier.setVoiceNote('/local/recordings/farm_note.m4a', 15);
+                            notifier.setVoiceNote(
+                              '/local/recordings/farm_note.m4a',
+                              15,
+                            );
                           } else {
                             notifier.setRecordingVoice(true);
                           }
@@ -1225,11 +1441,15 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: state.isRecordingVoice ? Colors.redAccent : AppColors.primary,
+                            color: state.isRecordingVoice
+                                ? Colors.redAccent
+                                : AppColors.primary,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            state.isRecordingVoice ? Icons.stop_rounded : Icons.mic_rounded,
+                            state.isRecordingVoice
+                                ? Icons.stop_rounded
+                                : Icons.mic_rounded,
                             color: Colors.white,
                             size: 28,
                           ),
@@ -1243,8 +1463,12 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                               : 'Tap mic to speak your questions or specific requests in your language.',
                           style: TextStyle(
                             fontSize: 14,
-                            color: state.isRecordingVoice ? Colors.redAccent : AppColors.textSecondary,
-                            fontWeight: state.isRecordingVoice ? FontWeight.bold : FontWeight.normal,
+                            color: state.isRecordingVoice
+                                ? Colors.redAccent
+                                : AppColors.textSecondary,
+                            fontWeight: state.isRecordingVoice
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -1255,24 +1479,41 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                     children: [
                       IconButton(
                         icon: Icon(
-                          state.isPlayingVoice ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded,
+                          state.isPlayingVoice
+                              ? Icons.pause_circle_filled_rounded
+                              : Icons.play_circle_fill_rounded,
                           color: AppColors.primary,
                           size: 40,
                         ),
-                        onPressed: () => notifier.setPlayingVoice(!state.isPlayingVoice),
+                        onPressed: () =>
+                            notifier.setPlayingVoice(!state.isPlayingVoice),
                       ),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(l10n.voiceNote, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            Text(l10n.tapPlayToListen, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                            Text(
+                              l10n.voiceNote,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              l10n.tapPlayToListen,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
+                        icon: const Icon(
+                          Icons.delete_outline_rounded,
+                          color: Colors.redAccent,
+                        ),
                         onPressed: () => notifier.clearVoiceNote(),
                       ),
                     ],
@@ -1392,33 +1633,49 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
                 fit: StackFit.expand,
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(15),
+                    ),
                     child: imageUrl.startsWith('http')
                         ? Image.network(
                             imageUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              color: const Color(0xFFF0F0F0),
-                              child: const Icon(Icons.image_not_supported_rounded, color: Colors.grey),
-                            ),
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                                  color: const Color(0xFFF0F0F0),
+                                  child: const Icon(
+                                    Icons.image_not_supported_rounded,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                           )
                         : Image.asset(
                             imageUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              color: const Color(0xFFF0F0F0),
-                              child: const Icon(Icons.image_not_supported_rounded, color: Colors.grey),
-                            ),
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                                  color: const Color(0xFFF0F0F0),
+                                  child: const Icon(
+                                    Icons.image_not_supported_rounded,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                           ),
                   ),
                   if (isSelected)
                     Container(
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.4),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(13)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(13),
+                        ),
                       ),
                       child: const Center(
-                        child: Icon(Icons.check_circle, color: Colors.white, size: 36),
+                        child: Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+                          size: 36,
+                        ),
                       ),
                     ),
                 ],
@@ -1450,7 +1707,7 @@ class _OrchardGuidedFlowScreenState extends ConsumerState<OrchardGuidedFlowScree
 class _RipplingIcon extends StatefulWidget {
   final IconData icon;
   final double size;
-  
+
   const _RipplingIcon({required this.icon, this.size = 30});
 
   @override
@@ -1469,9 +1726,10 @@ class _RipplingIconState extends State<_RipplingIcon>
       duration: const Duration(milliseconds: 700),
       vsync: this,
     )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 1.0, end: 1.25).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 1.0,
+      end: 1.25,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -1488,7 +1746,7 @@ class _RipplingIconState extends State<_RipplingIcon>
         final double baseSize = widget.size * 1.8;
         // Calculate a normalized value from 0.0 to 1.0 for the glow based on scale
         final double glowProgress = (_animation.value - 1.0) / 0.25;
-        
+
         return SizedBox(
           width: baseSize,
           height: baseSize,
@@ -1508,11 +1766,71 @@ class _RipplingIconState extends State<_RipplingIcon>
                   ),
                 ],
               ),
-              child: Icon(widget.icon, size: widget.size, color: AppColors.primary),
+              child: Icon(
+                widget.icon,
+                size: widget.size,
+                color: AppColors.primary,
+              ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _LoopingGuideVideo extends StatefulWidget {
+  final String videoUrl;
+
+  const _LoopingGuideVideo({Key? key, required this.videoUrl})
+    : super(key: key);
+
+  @override
+  State<_LoopingGuideVideo> createState() => _LoopingGuideVideoState();
+}
+
+class _LoopingGuideVideoState extends State<_LoopingGuideVideo> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
+      ..initialize().then((_) {
+        _controller.setVolume(0.0); // Silent
+        _controller.setLooping(true); // Loops indefinitely
+        _controller.play(); // Auto-plays
+        setState(() {});
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_controller.value.isInitialized) {
+      return Container(
+        height: 180,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: AspectRatio(
+        aspectRatio: _controller.value.aspectRatio,
+        child: VideoPlayer(_controller),
+      ),
     );
   }
 }

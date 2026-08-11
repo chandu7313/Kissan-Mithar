@@ -215,7 +215,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get step => 'Step';
 
   @override
-  String get of => 'of';
+  String get ofText => 'of';
 
   @override
   String get submittingFarmDetails => 'Submitting Farm Details...';
@@ -335,4 +335,400 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get acreGuntaCent => '1 Acre = 40 Guntas = 100 Cents';
+
+  @override
+  String get whereIsYourLand => 'Where is your land?';
+
+  @override
+  String get autoDetectLocation => 'Auto-Detect Location';
+
+  @override
+  String get detectingLocation => 'Detecting Location...';
+
+  @override
+  String get chooseOnMap => 'Choose on Map';
+
+  @override
+  String get tapToCapture => 'Tap to capture';
+
+  @override
+  String get detectedLocation => 'Detected Location';
+
+  @override
+  String get tellUsAboutYourLand => 'Tell us about your land';
+
+  @override
+  String get enterYourMobileNumber => 'Enter Your Mobile\nNumber';
+
+  @override
+  String get weWillSendCode => 'We\'ll send a code to verify.';
+
+  @override
+  String get mobileNumber => 'Mobile Number';
+
+  @override
+  String get mobileNumberHint => '00000 00000';
+
+  @override
+  String get sending => 'Sending...';
+
+  @override
+  String get sendOtp => 'Send OTP';
+
+  @override
+  String get enterValidMobile => 'Please enter a valid 10-digit mobile number';
+
+  @override
+  String get failedToSendOtp => 'Failed to send OTP. Please try again.';
+
+  @override
+  String get verifyYourNumber => 'Verify your number';
+
+  @override
+  String get enter6DigitCode => 'Enter the 6-digit code sent to';
+
+  @override
+  String get pleaseEnterCompleteOtp => 'Please enter the complete 6-digit OTP';
+
+  @override
+  String get invalidOtpTryAgain => 'Invalid OTP. Please try again.';
+
+  @override
+  String get resendOtpIn => 'Resend OTP in ';
+
+  @override
+  String get resendOtpNow => 'Resend OTP Now';
+
+  @override
+  String get verifying => 'Verifying...';
+
+  @override
+  String get verify => 'Verify';
+
+  @override
+  String get newOtpSent => 'A new OTP has been sent!';
+
+  @override
+  String get stayUpdatedOnYourFarm => 'Stay Updated On\nYour Farm';
+
+  @override
+  String get enableAlertsSubtitle =>
+      'Enable alerts to receive timely weather, expert consultation, and market price updates.';
+
+  @override
+  String get severeWeatherWarnings => 'Severe Weather Warnings';
+
+  @override
+  String get severeWeatherDesc =>
+      'Know when unexpected heavy rain or storms approach so you can delay spray cycles and protect crops.';
+
+  @override
+  String get agronomistCallReminders => 'Agronomist Call Reminders';
+
+  @override
+  String get agronomistCallDesc =>
+      'Get a reminder 15 minutes before your scheduled voice/video session with certified crop doctors.';
+
+  @override
+  String get mandiMarketRateAlerts => 'Mandi Market Rate Alerts';
+
+  @override
+  String get mandiMarketRateDesc =>
+      'Receive real-time price updates for Mango, Guava, Cotton, and crops at your nearest mandi.';
+
+  @override
+  String get orchardPlanReadyAlert => 'Orchard Plan Ready Alert';
+
+  @override
+  String get orchardPlanReadyDesc =>
+      'Get notified immediately when your customized farm layout and tree plantation map is prepared.';
+
+  @override
+  String get enablingAlerts => 'Enabling Alerts...';
+
+  @override
+  String get turnOnNotifications => 'Turn On Notifications';
+
+  @override
+  String get maybeLaterSkipForNow => 'Maybe Later, Skip for Now';
+
+  @override
+  String get languagePreference => 'Language Preference';
+
+  @override
+  String get changingLanguageUpdatesApp =>
+      'Changing language updates the entire app instantly';
+
+  @override
+  String get savedOrchardPlans => 'Saved Orchard Plans';
+
+  @override
+  String get callHistory => 'Call History';
+
+  @override
+  String get downloads => 'Downloads';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get myConsultations => 'My Consultations';
+
+  @override
+  String get newSession => 'New Session';
+
+  @override
+  String get upcoming => 'Upcoming';
+
+  @override
+  String get pastHistory => 'Past History';
+
+  @override
+  String get noScheduledConsultations =>
+      'You have no scheduled consultations. Connect with an expert today!';
+
+  @override
+  String get noConsultationsFound => 'No Consultations Found';
+
+  @override
+  String get bookAnExpert => 'Book an Expert';
+
+  @override
+  String get noDownloadedFiles => 'No Downloaded Files';
+
+  @override
+  String get savedReportsAppearHere =>
+      'Your saved reports and PDFs\nwill appear here.';
+
+  @override
+  String get filesCachedLocally => 'files cached locally';
+
+  @override
+  String get clearCache => 'Clear Cache';
+
+  @override
+  String get offlineSync => 'Offline Sync';
+
+  @override
+  String get lastSynced => 'Last synced 2 min ago';
+
+  @override
+  String get cacheStorage => 'Cache Storage';
+
+  @override
+  String get cacheUsed => '12.5 MB used';
+
+  @override
+  String get appVersion => 'App Version';
+
+  @override
+  String get privacyPolicyTerms => 'Privacy Policy & Terms';
+
+  @override
+  String get clearAllCache => 'Clear All Cache';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get unread => 'Unread';
+
+  @override
+  String get alertsWarnings => 'Alerts & Warnings';
+
+  @override
+  String get noNotificationsFoundTitle => 'No Notifications Found';
+
+  @override
+  String get seenAllAdvisories => 'You have seen all advisories and alerts.';
+
+  @override
+  String get markAllRead => 'Mark all read';
+
+  @override
+  String get step1Of2SessionPreference => 'Step 1 of 2: Session Preference';
+
+  @override
+  String get myBookings => 'My Bookings';
+
+  @override
+  String get chooseConsultationMode => '1. Choose Consultation Mode';
+
+  @override
+  String get voiceCall => 'Voice Call';
+
+  @override
+  String get videoCall => 'Video Call';
+
+  @override
+  String get chatAdvisory => 'Chat Advisory';
+
+  @override
+  String get selectCropIssueCategory => '2. Select Crop Issue Category';
+
+  @override
+  String get pestAndDisease => 'Pest & Disease';
+
+  @override
+  String get pestAndDiseaseSub => 'Insects, fungal rot, blight';
+
+  @override
+  String get soilAndFertilizer => 'Soil & Fertilizer';
+
+  @override
+  String get soilAndFertilizerSub => 'Nutrients, salinity, pH';
+
+  @override
+  String get waterAndDrip => 'Water & Drip';
+
+  @override
+  String get waterAndDripSub => 'Irrigation, pump pressure';
+
+  @override
+  String get cropPlanning => 'Crop Planning';
+
+  @override
+  String get cropPlanningSub => 'Varieties, sowing guide';
+
+  @override
+  String get growthAndFlowering => 'Growth & Flowering';
+
+  @override
+  String get growthAndFloweringSub => 'Flower drop, fruit size';
+
+  @override
+  String get marketAndPricing => 'Market & Pricing';
+
+  @override
+  String get marketAndPricingSub => 'Mandi rates, buyer links';
+
+  @override
+  String get addCropIssueDetails => 'Add Crop Issue Details';
+
+  @override
+  String get step2PhotosVoiceDesc => 'Step 2 of 2: Photos, Voice & Description';
+
+  @override
+  String get uploadingBooking => 'Uploading & Booking...';
+
+  @override
+  String get confirmAndBookExpert => 'Confirm & Book Expert';
+
+  @override
+  String get addPhotosOfCropIssue => 'Add Photos of Crop Issue';
+
+  @override
+  String get uploadClearPhotos =>
+      'Upload clear photos of leaves, stems, or pests for better diagnosis';
+
+  @override
+  String get uploadFromGallery => 'Upload from gallery';
+
+  @override
+  String get recordVoiceNote => 'Record Voice Note';
+
+  @override
+  String get tapMicAndExplain =>
+      'Tap mic and explain your problem in your language';
+
+  @override
+  String get tapToStartVoiceRecording => 'Tap to Start Voice Recording';
+
+  @override
+  String get gpsSync => 'GPS Sync';
+
+  @override
+  String get liveSatelliteWeather => 'Live Satellite Weather';
+
+  @override
+  String get cachedOfflineData => 'Cached Offline Data';
+
+  @override
+  String updatedAt(Object time) {
+    return 'Updated: $time';
+  }
+
+  @override
+  String feelsLike(Object high, Object low, Object temp) {
+    return 'Feels like $temp°C • High: $high° Low: $low°';
+  }
+
+  @override
+  String get rainProb => 'Rain Prob.';
+
+  @override
+  String windDirection(Object dir) {
+    return 'Wind ($dir)';
+  }
+
+  @override
+  String get rainfallTrendAndVolume => 'Rainfall Trend & Volume';
+
+  @override
+  String get expectedPrecipitationInMm => 'Expected precipitation in mm';
+
+  @override
+  String mmTotal(Object total) {
+    return '$total mm Total';
+  }
+
+  @override
+  String get heavyRainForecast =>
+      'Heavy Rain Forecast: Stop irrigation pumps and ensure field run-off paths are clear.';
+
+  @override
+  String get moderateRain =>
+      'Moderate Rain: Natural soil moisture sufficient; pause drip irrigation for 24h.';
+
+  @override
+  String get lightToNilRain =>
+      'Light to Nil Rain: Maintain normal drip irrigation schedule.';
+
+  @override
+  String get atmosphericAndFieldConditions => 'Atmospheric & Field Conditions';
+
+  @override
+  String get uvIndex => 'UV Index';
+
+  @override
+  String get uvLow => 'Low';
+
+  @override
+  String get uvModerate => 'Moderate';
+
+  @override
+  String get uvHigh => 'High';
+
+  @override
+  String get uvVeryHigh => 'Very High';
+
+  @override
+  String get solarRadiationIntensity => 'Solar radiation intensity';
+
+  @override
+  String get airPressure => 'Air Pressure';
+
+  @override
+  String get atmosphericDensity => 'Atmospheric density';
+
+  @override
+  String get dewPoint => 'Dew Point';
+
+  @override
+  String get moistureCondensation => 'Moisture condensation';
+
+  @override
+  String get windDir => 'Wind Direction';
+
+  @override
+  String get foliarDriftFactor => 'Foliar drift factor';
+
+  @override
+  String get sunrise => 'Sunrise';
+
+  @override
+  String get sunset => 'Sunset';
 }

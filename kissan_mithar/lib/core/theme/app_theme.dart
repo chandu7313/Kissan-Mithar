@@ -14,6 +14,7 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: primaryGreen,
+      fontFamilyFallback: const ['NotoSansDevanagari', 'NotoSansTelugu', 'NotoSansKannada'],
       scaffoldBackgroundColor: backgroundLight,
       colorScheme: const ColorScheme.light(
         primary: primaryGreen,

@@ -8,6 +8,7 @@ import '../../../../shared/widgets/media_picker_card.dart';
 import '../../../../shared/widgets/voice_recorder_card.dart';
 import '../../models/consultation_model.dart';
 import '../../providers/consultation_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class AddConsultationDetailsScreen extends ConsumerStatefulWidget {
   const AddConsultationDetailsScreen({super.key});
@@ -186,6 +187,7 @@ class _AddConsultationDetailsScreenState
     final bookingState = ref.watch(consultationBookingProvider);
     final draft = bookingState.valueOrNull ?? const ConsultationBookingDraft();
     final isLoading = bookingState.isLoading;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -206,9 +208,9 @@ class _AddConsultationDetailsScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Step Header
-                  const Text(
-                    'Add Crop Issue Details',
-                    style: TextStyle(
+                  Text(
+                    l10n.addCropIssueDetails,
+                    style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w900,
                       color: AppColors.textPrimary,
@@ -216,9 +218,9 @@ class _AddConsultationDetailsScreenState
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Step 2 of 2: Photos, Voice & Description',
-                    style: TextStyle(
+                  Text(
+                    l10n.step2PhotosVoiceDesc,
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: AppColors.primaryGreen,
@@ -229,6 +231,10 @@ class _AddConsultationDetailsScreenState
 
                   // 2. Photo & Video Upload Card
                   MediaPickerCard(
+                    title: l10n.addPhotosOfCropIssue,
+                    hintText: l10n.uploadClearPhotos,
+                    takePhotoLabel: l10n.takePhoto,
+                    uploadFromGalleryLabel: l10n.uploadFromGallery,
                     initialMediaPaths: draft.mediaPaths,
                     onMediaChanged: (paths) {
                       ref
@@ -241,6 +247,9 @@ class _AddConsultationDetailsScreenState
 
                   // 3. Voice Recorder Card
                   VoiceRecorderCard(
+                    title: l10n.recordVoiceNote,
+                    hintText: l10n.tapMicAndExplain,
+                    tapToStartRecordingLabel: l10n.tapToStartVoiceRecording,
                     initialVoicePath: draft.voiceNotePath,
                     initialDurationSeconds: draft.voiceDurationSeconds,
                     onVoiceChanged: (path) {
@@ -259,7 +268,7 @@ class _AddConsultationDetailsScreenState
 
                   // Confirm Button
                   LargeButton(
-                    label: isLoading ? 'Uploading & Booking...' : 'Confirm & Book Expert',
+                    label: isLoading ? l10n.uploadingBooking : l10n.confirmAndBookExpert,
                     leadingIcon: isLoading
                         ? const SizedBox(
                             width: 22,

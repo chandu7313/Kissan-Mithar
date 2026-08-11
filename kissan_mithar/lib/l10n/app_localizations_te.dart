@@ -110,7 +110,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get extraCents => 'అదనపు సెంట్లు';
 
   @override
-  String get next => 'తరువాత';
+  String get next => 'తదుపరి';
 
   @override
   String get continueText => 'కొనసాగించండి';
@@ -215,7 +215,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get step => 'దశ';
 
   @override
-  String get of => '/';
+  String get ofText => '/';
 
   @override
   String get submittingFarmDetails => 'వ్యవసాయ వివరాలను సమర్పిస్తున్నాము...';
@@ -333,4 +333,405 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get acreGuntaCent => '1 ఎకరం = 40 గుంటలు = 100 సెంట్లు';
+
+  @override
+  String get whereIsYourLand => 'మీ భూమి ఎక్కడ ఉంది?';
+
+  @override
+  String get autoDetectLocation => 'స్థానాన్ని స్వయంచాలకంగా గుర్తించండి';
+
+  @override
+  String get detectingLocation => 'స్థానాన్ని గుర్తిస్తోంది...';
+
+  @override
+  String get chooseOnMap => 'మ్యాప్‌లో ఎంచుకోండి';
+
+  @override
+  String get tapToCapture => 'క్యాప్చర్ చేయడానికి నొక్కండి';
+
+  @override
+  String get detectedLocation => 'గుర్తించబడిన స్థానం';
+
+  @override
+  String get tellUsAboutYourLand => 'మీ భూమి గురించి చెప్పండి';
+
+  @override
+  String get enterYourMobileNumber => 'మీ మొబైల్ నంబర్‌ను\nనమోదు చేయండి';
+
+  @override
+  String get weWillSendCode => 'మేము ధృవీకరించడానికి ఒక కోడ్‌ను పంపుతాము.';
+
+  @override
+  String get mobileNumber => 'మొబైల్ నంబర్';
+
+  @override
+  String get mobileNumberHint => '00000 00000';
+
+  @override
+  String get sending => 'పంపుతోంది...';
+
+  @override
+  String get sendOtp => 'OTP పంపండి';
+
+  @override
+  String get enterValidMobile =>
+      'దయచేసి సరైన 10-అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి';
+
+  @override
+  String get failedToSendOtp =>
+      'OTP పంపడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get verifyYourNumber => 'మీ నంబర్‌ను ధృవీకరించండి';
+
+  @override
+  String get enter6DigitCode => 'పంపిన 6-అంకెల కోడ్‌ను నమోదు చేయండి';
+
+  @override
+  String get pleaseEnterCompleteOtp =>
+      'దయచేసి పూర్తి 6-అంకెల OTP ని నమోదు చేయండి';
+
+  @override
+  String get invalidOtpTryAgain => 'చెల్లని OTP. దయచేసి మళ్లీ ప్రయత్నించండి.';
+
+  @override
+  String get resendOtpIn => 'OTPని మళ్లీ పంపండి ';
+
+  @override
+  String get resendOtpNow => 'ఇప్పుడే OTPని మళ్లీ పంపండి';
+
+  @override
+  String get verifying => 'ధృవీకరిస్తోంది...';
+
+  @override
+  String get verify => 'ధృవీకరించండి';
+
+  @override
+  String get newOtpSent => 'కొత్త OTP పంపబడింది!';
+
+  @override
+  String get stayUpdatedOnYourFarm => 'మీ పొలం గురించి\nఅప్‌డేట్‌గా ఉండండి';
+
+  @override
+  String get enableAlertsSubtitle =>
+      'సకాలంలో వాతావరణం, నిపుణుల సంప్రదింపులు మరియు మార్కెట్ ధర నవీకరణలను స్వీకరించడానికి హెచ్చరికలను ప్రారంభించండి.';
+
+  @override
+  String get severeWeatherWarnings => 'తీవ్రమైన వాతావరణ హెచ్చరికలు';
+
+  @override
+  String get severeWeatherDesc =>
+      'ఊహించని భారీ వర్షం లేదా తుఫానులు ఎప్పుడు వస్తున్నాయో తెలుసుకోండి, తద్వారా మీరు పంటలను రక్షించవచ్చు.';
+
+  @override
+  String get agronomistCallReminders => 'వ్యవసాయ నిపుణుల కాల్ రిమైండర్‌లు';
+
+  @override
+  String get agronomistCallDesc =>
+      'ధృవీకరించబడిన పంట వైద్యులతో మీ షెడ్యూల్ చేసిన వాయిస్/వీడియో సెషన్‌కు 15 నిమిషాల ముందు రిమైండర్ పొందండి.';
+
+  @override
+  String get mandiMarketRateAlerts => 'మండి మార్కెట్ రేట్ హెచ్చరికలు';
+
+  @override
+  String get mandiMarketRateDesc =>
+      'మీ సమీప మండిలో మామిడి, జామ, పత్తి మరియు పంటల కోసం రియల్ టైమ్ ధర నవీకరణలను స్వీకరించండి.';
+
+  @override
+  String get orchardPlanReadyAlert => 'పండ్లతోట ప్లాన్ రెడీ అలర్ట్';
+
+  @override
+  String get orchardPlanReadyDesc =>
+      'మీ అనుకూలీకరించిన వ్యవసాయ లేఅవుట్ మరియు చెట్ల పెంపకం మ్యాప్ సిద్ధమైనప్పుడు వెంటనే తెలియజేయండి.';
+
+  @override
+  String get enablingAlerts => 'హెచ్చరికలను ప్రారంభిస్తోంది...';
+
+  @override
+  String get turnOnNotifications => 'నోటిఫికేషన్‌లను ఆన్ చేయండి';
+
+  @override
+  String get maybeLaterSkipForNow => 'బహుశా తర్వాత, ఇప్పుడే దాటవేయి';
+
+  @override
+  String get languagePreference => 'భాషా ప్రాధాన్యత';
+
+  @override
+  String get changingLanguageUpdatesApp =>
+      'భాషను మార్చడం వలన మొత్తం యాప్ తక్షణమే నవీకరించబడుతుంది';
+
+  @override
+  String get savedOrchardPlans => 'సేవ్ చేసిన పండ్లతోట ప్లాన్‌లు';
+
+  @override
+  String get callHistory => 'కాల్ చరిత్ర';
+
+  @override
+  String get downloads => 'డౌన్‌లోడ్‌లు';
+
+  @override
+  String get settings => 'సెట్టింగ్‌లు';
+
+  @override
+  String get logout => 'లాగ్అవుట్';
+
+  @override
+  String get myConsultations => 'నా సంప్రదింపులు';
+
+  @override
+  String get newSession => 'కొత్త సెషన్';
+
+  @override
+  String get upcoming => 'రాబోయేవి';
+
+  @override
+  String get pastHistory => 'గత చరిత్ర';
+
+  @override
+  String get noScheduledConsultations =>
+      'మీకు షెడ్యూల్ చేసిన సంప్రదింపులు లేవు. ఈరోజే నిపుణుడితో కనెక్ట్ అవ్వండి!';
+
+  @override
+  String get noConsultationsFound => 'సంప్రదింపులు కనుగొనబడలేదు';
+
+  @override
+  String get bookAnExpert => 'నిపుణుడిని బుక్ చేయండి';
+
+  @override
+  String get noDownloadedFiles => 'డౌన్‌లోడ్ చేయబడిన ఫైల్‌లు లేవు';
+
+  @override
+  String get savedReportsAppearHere =>
+      'మీరు సేవ్ చేసిన నివేదికలు మరియు PDFలు\nఇక్కడ కనిపిస్తాయి.';
+
+  @override
+  String get filesCachedLocally => 'ఫైళ్లు స్థానికంగా కాష్ చేయబడ్డాయి';
+
+  @override
+  String get clearCache => 'కాష్ క్లియర్ చేయండి';
+
+  @override
+  String get offlineSync => 'ఆఫ్‌లైన్ సమకాలీకరణ';
+
+  @override
+  String get lastSynced => 'చివరిగా 2 నిమిషాల క్రితం సమకాలీకరించబడింది';
+
+  @override
+  String get cacheStorage => 'కాష్ నిల్వ';
+
+  @override
+  String get cacheUsed => '12.5 MB ఉపయోగించబడింది';
+
+  @override
+  String get appVersion => 'యాప్ వెర్షన్';
+
+  @override
+  String get privacyPolicyTerms => 'గోప్యతా విధానం & నిబంధనలు';
+
+  @override
+  String get clearAllCache => 'అన్ని కాష్‌లను క్లియర్ చేయండి';
+
+  @override
+  String get all => 'అన్నీ';
+
+  @override
+  String get unread => 'చదవనివి';
+
+  @override
+  String get alertsWarnings => 'హెచ్చరికలు';
+
+  @override
+  String get noNotificationsFoundTitle => 'నోటిఫికేషన్‌లు కనుగొనబడలేదు';
+
+  @override
+  String get seenAllAdvisories => 'మీరు అన్ని సలహాలు మరియు హెచ్చరికలను చూసారు.';
+
+  @override
+  String get markAllRead => 'అన్నీ చదివినట్లుగా గుర్తించండి';
+
+  @override
+  String get step1Of2SessionPreference => 'దశ 1/2: సెషన్ ప్రాధాన్యత';
+
+  @override
+  String get myBookings => 'నా బుకింగ్‌లు';
+
+  @override
+  String get chooseConsultationMode => '1. సంప్రదింపు మోడ్‌ను ఎంచుకోండి';
+
+  @override
+  String get voiceCall => 'వాయిస్ కాల్';
+
+  @override
+  String get videoCall => 'వీడియో కాల్';
+
+  @override
+  String get chatAdvisory => 'చాట్ సలహా';
+
+  @override
+  String get selectCropIssueCategory => '2. పంట సమస్య వర్గాన్ని ఎంచుకోండి';
+
+  @override
+  String get pestAndDisease => 'తెగులు మరియు వ్యాధి';
+
+  @override
+  String get pestAndDiseaseSub => 'కీటకాలు, శిలీంధ్ర కుళ్ళు, ముడత';
+
+  @override
+  String get soilAndFertilizer => 'మట్టి మరియు ఎరువులు';
+
+  @override
+  String get soilAndFertilizerSub => 'పోషకాలు, లవణీయత, pH';
+
+  @override
+  String get waterAndDrip => 'నీరు మరియు డ్రిప్';
+
+  @override
+  String get waterAndDripSub => 'నీటిపారుదల, పంపు పీడనం';
+
+  @override
+  String get cropPlanning => 'పంట ప్రణాళిక';
+
+  @override
+  String get cropPlanningSub => 'రకాలు, విత్తే మార్గదర్శి';
+
+  @override
+  String get growthAndFlowering => 'పెరుగుదల మరియు పుష్పించే';
+
+  @override
+  String get growthAndFloweringSub => 'పూలు రాలడం, పండ్ల పరిమాణం';
+
+  @override
+  String get marketAndPricing => 'మార్కెట్ & ధర';
+
+  @override
+  String get marketAndPricingSub => 'మండీ రేట్లు, కొనుగోలుదారు లింకులు';
+
+  @override
+  String get addCropIssueDetails => 'పంట సమస్య వివరాలను జోడించండి';
+
+  @override
+  String get step2PhotosVoiceDesc => 'దశ 2/2: ఫోటోలు, వాయిస్ & వివరణ';
+
+  @override
+  String get uploadingBooking => 'అప్‌లోడ్ చేస్తోంది & బుకింగ్ చేస్తోంది...';
+
+  @override
+  String get confirmAndBookExpert =>
+      'నిర్ధారించండి మరియు నిపుణుడిని బుక్ చేయండి';
+
+  @override
+  String get addPhotosOfCropIssue => 'పంట సమస్య ఫోటోలను జోడించండి';
+
+  @override
+  String get uploadClearPhotos =>
+      'మెరుగైన రోగ నిర్ధారణ కోసం ఆకులు, కాండం లేదా తెగుళ్ల స్పష్టమైన ఫోటోలను అప్‌లోడ్ చేయండి';
+
+  @override
+  String get uploadFromGallery => 'గ్యాలరీ నుండి అప్‌లోడ్ చేయండి';
+
+  @override
+  String get recordVoiceNote => 'వాయిస్ నోట్ రికార్డ్ చేయండి';
+
+  @override
+  String get tapMicAndExplain => 'మైక్ నొక్కి మీ భాషలో సమస్యను వివరించండి';
+
+  @override
+  String get tapToStartVoiceRecording =>
+      'వాయిస్ రికార్డింగ్ ప్రారంభించడానికి నొక్కండి';
+
+  @override
+  String get gpsSync => 'GPS సింక్';
+
+  @override
+  String get liveSatelliteWeather => 'ప్రత్యక్ష ఉపగ్రహ వాతావరణం';
+
+  @override
+  String get cachedOfflineData => 'ఆఫ్‌లైన్ డేటా';
+
+  @override
+  String updatedAt(Object time) {
+    return 'నవీకరించబడింది: $time';
+  }
+
+  @override
+  String feelsLike(Object high, Object low, Object temp) {
+    return '$temp°C అనుభూతి • గరిష్ట: $high° కనిష్ట: $low°';
+  }
+
+  @override
+  String get rainProb => 'వర్షం అవకాశం';
+
+  @override
+  String windDirection(Object dir) {
+    return 'గాలి ($dir)';
+  }
+
+  @override
+  String get rainfallTrendAndVolume => 'వర్షపాతం ధోరణి మరియు పరిమాణం';
+
+  @override
+  String get expectedPrecipitationInMm => 'ఆశించిన అవపాతం (మిమీ)';
+
+  @override
+  String mmTotal(Object total) {
+    return '$total మిమీ మొత్తం';
+  }
+
+  @override
+  String get heavyRainForecast =>
+      'భారీ వర్షం అంచనా: నీటి పంపులను ఆపండి మరియు పొలం నీటి పారుదల మార్గాలను స్పష్టంగా ఉంచండి.';
+
+  @override
+  String get moderateRain =>
+      'మోస్తరు వర్షం: సహజ నేల తేమ సరిపోతుంది; డ్రిప్ నీటిపారుదలను 24 గంటలు ఆపండి.';
+
+  @override
+  String get lightToNilRain =>
+      'తేలికపాటి నుండి వర్షం లేదు: సాధారణ డ్రిప్ నీటిపారుదల షెడ్యూల్ కొనసాగించండి.';
+
+  @override
+  String get atmosphericAndFieldConditions =>
+      'వాతావరణ మరియు క్షేత్ర పరిస్థితులు';
+
+  @override
+  String get uvIndex => 'UV సూచిక';
+
+  @override
+  String get uvLow => 'తక్కువ';
+
+  @override
+  String get uvModerate => 'మధ్యస్థ';
+
+  @override
+  String get uvHigh => 'ఎక్కువ';
+
+  @override
+  String get uvVeryHigh => 'చాలా ఎక్కువ';
+
+  @override
+  String get solarRadiationIntensity => 'సౌర రేడియేషన్ తీవ్రత';
+
+  @override
+  String get airPressure => 'గాలి పీడనం';
+
+  @override
+  String get atmosphericDensity => 'వాతావరణ సాంద్రత';
+
+  @override
+  String get dewPoint => 'మంచు బిందువు';
+
+  @override
+  String get moistureCondensation => 'తేమ సంగ్రహణ';
+
+  @override
+  String get windDir => 'గాలి దిశ';
+
+  @override
+  String get foliarDriftFactor => 'ఆకుల డ్రిఫ్ట్ కారకం';
+
+  @override
+  String get sunrise => 'సూర్యోదయం';
+
+  @override
+  String get sunset => 'సూర్యాస్తమయం';
 }

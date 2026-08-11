@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_language.dart';
+import '../../../../l10n/app_localizations.dart';
 
 /// Represents a locally cached PDF file for the Downloads screen.
 class CachedDownload {
@@ -111,6 +112,7 @@ class DownloadsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final downloads = _mockDownloads;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -122,9 +124,9 @@ class DownloadsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          'Downloads',
-          style: TextStyle(
+        title: Text(
+          l10n.downloads,
+          style: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w800,
             color: AppColors.textPrimary,
@@ -140,14 +142,14 @@ class DownloadsScreen extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: downloads.isEmpty
-                ? _buildEmptyState()
+                ? _buildEmptyState(l10n)
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     itemCount: downloads.length + 1, // +1 for storage info
                     itemBuilder: (context, index) {
                       if (index == downloads.length) {
-                        return _buildStorageInfo(downloads);
+                        return _buildStorageInfo(downloads, l10n);
                       }
                       return _buildDownloadCard(context, downloads[index]);
                     },
@@ -178,7 +180,7 @@ class DownloadsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -198,19 +200,19 @@ class DownloadsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'No Downloaded Files',
-              style: TextStyle(
+            Text(
+              l10n.noDownloadedFiles,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Your saved reports and PDFs\nwill appear here.',
+            Text(
+              l10n.savedReportsAppearHere,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,
                 height: 1.4,
@@ -346,7 +348,7 @@ class DownloadsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStorageInfo(List<CachedDownload> downloads) {
+  Widget _buildStorageInfo(List<CachedDownload> downloads, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(top: 8, bottom: 32),
       padding: const EdgeInsets.all(16),
@@ -362,7 +364,7 @@ class DownloadsScreen extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              '${downloads.length} files cached locally',
+              '${downloads.length} ${l10n.filesCachedLocally}',
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -376,9 +378,9 @@ class DownloadsScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               minimumSize: Size.zero,
             ),
-            child: const Text(
-              'Clear Cache',
-              style: TextStyle(
+            child: Text(
+              l10n.clearCache,
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFFC62828),

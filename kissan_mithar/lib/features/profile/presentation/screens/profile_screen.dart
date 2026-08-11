@@ -7,6 +7,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_language.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../providers/profile_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -406,19 +407,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   // ─── Logout Confirmation Dialog ───
-  void _showLogoutConfirmation() {
+  void _showLogoutConfirmation(AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.logout_rounded, color: Color(0xFFC62828), size: 24),
-            SizedBox(width: 10),
+            const Icon(Icons.logout_rounded, color: Color(0xFFC62828), size: 24),
+            const SizedBox(width: 10),
             Text(
-              'Logout',
-              style: TextStyle(
+              l10n.logout,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -477,9 +478,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   // ─── Settings Bottom Sheet ───
-  void _showSettingsSheet() {
+  void _showSettingsSheet(AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         padding: const EdgeInsets.all(24),
@@ -487,7 +489,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           color: AppColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        child: Column(
+        child: SingleChildScrollView(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -502,9 +505,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Settings',
-              style: TextStyle(
+            Text(
+              l10n.settings,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -513,17 +516,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             const SizedBox(height: 20),
             _buildSettingsRow(
-                Icons.sync_rounded, 'Offline Sync', 'Last synced 2 min ago'),
+                Icons.sync_rounded, l10n.offlineSync, l10n.lastSynced),
             const SizedBox(height: 14),
-            _buildSettingsRow(Icons.storage_rounded, 'Cache Storage',
-                '12.5 MB used'),
+            _buildSettingsRow(Icons.storage_rounded, l10n.cacheStorage,
+                l10n.cacheUsed),
             const SizedBox(height: 14),
-            _buildSettingsRow(Icons.info_outline_rounded, 'App Version',
+            _buildSettingsRow(Icons.info_outline_rounded, l10n.appVersion,
                 'v1.0.0'),
             const SizedBox(height: 14),
             _buildSettingsRow(
               Icons.shield_outlined,
-              'Privacy Policy & Terms',
+              l10n.privacyPolicyTerms,
               'View our data protection terms',
               onTap: () {
                 Navigator.pop(ctx);
@@ -552,9 +555,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text(
-                  'Clear All Cache',
-                  style: TextStyle(
+                child: Text(
+                  l10n.clearAllCache,
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFFC62828),
@@ -564,6 +567,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             const SizedBox(height: 16),
           ],
+        ),
         ),
       ),
     );
@@ -739,6 +743,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(profileProvider);
     final profile = state.profile;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -875,14 +880,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.language_rounded,
+                            const Icon(Icons.language_rounded,
                                 color: Color(0xFF236B28), size: 22),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Text(
-                              'Language Preference',
-                              style: TextStyle(
+                              l10n.languagePreference,
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 color: AppColors.textPrimary,
@@ -892,9 +897,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          'Changing language updates the entire app instantly',
-                          style: TextStyle(
+                        Text(
+                          l10n.changingLanguageUpdatesApp,
+                          style: const TextStyle(
                             fontSize: 12,
                             color: AppColors.textSecondary,
                           ),
@@ -932,7 +937,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         _buildMenuItem(
                           icon: Icons.park_rounded,
-                          title: 'Saved Orchard Plans',
+                          title: l10n.savedOrchardPlans,
                           badge: '1',
                           onTap: () => context.push('/orchard/tracker'),
                         ),
@@ -940,7 +945,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: AppColors.borderSubtle, height: 1),
                         _buildMenuItem(
                           icon: Icons.phone_rounded,
-                          title: 'Call History',
+                          title: l10n.callHistory,
                           onTap: () =>
                               context.push('/consultation/history'),
                         ),
@@ -948,7 +953,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: AppColors.borderSubtle, height: 1),
                         _buildMenuItem(
                           icon: Icons.file_download_outlined,
-                          title: 'Downloads',
+                          title: l10n.downloads,
                           badge: '3',
                           onTap: () =>
                               context.push('/profile/downloads'),
@@ -957,16 +962,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             color: AppColors.borderSubtle, height: 1),
                         _buildMenuItem(
                           icon: Icons.settings_outlined,
-                          title: 'Settings',
-                          onTap: _showSettingsSheet,
+                          title: l10n.settings,
+                          onTap: () => _showSettingsSheet(l10n),
                         ),
                         const Divider(
                             color: AppColors.borderSubtle, height: 1),
                         _buildMenuItem(
                           icon: Icons.logout_rounded,
-                          title: 'Logout',
+                          title: l10n.logout,
                           isDestructive: true,
-                          onTap: _showLogoutConfirmation,
+                          onTap: () => _showLogoutConfirmation(l10n),
                         ),
                       ],
                     ),

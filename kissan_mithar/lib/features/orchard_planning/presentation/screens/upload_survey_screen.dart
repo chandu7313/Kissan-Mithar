@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_language.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'plan_tracker_screen.dart';
 
 class UploadSurveyScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class UploadSurveyScreen extends StatefulWidget {
 
 class _UploadSurveyScreenState extends State<UploadSurveyScreen> {
   String? _selectedFileType;
+
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   Widget _buildLanguagePill(BuildContext context) {
     final currentLang = LanguageProvider().currentLanguage;

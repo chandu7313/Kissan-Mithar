@@ -6,57 +6,58 @@ import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../shared/widgets/large_button.dart';
 import '../../models/consultation_model.dart';
 import '../../providers/consultation_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class BookConsultationScreen extends ConsumerWidget {
   const BookConsultationScreen({super.key});
 
-  static final List<IssueCategory> _categories = [
-    const IssueCategory(
+  List<IssueCategory> _getCategories(AppLocalizations l10n) => [
+    IssueCategory(
       id: 'pest',
-      title: 'Pest & Disease',
-      subtitle: 'Insects, fungal rot, blight',
+      title: l10n.pestAndDisease,
+      subtitle: l10n.pestAndDiseaseSub,
       icon: Icons.bug_report_rounded,
-      accentColor: Color(0xFFC62828),
+      accentColor: const Color(0xFFC62828),
       backgroundImage: 'assets/images/pest-desease.png',
     ),
-    const IssueCategory(
+    IssueCategory(
       id: 'soil',
-      title: 'Soil & Fertilizer',
-      subtitle: 'Nutrients, salinity, pH',
+      title: l10n.soilAndFertilizer,
+      subtitle: l10n.soilAndFertilizerSub,
       icon: Icons.terrain_rounded,
-      accentColor: Color(0xFF5D4037),
+      accentColor: const Color(0xFF5D4037),
       backgroundImage: 'assets/images/soil-testing.png',
     ),
-    const IssueCategory(
+    IssueCategory(
       id: 'water',
-      title: 'Water & Drip',
-      subtitle: 'Irrigation, pump pressure',
+      title: l10n.waterAndDrip,
+      subtitle: l10n.waterAndDripSub,
       icon: Icons.water_drop_rounded,
-      accentColor: Color(0xFF1565C0),
+      accentColor: const Color(0xFF1565C0),
       backgroundImage: 'assets/images/water-drip.png',
     ),
-    const IssueCategory(
+    IssueCategory(
       id: 'crops',
-      title: 'Crop Planning',
-      subtitle: 'Varieties, sowing guide',
+      title: l10n.cropPlanning,
+      subtitle: l10n.cropPlanningSub,
       icon: Icons.agriculture_rounded,
-      accentColor: Color(0xFF2E7D32),
+      accentColor: const Color(0xFF2E7D32),
       backgroundImage: 'assets/images/crop-planning.png',
     ),
-    const IssueCategory(
+    IssueCategory(
       id: 'growth',
-      title: 'Growth & Flowering',
-      subtitle: 'Flower drop, fruit size',
+      title: l10n.growthAndFlowering,
+      subtitle: l10n.growthAndFloweringSub,
       icon: Icons.eco_rounded,
-      accentColor: Color(0xFFEF6C00),
+      accentColor: const Color(0xFFEF6C00),
       backgroundImage: 'assets/images/growth-flowering.png',
     ),
-    const IssueCategory(
+    IssueCategory(
       id: 'market',
-      title: 'Market & Pricing',
-      subtitle: 'Mandi rates, buyer links',
+      title: l10n.marketAndPricing,
+      subtitle: l10n.marketAndPricingSub,
       icon: Icons.storefront_rounded,
-      accentColor: Color(0xFF6A1B9A),
+      accentColor: const Color(0xFF6A1B9A),
       backgroundImage: 'assets/images/market-prices.png',
     ),
   ];
@@ -127,15 +128,15 @@ class BookConsultationScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
-                mode.label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: isSelected ? Colors.white : AppColors.textPrimary,
+                Text(
+                  _getCommunicationModeLabel(mode, AppLocalizations.of(context)!),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: isSelected ? Colors.white : AppColors.textPrimary,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -147,11 +148,12 @@ class BookConsultationScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     List<String> selectedCategories,
+    List<IssueCategory> categories,
   ) {
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: _categories.length,
+      itemCount: categories.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 12,
@@ -159,7 +161,7 @@ class BookConsultationScreen extends ConsumerWidget {
         childAspectRatio: 1.45,
       ),
       itemBuilder: (context, index) {
-        final cat = _categories[index];
+        final cat = categories[index];
         final isSelected = selectedCategories.contains(cat.title);
 
         return InkWell(
@@ -326,10 +328,23 @@ class BookConsultationScreen extends ConsumerWidget {
     );
   }
 
+  String _getCommunicationModeLabel(CommunicationMode mode, AppLocalizations l10n) {
+    switch (mode) {
+      case CommunicationMode.voiceCall:
+        return l10n.voiceCall;
+      case CommunicationMode.videoCall:
+        return l10n.videoCall;
+      case CommunicationMode.chat:
+        return l10n.chatAdvisory;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookingState = ref.watch(consultationBookingProvider);
     final draft = bookingState.valueOrNull ?? const ConsultationBookingDraft();
+    final l10n = AppLocalizations.of(context)!;
+    final categories = _getCategories(l10n);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -367,40 +382,39 @@ class BookConsultationScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
-                        child: Column(
+                      Expanded(
+                          child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Book an Expert',
-                              style: TextStyle(
+                              l10n.bookAnExpert,
+                              style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w900,
                                 color: AppColors.textPrimary,
                                 letterSpacing: -0.5,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
-                              'Step 1 of 2: Session Preference',
-                              style: TextStyle(
+                              l10n.step1Of2SessionPreference,
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.primaryGreen,
                               ),
                             ),
                           ],
-                        ),
-                      ),
+                        ),   ),
                       const SizedBox(width: 8),
                       // History Shortcut Chip
                       ActionChip(
                         onPressed: () => context.push('/consultation/history'),
                         avatar: const Icon(Icons.receipt_long_rounded,
                             size: 18, color: AppColors.primaryGreen),
-                        label: const Text(
-                          'My Bookings',
-                          style: TextStyle(
+                        label: Text(
+                          l10n.myBookings,
+                          style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primaryGreen,
@@ -418,9 +432,9 @@ class BookConsultationScreen extends ConsumerWidget {
                   const SizedBox(height: 22),
 
                   // 1. Communication Mode Section
-                  const Text(
-                    '1. Choose Consultation Mode',
-                    style: TextStyle(
+                  Text(
+                    l10n.chooseConsultationMode,
+                    style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
@@ -455,22 +469,22 @@ class BookConsultationScreen extends ConsumerWidget {
                   const SizedBox(height: 26),
 
                   // 2. Issue Category Section
-                  const Text(
-                    '2. Select Crop Issue Category',
-                    style: TextStyle(
+                  Text(
+                    l10n.selectCropIssueCategory,
+                    style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildCategoryGrid(context, ref, draft.categories),
+                  _buildCategoryGrid(context, ref, draft.categories, categories),
 
                   const SizedBox(height: 36),
 
                   // Next Button
                   LargeButton(
-                    label: 'Next',
+                    label: l10n.next,
                     leadingIcon: const _AnimatedArrow(),
                     onPressed: () {
                       context.push('/consultation/add-details');

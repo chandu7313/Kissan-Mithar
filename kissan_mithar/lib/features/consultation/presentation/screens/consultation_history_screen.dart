@@ -6,6 +6,7 @@ import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../models/consultation_model.dart';
 import '../../providers/consultation_provider.dart';
 import 'consultation_detail_screen.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ConsultationHistoryScreen extends ConsumerStatefulWidget {
   const ConsultationHistoryScreen({super.key});
@@ -256,7 +257,7 @@ class _ConsultationHistoryScreenState
     );
   }
 
-  Widget _buildEmptyState(String message) {
+  Widget _buildEmptyState(String message, AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
@@ -277,9 +278,9 @@ class _ConsultationHistoryScreenState
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'No Consultations Found',
-              style: TextStyle(
+            Text(
+              l10n.noConsultationsFound,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -310,8 +311,8 @@ class _ConsultationHistoryScreenState
                 context.push('/consultation');
               },
               icon: const Icon(Icons.add_rounded, size: 20),
-              label: const Text('Book an Expert',
-                  style: TextStyle(fontWeight: FontWeight.w800)),
+              label: Text(l10n.bookAnExpert,
+                  style: const TextStyle(fontWeight: FontWeight.w800)),
             ),
           ],
         ),
@@ -322,6 +323,7 @@ class _ConsultationHistoryScreenState
   @override
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(consultationsHistoryProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -350,10 +352,10 @@ class _ConsultationHistoryScreenState
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'My Consultations',
-                          style: TextStyle(
+                          l10n.myConsultations,
+                          style: const TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w900,
                             color: AppColors.textPrimary,
@@ -365,9 +367,9 @@ class _ConsultationHistoryScreenState
                         onPressed: () => context.push('/consultation'),
                         icon: const Icon(Icons.add_rounded,
                             color: AppColors.primaryGreen),
-                        label: const Text(
-                          'New Session',
-                          style: TextStyle(
+                        label: Text(
+                          l10n.newSession,
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w800,
                             color: AppColors.primaryGreen,
@@ -403,9 +405,9 @@ class _ConsultationHistoryScreenState
                       fontWeight: FontWeight.w600,
                     ),
                     dividerColor: Colors.transparent,
-                    tabs: const [
-                      Tab(text: 'Upcoming'),
-                      Tab(text: 'Past History'),
+                    tabs: [
+                      Tab(text: l10n.upcoming),
+                      Tab(text: l10n.pastHistory),
                     ],
                   ),
                 ),
@@ -437,7 +439,7 @@ class _ConsultationHistoryScreenState
                             },
                             child: upcoming.isEmpty
                                 ? _buildEmptyState(
-                                    'You have no scheduled consultations. Connect with an expert today!')
+                                    l10n.noScheduledConsultations, l10n)
                                 : ListView.builder(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 12),
@@ -455,7 +457,7 @@ class _ConsultationHistoryScreenState
                             },
                             child: past.isEmpty
                                 ? _buildEmptyState(
-                                    'No completed consultations found.')
+                                    l10n.noConsultationsFound, l10n)
                                 : ListView.builder(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 12),

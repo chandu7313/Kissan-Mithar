@@ -2,15 +2,18 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../models/weather_model.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class RainfallChartCard extends StatelessWidget {
   final List<RainfallDataPoint> rainfallTrend;
   final int rainChance;
+  final AppLocalizations l10n;
 
   const RainfallChartCard({
     super.key,
     required this.rainfallTrend,
     required this.rainChance,
+    required this.l10n,
   });
 
   @override
@@ -65,23 +68,23 @@ class RainfallChartCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Rainfall Trend & Volume',
+                            l10n.rainfallTrendAndVolume,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
                               color: AppColors.textPrimary,
                             ),
                           ),
                           Text(
-                            'Expected precipitation in mm',
+                            l10n.expectedPrecipitationInMm,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 11,
                               color: AppColors.textSecondary,
                             ),
@@ -107,7 +110,7 @@ class RainfallChartCard extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  '${totalRainMm.toStringAsFixed(1)} mm Total',
+                  l10n.mmTotal(totalRainMm.toStringAsFixed(1)),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
@@ -269,10 +272,10 @@ class RainfallChartCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     totalRainMm >= 10.0
-                        ? 'Heavy Rain Forecast: Stop irrigation pumps and ensure field run-off paths are clear.'
+                        ? l10n.heavyRainForecast
                         : (totalRainMm >= 2.0
-                            ? 'Moderate Rain: Natural soil moisture sufficient; pause drip irrigation for 24h.'
-                            : 'Light to Nil Rain: Maintain normal drip irrigation schedule.'),
+                            ? l10n.moderateRain
+                            : l10n.lightToNilRain),
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,

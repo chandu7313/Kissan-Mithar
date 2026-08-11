@@ -9,6 +9,7 @@ class VoiceRecorderCard extends StatefulWidget {
   final ValueChanged<int>? onDurationChanged;
   final String title;
   final String hintText;
+  final String tapToStartRecordingLabel;
 
   const VoiceRecorderCard({
     super.key,
@@ -18,6 +19,7 @@ class VoiceRecorderCard extends StatefulWidget {
     this.onDurationChanged,
     this.title = 'Record Voice Note',
     this.hintText = 'Tap mic and explain your problem in your language',
+    this.tapToStartRecordingLabel = 'Tap to Start Voice Recording',
   });
 
   @override
@@ -344,20 +346,20 @@ class _VoiceRecorderCardState extends State<VoiceRecorderCard>
                     style: BorderStyle.solid,
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.mic_rounded,
                       color: AppColors.primaryGreen,
                       size: 26,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Flexible(
                       child: Text(
-                        'Tap to Start Voice Recording',
+                        widget.tapToStartRecordingLabel,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryGreen,

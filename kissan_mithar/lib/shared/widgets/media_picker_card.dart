@@ -11,6 +11,8 @@ class MediaPickerCard extends StatefulWidget {
   final int maxItems;
   final String title;
   final String hintText;
+  final String takePhotoLabel;
+  final String uploadFromGalleryLabel;
   final bool allowVideo;
 
   const MediaPickerCard({
@@ -20,6 +22,8 @@ class MediaPickerCard extends StatefulWidget {
     this.maxItems = 4,
     this.title = 'Add Photos of Crop Issue',
     this.hintText = 'Upload clear photos of leaves, stems, or pests for better diagnosis',
+    this.takePhotoLabel = 'Take Photo',
+    this.uploadFromGalleryLabel = 'Upload from gallery',
     this.allowVideo = false,
   });
 
@@ -341,15 +345,15 @@ class _MediaPickerCardState extends State<MediaPickerCard> {
                               width: 1.5,
                             ),
                           ),
-                          child: const Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.camera_alt_rounded,
+                              const Icon(Icons.camera_alt_rounded,
                                   color: AppColors.primaryGreen, size: 30),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
-                                'Take Photo',
-                                style: TextStyle(
+                                widget.takePhotoLabel,
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.primaryGreen,
@@ -363,9 +367,9 @@ class _MediaPickerCardState extends State<MediaPickerCard> {
                     const SizedBox(height: 8),
                     InkWell(
                       onTap: () => _pickImage(ImageSource.gallery),
-                      child: const Text(
-                        'Upload from gallery',
-                        style: TextStyle(
+                      child: Text(
+                        widget.uploadFromGalleryLabel,
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: AppColors.primaryGreen,

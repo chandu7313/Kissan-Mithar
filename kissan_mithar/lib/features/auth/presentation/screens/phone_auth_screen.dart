@@ -8,6 +8,7 @@ import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../shared/widgets/farmer_illustration_banner.dart';
 import '../../../../shared/widgets/large_button.dart';
 import '../../providers/auth_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PhoneAuthScreen extends ConsumerStatefulWidget {
   const PhoneAuthScreen({super.key});
@@ -30,8 +31,8 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
     final phone = _phoneController.text.trim();
     if (phone.length < 10) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid 10-digit mobile number'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.enterValidMobile),
           backgroundColor: Colors.red,
         ),
       );
@@ -57,8 +58,8 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to send OTP. Please try again.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.failedToSendOtp),
           backgroundColor: Colors.red,
         ),
       );
@@ -67,6 +68,8 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: FarmerAppBar(
@@ -92,11 +95,11 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
                   const SizedBox(height: 28),
 
                   // Headline
-                  const Center(
+                  Center(
                     child: Text(
-                      'Enter Your Mobile\nNumber',
+                      l10n.enterYourMobileNumber,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
@@ -109,11 +112,11 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
                   const SizedBox(height: 10),
 
                   // Subtitle
-                  const Center(
+                  Center(
                     child: Text(
-                      "We'll send a code to verify.",
+                      l10n.weWillSendCode,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: AppColors.textSecondary,
@@ -124,9 +127,9 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
                   const SizedBox(height: 32),
 
                   // Label
-                  const Text(
-                    'Mobile Number',
-                    style: TextStyle(
+                  Text(
+                    l10n.mobileNumber,
+                    style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
@@ -193,15 +196,15 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
                               color: AppColors.textPrimary,
                               letterSpacing: 1.2,
                             ),
-                            decoration: const InputDecoration(
-                              hintText: '00000 00000',
-                              hintStyle: TextStyle(
+                            decoration: InputDecoration(
+                              hintText: l10n.mobileNumberHint,
+                              hintStyle: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFFA5ACA5),
                                 letterSpacing: 1.2,
                               ),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                               border: InputBorder.none,
                             ),
                           ),
@@ -214,7 +217,7 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
 
                   // Send OTP Button
                   LargeButton(
-                    label: _isSending ? 'Sending...' : 'Send OTP',
+                    label: _isSending ? l10n.sending : l10n.sendOtp,
                     leadingIcon: Icon(
                       _isSending ? Icons.hourglass_top_rounded : Icons.send_rounded,
                       color: Colors.white,

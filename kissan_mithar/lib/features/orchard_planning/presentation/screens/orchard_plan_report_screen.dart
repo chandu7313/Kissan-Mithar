@@ -25,15 +25,16 @@ class OrchardPlanReportScreen extends ConsumerWidget {
   }
 
   void _showDownloadDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.download_done_rounded, color: AppColors.primary),
-            SizedBox(width: 8),
-            Text(l10n.planDownloaded, style: TextStyle(fontWeight: FontWeight.bold)),
+            const Icon(Icons.download_done_rounded, color: AppColors.primary),
+            const SizedBox(width: 8),
+            Text(l10n.planDownloaded, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         content: const Text(

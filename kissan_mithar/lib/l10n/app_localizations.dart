@@ -504,11 +504,11 @@ abstract class AppLocalizations {
   /// **'Step'**
   String get step;
 
-  /// No description provided for @of.
+  /// No description provided for @ofText.
   ///
   /// In en, this message translates to:
   /// **'of'**
-  String get of;
+  String get ofText;
 
   /// No description provided for @submittingFarmDetails.
   ///
@@ -743,6 +743,756 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'1 Acre = 40 Guntas = 100 Cents'**
   String get acreGuntaCent;
+
+  /// No description provided for @whereIsYourLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Where is your land?'**
+  String get whereIsYourLand;
+
+  /// No description provided for @autoDetectLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Detect Location'**
+  String get autoDetectLocation;
+
+  /// No description provided for @detectingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Detecting Location...'**
+  String get detectingLocation;
+
+  /// No description provided for @chooseOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose on Map'**
+  String get chooseOnMap;
+
+  /// No description provided for @tapToCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to capture'**
+  String get tapToCapture;
+
+  /// No description provided for @detectedLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected Location'**
+  String get detectedLocation;
+
+  /// No description provided for @tellUsAboutYourLand.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your land'**
+  String get tellUsAboutYourLand;
+
+  /// No description provided for @enterYourMobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Your Mobile\nNumber'**
+  String get enterYourMobileNumber;
+
+  /// No description provided for @weWillSendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send a code to verify.'**
+  String get weWillSendCode;
+
+  /// No description provided for @mobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Number'**
+  String get mobileNumber;
+
+  /// No description provided for @mobileNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'00000 00000'**
+  String get mobileNumberHint;
+
+  /// No description provided for @sending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get sending;
+
+  /// No description provided for @sendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get sendOtp;
+
+  /// No description provided for @enterValidMobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid 10-digit mobile number'**
+  String get enterValidMobile;
+
+  /// No description provided for @failedToSendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send OTP. Please try again.'**
+  String get failedToSendOtp;
+
+  /// No description provided for @verifyYourNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your number'**
+  String get verifyYourNumber;
+
+  /// No description provided for @enter6DigitCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code sent to'**
+  String get enter6DigitCode;
+
+  /// No description provided for @pleaseEnterCompleteOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the complete 6-digit OTP'**
+  String get pleaseEnterCompleteOtp;
+
+  /// No description provided for @invalidOtpTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid OTP. Please try again.'**
+  String get invalidOtpTryAgain;
+
+  /// No description provided for @resendOtpIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP in '**
+  String get resendOtpIn;
+
+  /// No description provided for @resendOtpNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP Now'**
+  String get resendOtpNow;
+
+  /// No description provided for @verifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying...'**
+  String get verifying;
+
+  /// No description provided for @verify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get verify;
+
+  /// No description provided for @newOtpSent.
+  ///
+  /// In en, this message translates to:
+  /// **'A new OTP has been sent!'**
+  String get newOtpSent;
+
+  /// No description provided for @stayUpdatedOnYourFarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay Updated On\nYour Farm'**
+  String get stayUpdatedOnYourFarm;
+
+  /// No description provided for @enableAlertsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable alerts to receive timely weather, expert consultation, and market price updates.'**
+  String get enableAlertsSubtitle;
+
+  /// No description provided for @severeWeatherWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Severe Weather Warnings'**
+  String get severeWeatherWarnings;
+
+  /// No description provided for @severeWeatherDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Know when unexpected heavy rain or storms approach so you can delay spray cycles and protect crops.'**
+  String get severeWeatherDesc;
+
+  /// No description provided for @agronomistCallReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Agronomist Call Reminders'**
+  String get agronomistCallReminders;
+
+  /// No description provided for @agronomistCallDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a reminder 15 minutes before your scheduled voice/video session with certified crop doctors.'**
+  String get agronomistCallDesc;
+
+  /// No description provided for @mandiMarketRateAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandi Market Rate Alerts'**
+  String get mandiMarketRateAlerts;
+
+  /// No description provided for @mandiMarketRateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive real-time price updates for Mango, Guava, Cotton, and crops at your nearest mandi.'**
+  String get mandiMarketRateDesc;
+
+  /// No description provided for @orchardPlanReadyAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Orchard Plan Ready Alert'**
+  String get orchardPlanReadyAlert;
+
+  /// No description provided for @orchardPlanReadyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified immediately when your customized farm layout and tree plantation map is prepared.'**
+  String get orchardPlanReadyDesc;
+
+  /// No description provided for @enablingAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabling Alerts...'**
+  String get enablingAlerts;
+
+  /// No description provided for @turnOnNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn On Notifications'**
+  String get turnOnNotifications;
+
+  /// No description provided for @maybeLaterSkipForNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe Later, Skip for Now'**
+  String get maybeLaterSkipForNow;
+
+  /// No description provided for @languagePreference.
+  ///
+  /// In en, this message translates to:
+  /// **'Language Preference'**
+  String get languagePreference;
+
+  /// No description provided for @changingLanguageUpdatesApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing language updates the entire app instantly'**
+  String get changingLanguageUpdatesApp;
+
+  /// No description provided for @savedOrchardPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Orchard Plans'**
+  String get savedOrchardPlans;
+
+  /// No description provided for @callHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Call History'**
+  String get callHistory;
+
+  /// No description provided for @downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get downloads;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @myConsultations.
+  ///
+  /// In en, this message translates to:
+  /// **'My Consultations'**
+  String get myConsultations;
+
+  /// No description provided for @newSession.
+  ///
+  /// In en, this message translates to:
+  /// **'New Session'**
+  String get newSession;
+
+  /// No description provided for @upcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
+  /// No description provided for @pastHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Past History'**
+  String get pastHistory;
+
+  /// No description provided for @noScheduledConsultations.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no scheduled consultations. Connect with an expert today!'**
+  String get noScheduledConsultations;
+
+  /// No description provided for @noConsultationsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Consultations Found'**
+  String get noConsultationsFound;
+
+  /// No description provided for @bookAnExpert.
+  ///
+  /// In en, this message translates to:
+  /// **'Book an Expert'**
+  String get bookAnExpert;
+
+  /// No description provided for @noDownloadedFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'No Downloaded Files'**
+  String get noDownloadedFiles;
+
+  /// No description provided for @savedReportsAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Your saved reports and PDFs\nwill appear here.'**
+  String get savedReportsAppearHere;
+
+  /// No description provided for @filesCachedLocally.
+  ///
+  /// In en, this message translates to:
+  /// **'files cached locally'**
+  String get filesCachedLocally;
+
+  /// No description provided for @clearCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clearCache;
+
+  /// No description provided for @offlineSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Sync'**
+  String get offlineSync;
+
+  /// No description provided for @lastSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synced 2 min ago'**
+  String get lastSynced;
+
+  /// No description provided for @cacheStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Storage'**
+  String get cacheStorage;
+
+  /// No description provided for @cacheUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'12.5 MB used'**
+  String get cacheUsed;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get appVersion;
+
+  /// No description provided for @privacyPolicyTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy & Terms'**
+  String get privacyPolicyTerms;
+
+  /// No description provided for @clearAllCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All Cache'**
+  String get clearAllCache;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @unread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get unread;
+
+  /// No description provided for @alertsWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts & Warnings'**
+  String get alertsWarnings;
+
+  /// No description provided for @noNotificationsFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Notifications Found'**
+  String get noNotificationsFoundTitle;
+
+  /// No description provided for @seenAllAdvisories.
+  ///
+  /// In en, this message translates to:
+  /// **'You have seen all advisories and alerts.'**
+  String get seenAllAdvisories;
+
+  /// No description provided for @markAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get markAllRead;
+
+  /// No description provided for @step1Of2SessionPreference.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 1 of 2: Session Preference'**
+  String get step1Of2SessionPreference;
+
+  /// No description provided for @myBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get myBookings;
+
+  /// No description provided for @chooseConsultationMode.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Choose Consultation Mode'**
+  String get chooseConsultationMode;
+
+  /// No description provided for @voiceCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice Call'**
+  String get voiceCall;
+
+  /// No description provided for @videoCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Call'**
+  String get videoCall;
+
+  /// No description provided for @chatAdvisory.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat Advisory'**
+  String get chatAdvisory;
+
+  /// No description provided for @selectCropIssueCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Select Crop Issue Category'**
+  String get selectCropIssueCategory;
+
+  /// No description provided for @pestAndDisease.
+  ///
+  /// In en, this message translates to:
+  /// **'Pest & Disease'**
+  String get pestAndDisease;
+
+  /// No description provided for @pestAndDiseaseSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Insects, fungal rot, blight'**
+  String get pestAndDiseaseSub;
+
+  /// No description provided for @soilAndFertilizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Soil & Fertilizer'**
+  String get soilAndFertilizer;
+
+  /// No description provided for @soilAndFertilizerSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrients, salinity, pH'**
+  String get soilAndFertilizerSub;
+
+  /// No description provided for @waterAndDrip.
+  ///
+  /// In en, this message translates to:
+  /// **'Water & Drip'**
+  String get waterAndDrip;
+
+  /// No description provided for @waterAndDripSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Irrigation, pump pressure'**
+  String get waterAndDripSub;
+
+  /// No description provided for @cropPlanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop Planning'**
+  String get cropPlanning;
+
+  /// No description provided for @cropPlanningSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Varieties, sowing guide'**
+  String get cropPlanningSub;
+
+  /// No description provided for @growthAndFlowering.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth & Flowering'**
+  String get growthAndFlowering;
+
+  /// No description provided for @growthAndFloweringSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Flower drop, fruit size'**
+  String get growthAndFloweringSub;
+
+  /// No description provided for @marketAndPricing.
+  ///
+  /// In en, this message translates to:
+  /// **'Market & Pricing'**
+  String get marketAndPricing;
+
+  /// No description provided for @marketAndPricingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandi rates, buyer links'**
+  String get marketAndPricingSub;
+
+  /// No description provided for @addCropIssueDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Crop Issue Details'**
+  String get addCropIssueDetails;
+
+  /// No description provided for @step2PhotosVoiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 of 2: Photos, Voice & Description'**
+  String get step2PhotosVoiceDesc;
+
+  /// No description provided for @uploadingBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading & Booking...'**
+  String get uploadingBooking;
+
+  /// No description provided for @confirmAndBookExpert.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Book Expert'**
+  String get confirmAndBookExpert;
+
+  /// No description provided for @addPhotosOfCropIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photos of Crop Issue'**
+  String get addPhotosOfCropIssue;
+
+  /// No description provided for @uploadClearPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload clear photos of leaves, stems, or pests for better diagnosis'**
+  String get uploadClearPhotos;
+
+  /// No description provided for @uploadFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload from gallery'**
+  String get uploadFromGallery;
+
+  /// No description provided for @recordVoiceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Voice Note'**
+  String get recordVoiceNote;
+
+  /// No description provided for @tapMicAndExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap mic and explain your problem in your language'**
+  String get tapMicAndExplain;
+
+  /// No description provided for @tapToStartVoiceRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to Start Voice Recording'**
+  String get tapToStartVoiceRecording;
+
+  /// No description provided for @gpsSync.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS Sync'**
+  String get gpsSync;
+
+  /// No description provided for @liveSatelliteWeather.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Satellite Weather'**
+  String get liveSatelliteWeather;
+
+  /// No description provided for @cachedOfflineData.
+  ///
+  /// In en, this message translates to:
+  /// **'Cached Offline Data'**
+  String get cachedOfflineData;
+
+  /// No description provided for @updatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated: {time}'**
+  String updatedAt(Object time);
+
+  /// No description provided for @feelsLike.
+  ///
+  /// In en, this message translates to:
+  /// **'Feels like {temp}°C • High: {high}° Low: {low}°'**
+  String feelsLike(Object high, Object low, Object temp);
+
+  /// No description provided for @rainProb.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain Prob.'**
+  String get rainProb;
+
+  /// No description provided for @windDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind ({dir})'**
+  String windDirection(Object dir);
+
+  /// No description provided for @rainfallTrendAndVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Rainfall Trend & Volume'**
+  String get rainfallTrendAndVolume;
+
+  /// No description provided for @expectedPrecipitationInMm.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected precipitation in mm'**
+  String get expectedPrecipitationInMm;
+
+  /// No description provided for @mmTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{total} mm Total'**
+  String mmTotal(Object total);
+
+  /// No description provided for @heavyRainForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy Rain Forecast: Stop irrigation pumps and ensure field run-off paths are clear.'**
+  String get heavyRainForecast;
+
+  /// No description provided for @moderateRain.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate Rain: Natural soil moisture sufficient; pause drip irrigation for 24h.'**
+  String get moderateRain;
+
+  /// No description provided for @lightToNilRain.
+  ///
+  /// In en, this message translates to:
+  /// **'Light to Nil Rain: Maintain normal drip irrigation schedule.'**
+  String get lightToNilRain;
+
+  /// No description provided for @atmosphericAndFieldConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Atmospheric & Field Conditions'**
+  String get atmosphericAndFieldConditions;
+
+  /// No description provided for @uvIndex.
+  ///
+  /// In en, this message translates to:
+  /// **'UV Index'**
+  String get uvIndex;
+
+  /// No description provided for @uvLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get uvLow;
+
+  /// No description provided for @uvModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get uvModerate;
+
+  /// No description provided for @uvHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get uvHigh;
+
+  /// No description provided for @uvVeryHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Very High'**
+  String get uvVeryHigh;
+
+  /// No description provided for @solarRadiationIntensity.
+  ///
+  /// In en, this message translates to:
+  /// **'Solar radiation intensity'**
+  String get solarRadiationIntensity;
+
+  /// No description provided for @airPressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Air Pressure'**
+  String get airPressure;
+
+  /// No description provided for @atmosphericDensity.
+  ///
+  /// In en, this message translates to:
+  /// **'Atmospheric density'**
+  String get atmosphericDensity;
+
+  /// No description provided for @dewPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Dew Point'**
+  String get dewPoint;
+
+  /// No description provided for @moistureCondensation.
+  ///
+  /// In en, this message translates to:
+  /// **'Moisture condensation'**
+  String get moistureCondensation;
+
+  /// No description provided for @windDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind Direction'**
+  String get windDir;
+
+  /// No description provided for @foliarDriftFactor.
+  ///
+  /// In en, this message translates to:
+  /// **'Foliar drift factor'**
+  String get foliarDriftFactor;
+
+  /// No description provided for @sunrise.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise'**
+  String get sunrise;
+
+  /// No description provided for @sunset.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunset'**
+  String get sunset;
 }
 
 class _AppLocalizationsDelegate

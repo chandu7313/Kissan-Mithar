@@ -356,24 +356,29 @@ class HomeScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.wb_sunny_rounded,
-                      color: Color(0xFFFFD54F),
-                      size: 20,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      l10n.todayForecast,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white70,
-                        letterSpacing: 0.8,
+                Expanded(
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.wb_sunny_rounded,
+                        color: Color(0xFFFFD54F),
+                        size: 20,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          l10n.todayForecast,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white70,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),

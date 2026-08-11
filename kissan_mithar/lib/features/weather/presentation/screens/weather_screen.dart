@@ -9,6 +9,7 @@ import '../widgets/agriculture_alert_card.dart';
 import '../widgets/daily_forecast_list.dart';
 import '../widgets/hourly_forecast_strip.dart';
 import '../widgets/rainfall_chart_card.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class WeatherScreen extends ConsumerWidget {
   final VoidCallback? onHomeTap;
@@ -26,6 +27,7 @@ class WeatherScreen extends ConsumerWidget {
     final weather = weatherState.data;
     final timeFormat = DateFormat('h:mm a, d MMM');
     final updatedTimeStr = timeFormat.format(weather.lastUpdated);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -76,7 +78,7 @@ class WeatherScreen extends ConsumerWidget {
                 ),
                 children: [
                   // 1. Location Bar & Offline Indicator
-                  _buildLocationHeader(context, ref, weather, updatedTimeStr),
+                  _buildLocationHeader(context, ref, weather, updatedTimeStr, l10n),
                   const SizedBox(height: 14),
 
                   // 2. Agriculture Alerts Banner (Prominent Orange Banner)
@@ -87,7 +89,7 @@ class WeatherScreen extends ConsumerWidget {
                   ],
 
                   // 3. Current Weather Hero Card
-                  _buildCurrentWeatherHero(weather),
+                  _buildCurrentWeatherHero(weather, l10n),
                   const SizedBox(height: 20),
 
                   // 4. Hourly Forecast Strip (Next 24h)
@@ -97,6 +99,7 @@ class WeatherScreen extends ConsumerWidget {
                   RainfallChartCard(
                     rainfallTrend: weather.rainfallTrend,
                     rainChance: weather.rainChance,
+                    l10n: l10n,
                   ),
 
                   // 6. 7-Day Agricultural Forecast List
@@ -104,11 +107,11 @@ class WeatherScreen extends ConsumerWidget {
                   const SizedBox(height: 20),
 
                   // 7. Atmospheric & Farm Conditions Grid
-                  _buildAtmosphericGrid(weather),
+                  _buildAtmosphericGrid(weather, l10n),
                   const SizedBox(height: 24),
 
                   // 8. Sun & Daylight Schedule
-                  _buildSunScheduleCard(weather),
+                  _buildSunScheduleCard(weather, l10n),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -124,6 +127,7 @@ class WeatherScreen extends ConsumerWidget {
     WidgetRef ref,
     WeatherData weather,
     String updatedTimeStr,
+    AppLocalizations l10n,
   ) {
     return Container(
       padding: const EdgeInsets.all(14),
@@ -199,15 +203,15 @@ class WeatherScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: const Color(0xFF81C784)),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.gps_fixed_rounded,
+                      const Icon(Icons.gps_fixed_rounded,
                           size: 13, color: AppColors.primaryGreen),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
-                        'GPS Sync',
-                        style: TextStyle(
+                        l10n.gpsSync,
+                        style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           color: AppColors.primaryGreen,
@@ -242,8 +246,8 @@ class WeatherScreen extends ConsumerWidget {
                     Flexible(
                       child: Text(
                         weather.isOffline
-                            ? 'Cached Offline Data'
-                            : 'Live Satellite Weather',
+                            ? l10n.cachedOfflineData
+                            : l10n.liveSatelliteWeather,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 12,
@@ -259,7 +263,7 @@ class WeatherScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'Updated: $updatedTimeStr',
+                l10n.updatedAt(updatedTimeStr),
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -273,7 +277,7 @@ class WeatherScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCurrentWeatherHero(WeatherData weather) {
+  Widget _buildCurrentWeatherHero(WeatherData weather, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -325,7 +329,10 @@ class WeatherScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Feels like ${weather.feelsLike.round()}°C • High: ${weather.maxTemp.round()}° Low: ${weather.minTemp.round()}°',
+                      l10n.feelsLike(
+                          weather.feelsLike.round().toString(),
+                          weather.maxTemp.round().toString(),
+                          weather.minTemp.round().toString()),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -367,7 +374,7 @@ class WeatherScreen extends ConsumerWidget {
                   child: _buildHeroMetric(
                     Icons.water_drop_outlined,
                     '${weather.rainChance}%',
-                    'Rain Prob.',
+                    l10n.rainProb,
                   ),
                 ),
                 Container(
@@ -378,7 +385,7 @@ class WeatherScreen extends ConsumerWidget {
                   child: _buildHeroMetric(
                     Icons.opacity_rounded,
                     '${weather.humidity}%',
-                    'Humidity',
+                    l10n.humidity,
                   ),
                 ),
                 Container(
@@ -389,7 +396,7 @@ class WeatherScreen extends ConsumerWidget {
                   child: _buildHeroMetric(
                     Icons.air_rounded,
                     '${weather.windSpeed.round()} km/h',
-                    'Wind (${weather.windDirection})',
+                    l10n.windDirection(weather.windDirection),
                   ),
                 ),
               ],
@@ -431,15 +438,15 @@ class WeatherScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAtmosphericGrid(WeatherData weather) {
+  Widget _buildAtmosphericGrid(WeatherData weather, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
           child: Text(
-            'Atmospheric & Field Conditions',
-            style: TextStyle(
+            l10n.atmosphericAndFieldConditions,
+            style: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
@@ -459,30 +466,30 @@ class WeatherScreen extends ConsumerWidget {
             _buildGridTile(
               icon: Icons.wb_sunny_outlined,
               iconColor: const Color(0xFFF57F17),
-              title: 'UV Index',
-              value: '${weather.uvIndex} (${_getUvLabel(weather.uvIndex)})',
-              subtitle: 'Solar radiation intensity',
+              title: l10n.uvIndex,
+              value: '${weather.uvIndex} (${_getUvLabel(weather.uvIndex, l10n)})',
+              subtitle: l10n.solarRadiationIntensity,
             ),
             _buildGridTile(
               icon: Icons.speed_rounded,
               iconColor: const Color(0xFF00897B),
-              title: 'Air Pressure',
+              title: l10n.airPressure,
               value: '${weather.pressureHpa} hPa',
-              subtitle: 'Atmospheric density',
+              subtitle: l10n.atmosphericDensity,
             ),
             _buildGridTile(
               icon: Icons.dew_point,
               iconColor: const Color(0xFF0288D1),
-              title: 'Dew Point',
+              title: l10n.dewPoint,
               value: '${weather.dewPoint.round()}°C',
-              subtitle: 'Moisture condensation',
+              subtitle: l10n.moistureCondensation,
             ),
             _buildGridTile(
               icon: Icons.air_rounded,
               iconColor: const Color(0xFF5D4037),
-              title: 'Wind Direction',
+              title: l10n.windDir,
               value: '${weather.windDirection} • ${weather.windSpeed.round()} km/h',
-              subtitle: 'Foliar drift factor',
+              subtitle: l10n.foliarDriftFactor,
             ),
           ],
         ),
@@ -560,7 +567,7 @@ class WeatherScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSunScheduleCard(WeatherData weather) {
+  Widget _buildSunScheduleCard(WeatherData weather, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -582,9 +589,9 @@ class WeatherScreen extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Sunrise',
-                    style: TextStyle(
+                  Text(
+                    l10n.sunrise,
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                       fontWeight: FontWeight.w600,
@@ -614,9 +621,9 @@ class WeatherScreen extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Sunset',
-                    style: TextStyle(
+                  Text(
+                    l10n.sunset,
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                       fontWeight: FontWeight.w600,
@@ -639,10 +646,10 @@ class WeatherScreen extends ConsumerWidget {
     );
   }
 
-  String _getUvLabel(double uv) {
-    if (uv < 3) return 'Low';
-    if (uv < 6) return 'Moderate';
-    if (uv < 8) return 'High';
-    return 'Very High';
+  String _getUvLabel(double uv, AppLocalizations l10n) {
+    if (uv < 3) return l10n.uvLow;
+    if (uv < 6) return l10n.uvModerate;
+    if (uv < 8) return l10n.uvHigh;
+    return l10n.uvVeryHigh;
   }
 }

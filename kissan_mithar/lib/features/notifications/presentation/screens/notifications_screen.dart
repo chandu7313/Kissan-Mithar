@@ -6,6 +6,7 @@ import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../models/notification_model.dart';
 import '../../providers/notifications_provider.dart';
 import '../../services/notification_service.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class NotificationsScreen extends ConsumerStatefulWidget {
   final VoidCallback? onHomeTap;
@@ -240,6 +241,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final unreadCount = state.items.where((i) => !i.isRead).length;
     final alertCount =
         state.items.where((i) => i.type == NotificationType.alert).length;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -258,9 +260,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 size: 18,
                 color: AppColors.primaryGreen,
               ),
-              label: const Text(
-                'Mark all read',
-                style: TextStyle(
+              label: Text(
+                l10n.markAllRead,
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: AppColors.primaryGreen,
@@ -289,9 +291,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
                       children: [
-                        _buildFilterChip('All', 'all', state.selectedFilter, allCount),
-                        _buildFilterChip('Unread', 'unread', state.selectedFilter, unreadCount),
-                        _buildFilterChip('Alerts & Warnings', 'alert', state.selectedFilter, alertCount),
+                        _buildFilterChip(l10n.all, 'all', state.selectedFilter, allCount),
+                        _buildFilterChip(l10n.unread, 'unread', state.selectedFilter, unreadCount),
+                        _buildFilterChip(l10n.alertsWarnings, 'alert', state.selectedFilter, alertCount),
                       ],
                     ),
                   ),
@@ -336,19 +338,19 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          const Text(
-                            'No Notifications Found',
-                            style: TextStyle(
+                          Text(
+                            l10n.noNotificationsFoundTitle,
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
-                            'You have seen all advisories and alerts.',
+                          Text(
+                            l10n.seenAllAdvisories,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               color: AppColors.textSecondary,
                             ),

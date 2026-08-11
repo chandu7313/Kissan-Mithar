@@ -7,6 +7,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../shared/widgets/large_button.dart';
 import '../../providers/auth_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OtpVerifyScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -58,8 +59,8 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(devOtp != null
-            ? 'A new OTP has been sent! (Dev: $devOtp)'
-            : 'A new OTP has been sent!'),
+            ? '${AppLocalizations.of(context)!.newOtpSent} (Dev: $devOtp)'
+            : AppLocalizations.of(context)!.newOtpSent),
         backgroundColor: AppColors.primaryGreen,
       ),
     );
@@ -81,8 +82,8 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
     final enteredOtp = _controllers.map((c) => c.text).join();
     if (enteredOtp.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter the complete 6-digit OTP'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.pleaseEnterCompleteOtp),
           backgroundColor: Colors.red,
         ),
       );
@@ -104,8 +105,8 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
       context.go('/notification-permission');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid OTP. Please try again.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.invalidOtpTryAgain),
           backgroundColor: Colors.red,
         ),
       );
@@ -114,6 +115,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final timerText =
         '00:${_remainingSeconds.toString().padLeft(2, '0')}';
 
@@ -163,10 +165,10 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                   const SizedBox(height: 24),
 
                   // Header
-                  const Text(
-                    'Verify your number',
+                  Text(
+                    l10n.verifyYourNumber,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
@@ -177,10 +179,10 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                   const SizedBox(height: 12),
 
                   // Subtitle
-                  const Text(
-                    'Enter the 6-digit code sent to',
+                  Text(
+                    l10n.enter6DigitCode,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w500,
                       color: AppColors.textSecondary,
@@ -295,9 +297,9 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                           color: AppColors.secondaryBrown,
                         ),
                         const SizedBox(width: 6),
-                        const Text(
-                          'Resend OTP in ',
-                          style: TextStyle(
+                        Text(
+                          l10n.resendOtpIn,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                             color: AppColors.secondaryBrown,
@@ -317,9 +319,9 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
                     TextButton.icon(
                       onPressed: _resendOtp,
                       icon: const Icon(Icons.refresh_rounded, color: AppColors.primaryGreen),
-                      label: const Text(
-                        'Resend OTP Now',
-                        style: TextStyle(
+                      label: Text(
+                        l10n.resendOtpNow,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryGreen,
@@ -331,7 +333,7 @@ class _OtpVerifyScreenState extends ConsumerState<OtpVerifyScreen> {
 
                   // Verify Button
                   LargeButton(
-                    label: _isVerifying ? 'Verifying...' : 'Verify',
+                    label: _isVerifying ? l10n.verifying : l10n.verify,
                     leadingIcon: Icon(
                       _isVerifying ? Icons.hourglass_top_rounded : Icons.verified_outlined,
                       color: Colors.white,
