@@ -1,5 +1,5 @@
-import { createApp } from '../src/app';
-import { initFirebase } from '../src/config/firebase';
+import { createApp } from '../src/app.js';
+import { initFirebase } from '../src/config/firebase.js';
 
 // Initialize Firebase for serverless environment
 try {
