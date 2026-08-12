@@ -95,6 +95,20 @@ export class WeatherService {
     return alerts;
   }
 
+  private static mapWmoCode(code: number): { icon: string; text: string } {
+    switch (code) {
+      case 0: return { icon: 'wb_sunny', text: 'Clear Sky' };
+      case 1: case 2: case 3: return { icon: 'partly_cloudy_day', text: 'Partly Cloudy' };
+      case 45: case 48: return { icon: 'foggy', text: 'Fog' };
+      case 51: case 53: case 55: return { icon: 'rainy', text: 'Drizzle' };
+      case 61: case 63: case 65: return { icon: 'rainy', text: 'Rain' };
+      case 71: case 73: case 75: return { icon: 'ac_unit', text: 'Snow' };
+      case 80: case 81: case 82: return { icon: 'thunderstorm', text: 'Rain Showers' };
+      case 95: case 96: case 99: return { icon: 'thunderstorm', text: 'Thunderstorm' };
+      default: return { icon: 'cloud', text: 'Cloudy' };
+    }
+  }
+
   /**
    * Generates realistic simulated weather forecast data for Indian agricultural zones
    */
@@ -194,62 +208,100 @@ export class WeatherService {
 
     let weatherData: WeatherResponseDto;
 
-    if (env.WEATHER_API_KEY && !env.MOCK_WEATHER_FALLBACK) {
-      try {
-        const response = await axios.get(`${env.WEATHER_API_URL}/forecast`, {
-          params: {
-            lat,
-            lon: lng,
-            appid: env.WEATHER_API_KEY,
-            units: 'metric',
-          },
-          timeout: 5000,
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,precipitation_probability,precipitation,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=auto&past_days=7`;
+      
+      const response = await axios.get(url, { timeout: 8000 });
+      const data = response.data;
+
+      const currentTemp = data.current.temperature_2m;
+      const humidity = data.current.relative_humidity_2m;
+      const windKph = data.current.wind_speed_10m;
+      const maxRainProb = data.daily.precipitation_probability_max[0] || 0;
+      const precipitationMm = data.current.precipitation || 0;
+
+      const alerts = this.generateAgricultureAlerts(
+        currentTemp,
+        humidity,
+        windKph,
+        maxRainProb,
+        precipitationMm
+      );
+
+      const currentCode = this.mapWmoCode(data.current.weather_code);
+      
+      const hourly = [];
+      const nowIdx = data.hourly.time.findIndex((t: string) => new Date(t).getTime() >= Date.now());
+      const startIdx = nowIdx >= 0 ? nowIdx : 0;
+      for(let i=startIdx; i<startIdx+8; i++) {
+        if(i >= data.hourly.time.length) break;
+        const hTime = new Date(data.hourly.time[i]);
+        const hCode = this.mapWmoCode(data.hourly.weather_code[i]);
+        hourly.push({
+          time: `${hTime.getHours().toString().padStart(2, '0')}:00`,
+          tempC: data.hourly.temperature_2m[i],
+          rainProbability: data.hourly.precipitation_probability[i],
+          conditionIcon: hCode.icon,
+          conditionText: hCode.text,
         });
-
-        const raw = response.data;
-        const currentTemp = raw.list?.[0]?.main?.temp || 28;
-        const humidity = raw.list?.[0]?.main?.humidity || 65;
-        const windKph = (raw.list?.[0]?.wind?.speed || 3.5) * 3.6;
-        const rainProb = (raw.list?.[0]?.pop || 0.4) * 100;
-
-        const alerts = this.generateAgricultureAlerts(
-          currentTemp,
-          humidity,
-          windKph,
-          rainProb,
-          0
-        );
-
-        weatherData = {
-          location: {
-            name: raw.city?.name || 'Farm Location',
-            region: 'India',
-            country: 'India',
-            lat,
-            lon: lng,
-          },
-          current: {
-            tempC: currentTemp,
-            feelsLikeC: raw.list?.[0]?.main?.feels_like || currentTemp,
-            humidity,
-            conditionText: raw.list?.[0]?.weather?.[0]?.description || 'Clear Sky',
-            conditionIcon: 'partly_cloudy_day',
-            windKph: Math.round(windKph * 10) / 10,
-            windDirection: 'SW',
-            uvIndex: 6,
-            precipitationMm: 2.0,
-            lastUpdated: new Date().toISOString(),
-          },
-          hourly: [],
-          forecast: [],
-          rainfallHistory: [],
-          agricultureAlerts: alerts,
-        };
-      } catch (err) {
-        console.warn('[WeatherService] Live API failed, falling back to simulated data:', err);
-        weatherData = this.generateSimulatedWeather(lat, lng);
       }
-    } else {
+
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const forecast = [];
+      for(let i=7; i<7+7; i++) { // Skip 7 past days
+        if(i >= data.daily.time.length) break;
+        const d = new Date(data.daily.time[i]);
+        const dCode = this.mapWmoCode(data.daily.weather_code[i]);
+        const dayName = i === 7 ? 'Today' : i === 8 ? 'Tomorrow' : days[d.getDay()];
+        forecast.push({
+          date: d.toISOString().slice(0, 10),
+          dayName,
+          maxTempC: data.daily.temperature_2m_max[i],
+          minTempC: data.daily.temperature_2m_min[i],
+          rainProbability: data.daily.precipitation_probability_max[i],
+          rainfallMm: data.daily.precipitation_sum[i],
+          conditionText: dCode.text,
+          conditionIcon: dCode.icon,
+        });
+      }
+
+      const rainfallHistory = [];
+      for(let i=0; i<7; i++) {
+        const d = new Date(data.daily.time[i]);
+        rainfallHistory.push({
+          day: days[d.getDay()],
+          rainfallMm: data.daily.precipitation_sum[i]
+        });
+      }
+
+      weatherData = {
+        location: {
+          name: 'Live Device Location',
+          region: '',
+          country: '',
+          lat,
+          lon: lng,
+        },
+        current: {
+          tempC: currentTemp,
+          feelsLikeC: data.current.apparent_temperature,
+          humidity,
+          conditionText: currentCode.text,
+          conditionIcon: currentCode.icon,
+          windKph,
+          windDirection: 'WSW',
+          uvIndex: 6,
+          precipitationMm,
+          lastUpdated: new Date().toISOString(),
+        },
+        hourly,
+        forecast,
+        rainfallHistory,
+        agricultureAlerts: alerts,
+        cachedAt: new Date().toISOString(),
+      };
+    } catch (err) {
+      console.warn('[WeatherService] Live API failed, falling back to simulated data:', err);
       weatherData = this.generateSimulatedWeather(lat, lng);
     }
 

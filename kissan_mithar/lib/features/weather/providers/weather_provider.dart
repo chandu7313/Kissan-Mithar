@@ -91,17 +91,19 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
   }
 
   /// Retrieves saved farm location or uses device GPS
-  Future<Map<String, dynamic>> _resolveFarmCoordinates() async {
+  Future<Map<String, dynamic>> _resolveFarmCoordinates({bool forceDeviceLocation = false}) async {
     double lat = 18.8475;
     double lng = 73.9103;
     String locationName = 'Khed, Pune, Maharashtra';
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      // Check saved farm location
-      final savedFarm = prefs.getString(_savedFarmKey);
-      if (savedFarm != null) {
-        final Map<String, dynamic> farmMap = jsonDecode(savedFarm);
+      
+      if (!forceDeviceLocation) {
+        // Check saved farm location
+        final savedFarm = prefs.getString(_savedFarmKey);
+        if (savedFarm != null) {
+          final Map<String, dynamic> farmMap = jsonDecode(savedFarm);
         lat = (farmMap['lat'] as num?)?.toDouble() ?? lat;
         lng = (farmMap['lng'] as num?)?.toDouble() ?? lng;
         locationName = farmMap['name'] as String? ?? locationName;
@@ -125,6 +127,7 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
               .join(', ');
           return {'lat': lat, 'lng': lng, 'name': locationName};
         }
+      }
       }
 
       // Fallback: Native Device GPS
@@ -155,11 +158,12 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
     double? customLat,
     double? customLng,
     String? customLocationName,
+    bool forceDeviceLocation = false,
   }) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      final loc = await _resolveFarmCoordinates();
+      final loc = await _resolveFarmCoordinates(forceDeviceLocation: forceDeviceLocation);
       final lat = customLat ?? (loc['lat'] as double);
       final lng = customLng ?? (loc['lng'] as double);
       final name = customLocationName ?? (loc['name'] as String);
@@ -291,7 +295,7 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
   }
 
   void refreshWeather() {
-    fetchLiveWeather();
+    fetchLiveWeather(forceDeviceLocation: true);
   }
 
   // --- Helper generators for synthetic realistic forecasts ---
