@@ -6,6 +6,9 @@
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
 
+# Google Play Core (Flutter deferred components) — not used in standard APK builds
+-dontwarn com.google.android.play.core.**
+
 # Google Maps ProGuard Rules
 -keep class com.google.android.gms.maps.** { *; }
 -keep interface com.google.android.gms.maps.** { *; }
@@ -17,3 +20,4 @@
 -keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 -dontwarn javax.annotation.**
 -dontwarn org.checkerframework.**
+

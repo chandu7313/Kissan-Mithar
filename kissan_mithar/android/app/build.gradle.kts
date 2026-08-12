@@ -8,8 +8,7 @@ plugins {
 android {
     namespace = "com.kissanmithar.app"
     compileSdk = flutter.compileSdkVersion
-    buildToolsVersion = "34.0.0"
-// ndkVersion = flutter.ndkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -30,12 +29,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isMinifyEnabled = false
+            isShrinkResources = false
             // Signing with the debug keys for local release preview
             signingConfig = signingConfigs.getByName("debug")
         }
