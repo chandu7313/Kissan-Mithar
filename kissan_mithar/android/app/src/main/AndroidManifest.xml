@@ -27,7 +27,7 @@
     <application
         android:label="Kisan Mithar"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:allowBackup="true"
         android:supportsRtl="true">
 

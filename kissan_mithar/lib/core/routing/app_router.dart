@@ -16,8 +16,10 @@ import '../../features/notifications/presentation/screens/notifications_screen.d
 import '../../features/orchard_planning/presentation/screens/orchard_guided_flow_screen.dart';
 import '../../features/orchard_planning/presentation/screens/orchard_plan_report_screen.dart';
 import '../../features/orchard_planning/presentation/screens/plan_tracker_screen.dart';
+import '../../features/orchard_planning/presentation/screens/success_screen.dart';
 import '../../features/profile/presentation/screens/downloads_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/expert_portal/presentation/screens/expert_dashboard_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/weather/presentation/screens/weather_screen.dart';
 
@@ -37,6 +39,8 @@ class AppRoutes {
   static const String home = 'home';
   static const String notifications = 'notifications';
   static const String profile = 'profile';
+  static const String expertDashboard = 'expertDashboard';
+  static const String orchardSuccess = 'orchardSuccess';
   static const String landSize = 'landSize';
   static const String orchardFlow = 'orchardFlow';
   static const String planTracker = 'planTracker';
@@ -147,6 +151,19 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/orchard/success',
+      name: AppRoutes.orchardSuccess,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return OrchardSuccessScreen(
+          landSize: extra?['landSize'] as String? ?? '1-3 Acres',
+          soilType: extra?['soilType'] as String? ?? 'Red Soil',
+          hasMap: extra?['hasMap'] as bool? ?? false,
+        );
+      },
+    ),
+    GoRoute(
       path: '/orchard/plan-tracker',
       name: AppRoutes.planTracker,
       parentNavigatorKey: _rootNavigatorKey,
@@ -234,6 +251,14 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (BuildContext context, GoRouterState state) {
         return const MyActivityScreen();
+      },
+    ),
+    GoRoute(
+      path: '/expert-portal',
+      name: AppRoutes.expertDashboard,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (BuildContext context, GoRouterState state) {
+        return const ExpertDashboardScreen();
       },
     ),
     GoRoute(

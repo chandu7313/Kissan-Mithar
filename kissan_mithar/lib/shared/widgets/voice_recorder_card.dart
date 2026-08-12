@@ -23,12 +23,13 @@ class VoiceRecorderCard extends StatefulWidget {
   });
 
   @override
-  State<VoiceRecorderCard> createState() => _VoiceRecorderCardState();
+  State<VoiceRecorderCard> createState() => VoiceRecorderCardState();
 }
 
-class _VoiceRecorderCardState extends State<VoiceRecorderCard>
+class VoiceRecorderCardState extends State<VoiceRecorderCard>
     with SingleTickerProviderStateMixin {
   bool _isRecording = false;
+  bool get isRecording => _isRecording;
   bool _isPlaying = false;
   int _recordedSeconds = 0;
   String? _voicePath;
@@ -36,6 +37,7 @@ class _VoiceRecorderCardState extends State<VoiceRecorderCard>
   Timer? _playbackTimer;
   int _playProgressSeconds = 0;
   late AnimationController _pulseController;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -46,6 +48,13 @@ class _VoiceRecorderCardState extends State<VoiceRecorderCard>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
+    
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.03).animate(
+      CurvedAnimation(
+        parent: _pulseController,
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   @override
@@ -54,6 +63,12 @@ class _VoiceRecorderCardState extends State<VoiceRecorderCard>
     _playbackTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
+  }
+
+  void stopRecording() {
+    if (_isRecording) {
+      _stopRecording();
+    }
   }
 
   void _startRecording() {
@@ -332,41 +347,51 @@ class _VoiceRecorderCardState extends State<VoiceRecorderCard>
               ),
             ),
             const SizedBox(height: 14),
-            InkWell(
-              onTap: _startRecording,
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1EFEA),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFFC7CEC7),
-                    style: BorderStyle.solid,
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.mic_rounded,
-                      color: AppColors.primaryGreen,
-                      size: 26,
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: InkWell(
+                onTap: _startRecording,
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1EFEA),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFC7CEC7),
+                      style: BorderStyle.solid,
                     ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        widget.tapToStartRecordingLabel,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primaryGreen,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryGreen.withAlpha(20),
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.mic_rounded,
+                        color: AppColors.primaryGreen,
+                        size: 26,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          widget.tapToStartRecordingLabel,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryGreen,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

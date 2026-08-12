@@ -29,8 +29,13 @@ export class ConsultationController {
   static async list(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const role = req.user?.role;
-      const farmerId = role === 'FARMER' ? req.user?.farmerId : undefined;
-      const expertId = role === 'EXPERT' ? req.user?.expertId : undefined;
+      let farmerId = role === 'FARMER' ? req.user?.farmerId : undefined;
+      let expertId = role === 'EXPERT' ? req.user?.expertId : undefined;
+
+      if (req.query.viewAsExpert === 'true') {
+        farmerId = undefined;
+        expertId = undefined;
+      }
 
       // For ADMIN role, return all consultations
       const history = await ConsultationService.getHistory({

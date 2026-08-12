@@ -533,6 +533,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 context.push('/legal');
               },
             ),
+            const SizedBox(height: 14),
+            _buildSettingsRow(
+              Icons.admin_panel_settings_rounded,
+              'Expert Dashboard',
+              'View all consultations and plans',
+              onTap: () {
+                Navigator.pop(ctx);
+                context.push('/expert-portal');
+              },
+            ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,

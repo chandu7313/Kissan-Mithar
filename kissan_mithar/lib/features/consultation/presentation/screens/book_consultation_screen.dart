@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,9 +8,33 @@ import '../../../../shared/widgets/large_button.dart';
 import '../../models/consultation_model.dart';
 import '../../providers/consultation_provider.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/services/step_voice_guide_service.dart';
 
-class BookConsultationScreen extends ConsumerWidget {
+class BookConsultationScreen extends ConsumerStatefulWidget {
   const BookConsultationScreen({super.key});
+
+  @override
+  ConsumerState<BookConsultationScreen> createState() => _BookConsultationScreenState();
+}
+
+class _BookConsultationScreenState extends ConsumerState<BookConsultationScreen> with SingleTickerProviderStateMixin {
+  late final AnimationController _shakeController;
+  final StepVoiceGuideService _voiceGuide = StepVoiceGuideService();
+
+  @override
+  void initState() {
+    super.initState();
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+  }
+
+  @override
+  void dispose() {
+    _shakeController.dispose();
+    super.dispose();
+  }
 
   List<IssueCategory> _getCategories(AppLocalizations l10n) => [
     IssueCategory(
@@ -79,7 +104,6 @@ class BookConsultationScreen extends ConsumerWidget {
 
   Widget _buildModeCard(
     BuildContext context,
-    WidgetRef ref,
     CommunicationMode mode,
     bool isSelected,
   ) {
@@ -146,7 +170,6 @@ class BookConsultationScreen extends ConsumerWidget {
 
   Widget _buildCategoryGrid(
     BuildContext context,
-    WidgetRef ref,
     List<String> selectedCategories,
     List<IssueCategory> categories,
   ) {
@@ -340,7 +363,7 @@ class BookConsultationScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final bookingState = ref.watch(consultationBookingProvider);
     final draft = bookingState.valueOrNull ?? const ConsultationBookingDraft();
     final l10n = AppLocalizations.of(context)!;
@@ -396,13 +419,34 @@ class BookConsultationScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              l10n.step1Of2SessionPreference,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primaryGreen,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  l10n.step1Of2SessionPreference,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primaryGreen,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                InkWell(
+                                  onTap: () => _voiceGuide.speak("Choose your consultation mode and select crop issue category to proceed."),
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryGreen.withAlpha(20),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.volume_up_rounded,
+                                      size: 18,
+                                      color: AppColors.primaryGreen,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),   ),
@@ -445,21 +489,18 @@ class BookConsultationScreen extends ConsumerWidget {
                     children: [
                       _buildModeCard(
                         context,
-                        ref,
                         CommunicationMode.voiceCall,
                         draft.mode == CommunicationMode.voiceCall,
                       ),
                       const SizedBox(width: 10),
                       _buildModeCard(
                         context,
-                        ref,
                         CommunicationMode.videoCall,
                         draft.mode == CommunicationMode.videoCall,
                       ),
                       const SizedBox(width: 10),
                       _buildModeCard(
                         context,
-                        ref,
                         CommunicationMode.chat,
                         draft.mode == CommunicationMode.chat,
                       ),
@@ -478,7 +519,17 @@ class BookConsultationScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildCategoryGrid(context, ref, draft.categories, categories),
+                  AnimatedBuilder(
+                    animation: _shakeController,
+                    builder: (context, child) {
+                      final dx = sin(_shakeController.value * 4 * pi) * 6;
+                      return Transform.translate(
+                        offset: Offset(dx, 0),
+                        child: child,
+                      );
+                    },
+                    child: _buildCategoryGrid(context, draft.categories, categories),
+                  ),
 
                   const SizedBox(height: 36),
 
@@ -487,6 +538,10 @@ class BookConsultationScreen extends ConsumerWidget {
                     label: l10n.next,
                     leadingIcon: const _AnimatedArrow(),
                     onPressed: () {
+                      if (draft.categories.isEmpty) {
+                        _shakeController.forward(from: 0.0);
+                        return;
+                      }
                       context.push('/consultation/add-details');
                     },
                   ),

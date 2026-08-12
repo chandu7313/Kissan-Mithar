@@ -697,7 +697,7 @@ class _OrchardGuidedFlowScreenState
                             final success = await notifier.submitOrchardPlan();
                             if (success && context.mounted) {
                               context.pushNamed(
-                                AppRoutes.planTracker,
+                                AppRoutes.orchardSuccess,
                                 extra: {
                                   'landSize': state.landSize,
                                   'soilType': state.soilTypes.join(', '),

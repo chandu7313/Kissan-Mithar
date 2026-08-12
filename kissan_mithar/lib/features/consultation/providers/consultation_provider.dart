@@ -133,7 +133,7 @@ class ConsultationBookingNotifier extends StateNotifier<AsyncValue<ConsultationB
       if (responseData is Map<String, dynamic> && responseData['success'] == true) {
         final data = responseData['data'] as Map<String, dynamic>;
         final newBooking = ConsultationItem.fromJson(data);
-        state = AsyncData(currentDraft);
+        resetDraft();
         return newBooking;
       }
       

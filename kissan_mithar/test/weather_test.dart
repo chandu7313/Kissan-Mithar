@@ -9,6 +9,7 @@ import 'package:kissan_mithar/features/weather/presentation/widgets/daily_foreca
 import 'package:kissan_mithar/features/weather/presentation/widgets/hourly_forecast_strip.dart';
 import 'package:kissan_mithar/features/weather/presentation/widgets/rainfall_chart_card.dart';
 import 'package:kissan_mithar/features/weather/providers/weather_provider.dart';
+import 'package:kissan_mithar/l10n/app_localizations.dart';
 
 void main() {
   group('Weather Model & JSON Unit Tests', () {
@@ -141,10 +142,16 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: const [AppLocalizations.delegate],
           home: Scaffold(
-            body: RainfallChartCard(
-              rainfallTrend: weather.rainfallTrend,
-              rainChance: weather.rainChance,
+            body: Builder(
+              builder: (context) {
+                return RainfallChartCard(
+                  rainfallTrend: weather.rainfallTrend,
+                  rainChance: weather.rainChance,
+                  l10n: AppLocalizations.of(context)!,
+                );
+              }
             ),
           ),
         ),
@@ -165,6 +172,7 @@ void main() {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
+            localizationsDelegates: [AppLocalizations.delegate],
             home: WeatherScreen(),
           ),
         ),

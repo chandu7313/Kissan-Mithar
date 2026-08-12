@@ -59,8 +59,8 @@ void main() {
       notifier.setLandSize('Above 5 Acres');
       expect(notifier.state.landSize, 'Above 5 Acres');
 
-      notifier.setSoilType('Black Cotton Soil (Kali Mitti)');
-      expect(notifier.state.soilType, 'Black Cotton Soil (Kali Mitti)');
+      notifier.toggleSoilType('Black Cotton Soil (Kali Mitti)');
+      expect(notifier.state.soilTypes, contains('Black Cotton Soil (Kali Mitti)'));
 
       notifier.setBudget(85000.0);
       expect(notifier.state.budget, 85000.0);

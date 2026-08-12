@@ -20,7 +20,7 @@ void main() {
       const state = OrchardDraftState();
       expect(state.currentStep, 0);
       expect(state.landSize, '1-3 Acres');
-      expect(state.soilType, 'Red Soil (Lal Mitti)');
+      expect(state.soilTypes, isEmpty);
       expect(state.budget, 45000.0);
       expect(state.needExpertSuggestion, false);
       expect(state.currentStage, 1);
@@ -33,7 +33,7 @@ void main() {
         district: 'Pune',
         stateName: 'Maharashtra',
         landSize: '3-5 Acres',
-        soilType: 'Black Soil (Kali Mitti)',
+        soilTypes: ['Black Soil (Kali Mitti)'],
         budget: 65000.0,
       );
 
@@ -45,7 +45,7 @@ void main() {
       expect(reconstructed.district, 'Pune');
       expect(reconstructed.stateName, 'Maharashtra');
       expect(reconstructed.landSize, '3-5 Acres');
-      expect(reconstructed.soilType, 'Black Soil (Kali Mitti)');
+      expect(reconstructed.soilTypes, contains('Black Soil (Kali Mitti)'));
       expect(reconstructed.budget, 65000.0);
     });
 
@@ -91,8 +91,8 @@ void main() {
       expect(notifier.state.landSize, 'Above 5 Acres');
 
       // Soil type
-      notifier.setSoilType('Sandy Soil (Balui Mitti)');
-      expect(notifier.state.soilType, 'Sandy Soil (Balui Mitti)');
+      notifier.toggleSoilType('Sandy Soil (Balui Mitti)');
+      expect(notifier.state.soilTypes, contains('Sandy Soil (Balui Mitti)'));
 
       // Water sources multi-select
       notifier.toggleWaterSource('Borewell');

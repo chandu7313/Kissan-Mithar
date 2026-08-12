@@ -9,6 +9,7 @@ import '../../../../shared/widgets/voice_recorder_card.dart';
 import '../../models/consultation_model.dart';
 import '../../providers/consultation_provider.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/services/step_voice_guide_service.dart';
 
 class AddConsultationDetailsScreen extends ConsumerStatefulWidget {
   const AddConsultationDetailsScreen({super.key});
@@ -21,6 +22,8 @@ class AddConsultationDetailsScreen extends ConsumerStatefulWidget {
 class _AddConsultationDetailsScreenState
     extends ConsumerState<AddConsultationDetailsScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final StepVoiceGuideService _voiceGuide = StepVoiceGuideService();
+  final GlobalKey<VoiceRecorderCardState> _recorderKey = GlobalKey<VoiceRecorderCardState>();
 
   @override
   void initState() {
@@ -41,6 +44,11 @@ class _AddConsultationDetailsScreenState
   }
 
   Future<void> _submitBooking() async {
+    if (_recorderKey.currentState?.isRecording ?? false) {
+      _recorderKey.currentState?.stopRecording();
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+
     final notifier = ref.read(consultationBookingProvider.notifier);
     notifier.setMessage(_messageController.text.trim());
 
@@ -218,13 +226,34 @@ class _AddConsultationDetailsScreenState
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    l10n.step2PhotosVoiceDesc,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryGreen,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        l10n.step2PhotosVoiceDesc,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryGreen,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () => _voiceGuide.speak("Add clear photos of the crop issue and record a voice note explaining your problem."),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryGreen.withAlpha(20),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.volume_up_rounded,
+                            size: 18,
+                            color: AppColors.primaryGreen,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
 
                   // Removed summary card and text message section
@@ -247,6 +276,7 @@ class _AddConsultationDetailsScreenState
 
                   // 3. Voice Recorder Card
                   VoiceRecorderCard(
+                    key: _recorderKey,
                     title: l10n.recordVoiceNote,
                     hintText: l10n.tapMicAndExplain,
                     tapToStartRecordingLabel: l10n.tapToStartVoiceRecording,

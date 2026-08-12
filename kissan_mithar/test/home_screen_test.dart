@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kissan_mithar/core/localization/app_localizations.dart';
+import 'package:kissan_mithar/l10n/app_localizations.dart';
 import 'package:kissan_mithar/features/home/presentation/screens/home_screen.dart';
 
 void main() {

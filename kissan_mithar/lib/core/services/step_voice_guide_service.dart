@@ -22,8 +22,8 @@ class StepVoiceGuideService {
     if (_isInitialized) return;
     try {
       await _tts.setSpeechRate(
-        0.55,
-      ); // Adjusted speed (Default is usually around 0.5)
+        0.45,
+      ); // Adjusted speed (Slightly slower than default 0.5)
       await _tts.setVolume(1.0);
       await _tts.setPitch(1.0);
 

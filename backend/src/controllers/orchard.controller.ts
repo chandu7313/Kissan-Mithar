@@ -29,9 +29,14 @@ export class OrchardController {
   static async list(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const role = req.user?.role;
-      const farmerId = role === 'FARMER' ? req.user?.farmerId : undefined;
-      const expertId = role === 'EXPERT' ? req.user?.expertId : undefined;
+      let farmerId = role === 'FARMER' ? req.user?.farmerId : undefined;
+      let expertId = role === 'EXPERT' ? req.user?.expertId : undefined;
       const status = req.query.status as any;
+
+      if (req.query.viewAsExpert === 'true') {
+        farmerId = undefined;
+        expertId = undefined;
+      }
 
       const requests = await OrchardService.getRequests({
         farmerId,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kissan_mithar/core/localization/app_language.dart';
-import 'package:kissan_mithar/core/localization/app_localizations.dart';
+import 'package:kissan_mithar/l10n/app_localizations.dart';
 import 'package:kissan_mithar/features/profile/models/farmer_profile_model.dart';
 import 'package:kissan_mithar/features/profile/presentation/screens/downloads_screen.dart';
 import 'package:kissan_mithar/features/profile/presentation/screens/profile_screen.dart';
