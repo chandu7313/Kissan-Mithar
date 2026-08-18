@@ -7,6 +7,7 @@ import '../../features/consultation/presentation/screens/add_consultation_detail
 import '../../features/consultation/presentation/screens/book_consultation_screen.dart';
 import '../../features/consultation/presentation/screens/consultation_detail_screen.dart';
 import '../../features/consultation/presentation/screens/consultation_history_screen.dart';
+import '../../features/consultation/presentation/screens/consultation_success_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/home/presentation/screens/main_shell_screen.dart';
 import '../../features/language_selection/presentation/screens/language_select_screen.dart';
@@ -47,6 +48,7 @@ class AppRoutes {
   static const String orchardReport = 'orchardReport';
   static const String consultation = 'consultation';
   static const String consultationAddDetails = 'consultationAddDetails';
+  static const String consultationSuccess = 'consultationSuccess';
   static const String consultationHistory = 'consultationHistory';
   static const String consultationDetail = 'consultationDetail';
   static const String profileDownloads = 'profileDownloads';
@@ -117,10 +119,10 @@ final GoRouter appRouter = GoRouter(
           },
         ),
         GoRoute(
-          path: '/notifications',
-          name: AppRoutes.notifications,
+          path: '/activity',
+          name: AppRoutes.activity,
           builder: (BuildContext context, GoRouterState state) {
-            return const NotificationsScreen();
+            return const MyActivityScreen();
           },
         ),
         GoRoute(
@@ -130,145 +132,145 @@ final GoRouter appRouter = GoRouter(
             return const ProfileScreen();
           },
         ),
+        // 3. Full Screen Feature Routes (Orchard Planning, Consultation, Weather, Activity)
+        GoRoute(
+          path: '/orchard/land-size',
+          name: AppRoutes.landSize,
+          builder: (BuildContext context, GoRouterState state) {
+            return const OrchardGuidedFlowScreen();
+          },
+        ),
+        GoRoute(
+          path: '/orchard/survey',
+          name: AppRoutes.orchardFlow,
+          builder: (BuildContext context, GoRouterState state) {
+            return const OrchardGuidedFlowScreen();
+          },
+        ),
+        GoRoute(
+          path: '/orchard/success',
+          name: AppRoutes.orchardSuccess,
+          builder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>?;
+            return OrchardSuccessScreen(
+              landSize: extra?['landSize'] as String? ?? '1-3 Acres',
+              soilType: extra?['soilType'] as String? ?? 'Red Soil',
+              hasMap: extra?['hasMap'] as bool? ?? false,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/orchard/plan-tracker',
+          name: AppRoutes.planTracker,
+          builder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>?;
+            return PlanTrackerScreen(
+              landSize: extra?['landSize'] ?? '1-3 Acres',
+              soilType: extra?['soilType'] ?? 'Red Soil (Lal Mitti)',
+              hasMap: extra?['hasMap'] ?? true,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/orchard/report',
+          name: AppRoutes.orchardReport,
+          builder: (BuildContext context, GoRouterState state) {
+            return const OrchardPlanReportScreen();
+          },
+        ),
+        GoRoute(
+          path: '/consultation',
+          name: AppRoutes.consultation,
+          builder: (BuildContext context, GoRouterState state) {
+            return const BookConsultationScreen();
+          },
+        ),
+        GoRoute(
+          path: '/consultation/add-details',
+          name: AppRoutes.consultationAddDetails,
+          builder: (BuildContext context, GoRouterState state) {
+            return const AddConsultationDetailsScreen();
+          },
+        ),
+        GoRoute(
+          path: '/consultation/success',
+          name: AppRoutes.consultationSuccess,
+          builder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>?;
+            return ConsultationSuccessScreen(
+              bookingId: extra?['bookingId'] ?? '',
+              expertName: extra?['expertName'] ?? '',
+              scheduledDate: extra?['scheduledDate'] ?? '',
+              scheduledTime: extra?['scheduledTime'] ?? '',
+              modeIcon: extra?['modeIcon'] ?? Icons.phone,
+              modeLabel: extra?['modeLabel'] ?? '',
+              language: extra?['language'] ?? '',
+            );
+          },
+        ),
+        GoRoute(
+          path: '/consultation/history',
+          name: AppRoutes.consultationHistory,
+          builder: (BuildContext context, GoRouterState state) {
+            return const ConsultationHistoryScreen();
+          },
+        ),
+        GoRoute(
+          path: '/consultation/detail/:id',
+          name: AppRoutes.consultationDetail,
+          builder: (BuildContext context, GoRouterState state) {
+            final id = state.pathParameters['id'] ?? 'CNS-8921';
+            return ConsultationDetailScreen(consultationId: id);
+          },
+        ),
+        GoRoute(
+          path: '/weather',
+          name: AppRoutes.weather,
+          builder: (BuildContext context, GoRouterState state) {
+            return const WeatherScreen();
+          },
+        ),
+        GoRoute(
+          path: '/profile/downloads',
+          name: AppRoutes.profileDownloads,
+          builder: (BuildContext context, GoRouterState state) {
+            return const DownloadsScreen();
+          },
+        ),
+        GoRoute(
+          path: '/orchard/tracker',
+          name: AppRoutes.orchardTracker,
+          builder: (BuildContext context, GoRouterState state) {
+            return PlanTrackerScreen(
+              landSize: '1-3 Acres',
+              soilType: 'Red Soil (Lal Mitti)',
+              hasMap: true,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/notifications',
+          name: AppRoutes.notifications,
+          builder: (BuildContext context, GoRouterState state) {
+            return const NotificationsScreen();
+          },
+        ),
+        GoRoute(
+          path: '/expert-portal',
+          name: AppRoutes.expertDashboard,
+          builder: (BuildContext context, GoRouterState state) {
+            return const ExpertDashboardScreen();
+          },
+        ),
+        GoRoute(
+          path: '/legal',
+          name: 'legal',
+          builder: (BuildContext context, GoRouterState state) {
+            final tab = state.uri.queryParameters['tab'];
+            return LegalScreen(initialTabIndex: tab == 'terms' ? 1 : 0);
+          },
+        ),
       ],
-    ),
-
-    // 3. Full Screen Feature Routes (Orchard Planning, Consultation, Weather, Activity)
-    GoRoute(
-      path: '/orchard/land-size',
-      name: AppRoutes.landSize,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const OrchardGuidedFlowScreen();
-      },
-    ),
-    GoRoute(
-      path: '/orchard/survey',
-      name: AppRoutes.orchardFlow,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const OrchardGuidedFlowScreen();
-      },
-    ),
-    GoRoute(
-      path: '/orchard/success',
-      name: AppRoutes.orchardSuccess,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        final extra = state.extra as Map<String, dynamic>?;
-        return OrchardSuccessScreen(
-          landSize: extra?['landSize'] as String? ?? '1-3 Acres',
-          soilType: extra?['soilType'] as String? ?? 'Red Soil',
-          hasMap: extra?['hasMap'] as bool? ?? false,
-        );
-      },
-    ),
-    GoRoute(
-      path: '/orchard/plan-tracker',
-      name: AppRoutes.planTracker,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        final extra = state.extra as Map<String, dynamic>?;
-        return PlanTrackerScreen(
-          landSize: extra?['landSize'] ?? '1-3 Acres',
-          soilType: extra?['soilType'] ?? 'Red Soil (Lal Mitti)',
-          hasMap: extra?['hasMap'] ?? true,
-        );
-      },
-    ),
-    GoRoute(
-      path: '/orchard/report',
-      name: AppRoutes.orchardReport,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const OrchardPlanReportScreen();
-      },
-    ),
-    GoRoute(
-      path: '/consultation',
-      name: AppRoutes.consultation,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const BookConsultationScreen();
-      },
-    ),
-    GoRoute(
-      path: '/consultation/add-details',
-      name: AppRoutes.consultationAddDetails,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const AddConsultationDetailsScreen();
-      },
-    ),
-    GoRoute(
-      path: '/consultation/history',
-      name: AppRoutes.consultationHistory,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const ConsultationHistoryScreen();
-      },
-    ),
-    GoRoute(
-      path: '/consultation/detail/:id',
-      name: AppRoutes.consultationDetail,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        final id = state.pathParameters['id'] ?? 'CNS-8921';
-        return ConsultationDetailScreen(consultationId: id);
-      },
-    ),
-    GoRoute(
-      path: '/weather',
-      name: AppRoutes.weather,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const WeatherScreen();
-      },
-    ),
-    GoRoute(
-      path: '/profile/downloads',
-      name: AppRoutes.profileDownloads,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const DownloadsScreen();
-      },
-    ),
-    GoRoute(
-      path: '/orchard/tracker',
-      name: AppRoutes.orchardTracker,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return PlanTrackerScreen(
-          landSize: '1-3 Acres',
-          soilType: 'Red Soil (Lal Mitti)',
-          hasMap: true,
-        );
-      },
-    ),
-    GoRoute(
-      path: '/activity',
-      name: AppRoutes.activity,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const MyActivityScreen();
-      },
-    ),
-    GoRoute(
-      path: '/expert-portal',
-      name: AppRoutes.expertDashboard,
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        return const ExpertDashboardScreen();
-      },
-    ),
-    GoRoute(
-      path: '/legal',
-      name: 'legal',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (BuildContext context, GoRouterState state) {
-        final tab = state.uri.queryParameters['tab'];
-        return LegalScreen(initialTabIndex: tab == 'terms' ? 1 : 0);
-      },
     ),
   ],
 );

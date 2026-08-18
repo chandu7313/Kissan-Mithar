@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Download, Send, CheckCircle2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ArrowLeft, Download, Send, CheckCircle2, Upload, Eye, X } from 'lucide-react';
 import { OrchardReport, OrchardRequest } from '../types/index.js';
 import { PdfGenerator } from '../services/pdfGenerator.js';
+import { PdfMerger } from '../services/pdfMerger.js';
 import { OrchardApi } from '../api/orchard.api.js';
 
 interface Props {
@@ -84,6 +85,15 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [statusBanner, setStatusBanner] = useState<string | null>(null);
 
+  // External PDF Upload & Merge states
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedPdfBuffer, setUploadedPdfBuffer] = useState<ArrayBuffer | null>(null);
+  const [uploadedPdfName, setUploadedPdfName] = useState<string | null>(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [mergedPdfUrl, setMergedPdfUrl] = useState<string | null>(null);
+  const [mergedPdfBlob, setMergedPdfBlob] = useState<Blob | null>(null);
+  const [isPreviewing, setIsPreviewing] = useState(false);
+
   const buildReportObject = (): OrchardReport => {
     return {
       id: existingReport?.id || `REP-${request.id.slice(-6)}`,
@@ -106,6 +116,7 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
       governmentSchemes,
       maintenanceCalendar,
       generatedAt: new Date().toISOString(),
+      pdfUrl: undefined, // Will be set after upload
     };
   };
 
@@ -115,13 +126,66 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
     doc.save(`Kisan-Mithar-Orchard-Plan-${request.id}.pdf`);
   };
 
-  const handleSaveAndDeliver = async () => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'application/pdf') {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setUploadedPdfBuffer(ev.target?.result as ArrayBuffer);
+        setUploadedPdfName(file.name);
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      alert('Only PDF files are supported.');
+    }
+  };
+
+  const handlePreview = async () => {
+    setIsPreviewing(true);
+    try {
+      const reportObj = buildReportObject();
+      const generatedBuffer = PdfGenerator.generateOrchardReportArrayBuffer(request, reportObj);
+      
+      let finalBuffer: Uint8Array | ArrayBuffer = generatedBuffer;
+      if (uploadedPdfBuffer) {
+        finalBuffer = await PdfMerger.mergePdfs(generatedBuffer, uploadedPdfBuffer);
+      }
+      
+      const blob = new Blob([finalBuffer as any], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      setMergedPdfBlob(blob);
+      setMergedPdfUrl(url);
+      setShowPreviewModal(true);
+    } catch (error) {
+      console.error('Error generating preview:', error);
+      alert('Failed to generate preview. Please try again.');
+    } finally {
+      setIsPreviewing(false);
+    }
+  };
+
+  const handleConfirmAndSend = async () => {
+    if (!mergedPdfBlob) return;
     setIsSaving(true);
-    const report = buildReportObject();
-    await OrchardApi.submitReport(request.id, report);
-    await OrchardApi.updateStatus(request.id, 'PLAN_READY');
-    setIsSaving(false);
-    setStatusBanner('Report successfully saved & delivered to Farmer App! Mobile push notification triggered.');
+    try {
+      // 1. Upload PDF to Cloudinary
+      const filename = `Kisan-Mithar-Plan-${request.id}.pdf`;
+      const uploadedUrl = await OrchardApi.uploadReportPdf(mergedPdfBlob, filename);
+      
+      // 2. Submit Report
+      const report = buildReportObject();
+      report.pdfUrl = uploadedUrl;
+      await OrchardApi.submitReport(request.id, report);
+      await OrchardApi.updateStatus(request.id, 'PLAN_READY');
+      
+      setShowPreviewModal(false);
+      setStatusBanner('Report successfully saved & delivered to Farmer App! Mobile push notification triggered.');
+    } catch (error) {
+      console.error('Error saving and delivering report:', error);
+      alert('Failed to save and deliver report.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -145,7 +209,28 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <input
+            type="file"
+            accept="application/pdf"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+          {uploadedPdfName && (
+            <div style={{ fontSize: '0.8125rem', color: 'var(--primary-600)', background: '#e0f2fe', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>
+              Attached: {uploadedPdfName}
+            </div>
+          )}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
+          >
+            <Upload size={15} />
+            <span>Attach External PDF</span>
+          </button>
+          
           <button
             onClick={handleDownloadPdf}
             className="btn-secondary"
@@ -154,14 +239,15 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
             <Download size={15} />
             <span>Download PDF</span>
           </button>
+
           <button
-            onClick={handleSaveAndDeliver}
-            disabled={isSaving}
+            onClick={handlePreview}
+            disabled={isPreviewing}
             className="btn-primary"
             style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
           >
-            <Send size={15} />
-            <span>{isSaving ? 'Publishing...' : 'Save & Publish to Farmer App'}</span>
+            <Eye size={15} />
+            <span>{isPreviewing ? 'Loading...' : 'Preview & Publish'}</span>
           </button>
         </div>
       </div>
@@ -413,6 +499,53 @@ export const ReportBuilderPage: React.FC<Props> = ({ request, onBack }) => {
           </div>
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {showPreviewModal && mergedPdfUrl && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', 
+          backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1000, 
+          display: 'flex', justifyContent: 'center', alignItems: 'center'
+        }}>
+          <div style={{
+            backgroundColor: 'white', borderRadius: '0.75rem', width: '90%', maxWidth: '1000px', height: '90vh',
+            display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-light)' }}>
+              <div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Document Preview</h2>
+                <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Review the final {uploadedPdfName ? 'merged' : 'generated'} PDF before publishing to the farmer.</p>
+              </div>
+              <button onClick={() => setShowPreviewModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem' }}>
+                <X size={24} color="var(--text-muted)" />
+              </button>
+            </div>
+            
+            <div style={{ flex: 1, backgroundColor: '#f1f5f9' }}>
+              <iframe src={`${mergedPdfUrl}#view=FitH`} style={{ width: '100%', height: '100%', border: 'none' }} title="PDF Preview" />
+            </div>
+
+            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--border-light)', display: 'flex', justifyContent: 'flex-end', gap: '1rem', backgroundColor: '#f8fafc' }}>
+              <button 
+                onClick={() => setShowPreviewModal(false)}
+                className="btn-secondary"
+                disabled={isSaving}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmAndSend}
+                className="btn-primary"
+                disabled={isSaving}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                <Send size={16} />
+                <span>{isSaving ? 'Publishing & Sending...' : 'Confirm & Send to Farmer'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

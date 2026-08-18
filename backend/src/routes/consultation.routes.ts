@@ -4,6 +4,7 @@ import { ConsultationController } from '../controllers/consultation.controller.j
 import { requireAuth } from '../middleware/auth.js';
 import { requireRole } from '../middleware/rbac.js';
 import { validateRequest } from '../middleware/validate.js';
+import { cacheMiddleware } from '../middleware/cache.js';
 
 const router = Router();
 
@@ -33,7 +34,7 @@ const updateConsultationSchema = z.object({
 });
 
 router.post('/', requireAuth, validateRequest(bookConsultationSchema), ConsultationController.book);
-router.get('/', requireAuth, ConsultationController.list);
+router.get('/', requireAuth, cacheMiddleware(30), ConsultationController.list);
 router.get('/:id', requireAuth, ConsultationController.getById);
 
 // Expert/Admin can update consultation status and add prescriptions

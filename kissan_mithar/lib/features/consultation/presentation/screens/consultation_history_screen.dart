@@ -325,20 +325,22 @@ class _ConsultationHistoryScreenState
     final historyAsync = ref.watch(consultationsHistoryProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: FarmerAppBar(
-        onBackTap: () {
-          if (context.canPop()) {
-            context.pop();
-          } else {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        context.go('/home');
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: FarmerAppBar(
+          onBackTap: () {
             context.go('/home');
-          }
-        },
-        showTractorIcon: false,
-        showBrandTitle: true,
-        showLanguagePill: true,
-      ),
+          },
+          showTractorIcon: false,
+          showBrandTitle: true,
+          showLanguagePill: true,
+        ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -504,6 +506,7 @@ class _ConsultationHistoryScreenState
           ),
         ),
       ),
+    ),
     );
   }
 }

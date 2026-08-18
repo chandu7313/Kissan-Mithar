@@ -193,7 +193,7 @@ class VoiceRecorderCardState extends State<VoiceRecorderCard>
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  _isRecording ? Icons.mic_rounded : Icons.mic_none_rounded,
+                  Icons.record_voice_over,
                   color: _isRecording ? Colors.redAccent : AppColors.primaryGreen,
                   size: 22,
                 ),
@@ -374,7 +374,7 @@ class VoiceRecorderCardState extends State<VoiceRecorderCard>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
-                        Icons.mic_rounded,
+                        Icons.record_voice_over,
                         color: AppColors.primaryGreen,
                         size: 26,
                       ),

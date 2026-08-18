@@ -4,6 +4,7 @@ import { OrchardController } from '../controllers/orchard.controller.js';
 import { requireAuth } from '../middleware/auth.js';
 import { requireRole } from '../middleware/rbac.js';
 import { validateRequest } from '../middleware/validate.js';
+import { cacheMiddleware } from '../middleware/cache.js';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ const createRequestSchema = z.object({
       left: z.string().optional(),
       right: z.string().optional(),
       center: z.string().optional(),
+      gallery: z.array(z.string()).optional(),
     }),
     gps: z.object({
       latitude: z.number(),
@@ -25,19 +27,44 @@ const createRequestSchema = z.object({
     }),
     landDetails: z.object({
       size: z.string(),
-      soilType: z.string(),
+      soilType: z.string().optional(),
+      soilTypes: z.array(z.string()).optional(),
       waterSources: z.array(z.string()),
       electricity: z.boolean(),
       drip: z.boolean(),
       existingCrops: z.array(z.string()),
     }),
+    surveyMapUrl: z.string().optional(),
+    surveyMapType: z.string().optional(),
+    preferences: z.object({
+      budget: z.number().optional(),
+      expectedGoal: z.string().optional(),
+      preferredOrchards: z.array(z.string()).optional(),
+      needExpertSuggestion: z.boolean().optional(),
+      notes: z.string().optional(),
+    }).optional(),
     notes: z.string().optional(),
+    voiceNoteUrl: z.string().optional(),
   }),
 });
 
 const updateStatusSchema = z.object({
   body: z.object({
     status: z.enum(['SUBMITTED', 'UNDER_REVIEW', 'EXPERT_ASSIGNED', 'PLAN_READY', 'COMPLETED']),
+  }),
+});
+
+const updateDetailsSchema = z.object({
+  body: z.object({
+    farmerName: z.string().optional(),
+    phoneNumber: z.string().optional(),
+    village: z.string().optional(),
+    district: z.string().optional(),
+    state: z.string().optional(),
+    landSize: z.string().optional(),
+    soilType: z.string().optional(),
+    waterSources: z.array(z.string()).optional(),
+    existingCrops: z.array(z.string()).optional(),
   }),
 });
 
@@ -66,7 +93,8 @@ const createReportSchema = z.object({
 });
 
 router.post('/', requireAuth, validateRequest(createRequestSchema), OrchardController.create);
-router.get('/', requireAuth, OrchardController.list);
+router.get('/', requireAuth, cacheMiddleware(30), OrchardController.list);
+router.get('/my-requests', requireAuth, OrchardController.list);
 router.get('/:id', requireAuth, OrchardController.getById);
 
 // Role-restricted routes: Only Experts & Admins can change status or issue reports
@@ -76,6 +104,14 @@ router.patch(
   requireRole('EXPERT', 'ADMIN'),
   validateRequest(updateStatusSchema),
   OrchardController.updateStatus
+);
+
+router.patch(
+  '/:id/details',
+  requireAuth,
+  requireRole('EXPERT', 'ADMIN'),
+  validateRequest(updateDetailsSchema),
+  OrchardController.updateDetails
 );
 
 router.post(

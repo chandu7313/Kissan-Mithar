@@ -460,7 +460,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Changing language updates the entire app instantly';
 
   @override
-  String get savedOrchardPlans => 'Saved Orchard Plans';
+  String get savedOrchardPlans => 'Orchard Plans';
 
   @override
   String get callHistory => 'Call History';
@@ -731,4 +731,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sunset => 'Sunset';
+
+  @override
+  String get whichOrchardTitle => 'Which orchard do you want to plant?';
+
+  @override
+  String get whichOrchardSubtitle =>
+      'Select one or more orchards, or ask an expert.';
+
+  @override
+  String get mangoOrchard => 'Mango';
+
+  @override
+  String get orangeOrchard => 'Orange';
+
+  @override
+  String get guavaOrchard => 'Guava';
+
+  @override
+  String get pomegranateOrchard => 'Pomegranate';
+
+  @override
+  String get bananaOrchard => 'Banana';
+
+  @override
+  String get papayaOrchard => 'Papaya';
+
+  @override
+  String get cashewOrchard => 'Cashew';
+
+  @override
+  String get coconutOrchard => 'Coconut';
+
+  @override
+  String get custardAppleOrchard => 'Custard Apple';
+
+  @override
+  String get dragonFruitOrchard => 'Dragon Fruit';
+
+  @override
+  String get grapesOrchard => 'Grapes';
+
+  @override
+  String get jackfruitOrchard => 'Jackfruit';
+
+  @override
+  String get pineappleOrchard => 'Pineapple';
+
+  @override
+  String get sapotaOrchard => 'Sapota';
+
+  @override
+  String get notDecided => 'Not Decided';
+
+  @override
+  String get othersOrchard => 'Others';
+
+  @override
+  String get activeRequests => 'Active Requests';
+
+  @override
+  String get underReview => 'Under Review';
+
+  @override
+  String get requestNo => 'Request';
+
+  @override
+  String get tapToViewTracker => 'Tap to view 5-stage tracker';
+
+  @override
+  String get scheduled => 'Scheduled';
+
+  @override
+  String get startNewActivity => 'Start New Activity';
+
+  @override
+  String get newOrchardPlanSurvey => 'New Orchard Plan Survey';
+
+  @override
+  String get logoutConfirmationTitle => 'Are you sure you want to log out?';
+
+  @override
+  String get logoutConfirmationDesc =>
+      'Your saved data will be cleared from this device.';
+
+  @override
+  String get yesLogout => 'Yes, Logout';
 }

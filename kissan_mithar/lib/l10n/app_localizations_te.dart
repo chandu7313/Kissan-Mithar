@@ -734,4 +734,90 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get sunset => 'సూర్యాస్తమయం';
+
+  @override
+  String get whichOrchardTitle => 'Which orchard do you want to plant?';
+
+  @override
+  String get whichOrchardSubtitle =>
+      'Select one or more orchards, or ask an expert.';
+
+  @override
+  String get mangoOrchard => 'Mango';
+
+  @override
+  String get orangeOrchard => 'Orange';
+
+  @override
+  String get guavaOrchard => 'Guava';
+
+  @override
+  String get pomegranateOrchard => 'Pomegranate';
+
+  @override
+  String get bananaOrchard => 'Banana';
+
+  @override
+  String get papayaOrchard => 'Papaya';
+
+  @override
+  String get cashewOrchard => 'Cashew';
+
+  @override
+  String get coconutOrchard => 'Coconut';
+
+  @override
+  String get custardAppleOrchard => 'Custard Apple';
+
+  @override
+  String get dragonFruitOrchard => 'Dragon Fruit';
+
+  @override
+  String get grapesOrchard => 'Grapes';
+
+  @override
+  String get jackfruitOrchard => 'Jackfruit';
+
+  @override
+  String get pineappleOrchard => 'Pineapple';
+
+  @override
+  String get sapotaOrchard => 'Sapota';
+
+  @override
+  String get notDecided => 'Not Decided';
+
+  @override
+  String get othersOrchard => 'Others';
+
+  @override
+  String get activeRequests => 'క్రియాశీల అభ్యర్థనలు';
+
+  @override
+  String get underReview => 'సమీక్షలో ఉంది';
+
+  @override
+  String get requestNo => 'అభ్యర్థన';
+
+  @override
+  String get tapToViewTracker => '5-దశల ట్రాకర్‌ను వీక్షించడానికి నొక్కండి';
+
+  @override
+  String get scheduled => 'షెడ్యూల్ చేయబడింది';
+
+  @override
+  String get startNewActivity => 'కొత్త కార్యాచరణ ప్రారంభించండి';
+
+  @override
+  String get newOrchardPlanSurvey => 'కొత్త ఆర్చర్డ్ ప్లాన్ సర్వే';
+
+  @override
+  String get logoutConfirmationTitle => 'మీరు లాగౌట్ చేయాలనుకుంటున్నారా?';
+
+  @override
+  String get logoutConfirmationDesc =>
+      'మీ సేవ్ చేసిన డేటా ఈ పరికరం నుండి తొలగించబడుతుంది.';
+
+  @override
+  String get yesLogout => 'అవును, లాగౌట్ చేయండి';
 }

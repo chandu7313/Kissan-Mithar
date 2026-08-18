@@ -27,6 +27,12 @@ class AppTheme {
         onError: Colors.white,
       ),
 
+      // Disable default splash/highlight ripples globally
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      splashFactory: NoSplash.splashFactory,
+
       // Touch targets: min 56dp for accessibility
       materialTapTargetSize: MaterialTapTargetSize.padded,
       

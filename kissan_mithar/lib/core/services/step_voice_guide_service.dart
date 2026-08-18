@@ -66,6 +66,65 @@ class StepVoiceGuideService {
     }
   }
 
+  /// Speaks the success confirmation message.
+  Future<void> speakSuccess(AppLanguage language) async {
+    await _ensureInitialized();
+    await stop();
+
+    final instructions = {
+      'en': 'Farm Details Submitted! Our agronomy experts are reviewing your farm profile. We will notify you once your personalized orchard plan is ready.',
+      'hi': 'खेत का विवरण जमा कर दिया गया है! हमारे कृषि विशेषज्ञ आपकी प्रोफाइल की जांच कर रहे हैं। आपकी व्यक्तिगत योजना तैयार होने पर हम आपको सूचित करेंगे।',
+      'te': 'పొలం వివరాలు సమర్పించబడ్డాయి! మా వ్యవసాయ నిపుణులు మీ పొలం ప్రొఫైల్‌ను సమీక్షిస్తున్నారు. మీ పండ్ల తోట ప్రణాళిక సిద్ధమైన తర్వాత మేము మీకు తెలియజేస్తాము.',
+      'kn': 'ಕೃಷಿ ವಿವರಗಳನ್ನು ಸಲ್ಲಿಸಲಾಗಿದೆ! ನಮ್ಮ ಕೃಷಿ ತಜ್ಞರು ನಿಮ್ಮ ಜಮೀನಿನ ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸುತ್ತಿದ್ದಾರೆ. ನಿಮ್ಮ ತೋಟದ ಯೋಜನೆ ಸಿದ್ಧವಾದಾಗ ನಾವು ನಿಮಗೆ ತಿಳಿಸುತ್ತೇವೆ.',
+    };
+
+    final text = instructions[language.code] ?? instructions['en'] ?? '';
+    if (text.isEmpty) return;
+
+    final ttsLangCode = _getTtsLanguageCode(language);
+    try {
+      await _tts.setLanguage(ttsLangCode);
+      await _tts.speak(text);
+    } catch (e) {
+      debugPrint('[TTS] Failed to speak success: $e');
+    }
+  }
+
+  /// Speaks the consultation booking success confirmation message.
+  Future<void> speakConsultationSuccess(AppLanguage language) async {
+    await _ensureInitialized();
+    await stop();
+
+    final instructions = {
+      'en': 'Consultation Booked! An expert will contact you soon.',
+      'hi': 'परामर्श बुक हो गया है! एक विशेषज्ञ जल्द ही आपसे संपर्क करेगा।',
+      'te': 'సంప్రదింపులు బుక్ చేయబడ్డాయి! నిపుణులు త్వరలో మిమ్మల్ని సంప్రదిస్తారు.',
+      'kn': 'ಸಮಾಲೋಚನೆ ಬುಕ್ ಆಗಿದೆ! ತಜ್ಞರು ಶೀಘ್ರದಲ್ಲೇ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತಾರೆ.',
+    };
+
+    final text = instructions[language.code] ?? instructions['en'] ?? '';
+    if (text.isEmpty) return;
+
+    final ttsLangCode = _getTtsLanguageCode(language);
+    try {
+      await _tts.setLanguage(ttsLangCode);
+      await _tts.speak(text);
+    } catch (e) {
+      debugPrint('[TTS] Failed to speak consultation success: $e');
+    }
+  }
+
+  /// Speaks arbitrary text.
+  Future<void> speak(String text) async {
+    await _ensureInitialized();
+    await stop();
+    try {
+      await _tts.speak(text);
+    } catch (e) {
+      debugPrint('[TTS] Failed to speak: $e');
+    }
+  }
+
   /// Stops any currently playing speech.
   Future<void> stop() async {
     if (_isSpeaking) {
@@ -134,8 +193,19 @@ class StepVoiceGuideService {
       'kn':
           'ನಿಮ್ಮ ಜಮೀನಿನ ಸ್ಥಳವನ್ನು ದೃಢೀಕರಿಸಿ. ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಪತ್ತೆಹಚ್ಚಲು ಬಟನ್ ಒತ್ತಿ, ಅಥವಾ ನಿಮ್ಮ ಹಳ್ಳಿ ಮತ್ತು ಜಿಲ್ಲೆಯನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ.',
     },
-    // Step 3: Land Details
+    // Step 3: Orchard Preference
     3: {
+      'en':
+          'Select the orchard you are planning to plant. You can choose from various fruits. If you have not decided, you can select need expert suggestion.',
+      'hi':
+          'उस बाग का चयन करें जिसे आप लगाने की योजना बना रहे हैं। आप विभिन्न फलों में से चुन सकते हैं। यदि आपने निर्णय नहीं लिया है, तो आप विशेषज्ञ के सुझाव की आवश्यकता है का चयन कर सकते हैं।',
+      'te':
+          'మీరు నాటాలనుకుంటున్న పండ్ల తోటను ఎంచుకోండి. మీరు వివిధ పండ్ల నుండి ఎంచుకోవచ్చు. మీరు నిర్ణయించుకోకపోతే, నిపుణుల సూచన అవసరం అని ఎంచుకోవచ్చు.',
+      'kn':
+          'ನೀವು ನೆಡಲು ಯೋಜಿಸುತ್ತಿರುವ ತೋಟವನ್ನು ಆಯ್ಕೆಮಾಡಿ. ನೀವು ವಿವಿಧ ಹಣ್ಣುಗಳಿಂದ ಆಯ್ಕೆ ಮಾಡಬಹುದು. ನೀವು ನಿರ್ಧರಿಸದಿದ್ದರೆ, ತಜ್ಞರ ಸಲಹೆಯ ಅಗತ್ಯವಿದೆ ಎಂಬುದನ್ನು ಆಯ್ಕೆ ಮಾಡಬಹುದು.',
+    },
+    // Step 4: Land Details
+    4: {
       'en':
           'Fill in your land details and preferences. Select your water sources and soil types. You can select multiple options. Then there is mic at the end of this page you can tell anything you want.',
       'hi':

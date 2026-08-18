@@ -981,7 +981,7 @@ abstract class AppLocalizations {
   /// No description provided for @savedOrchardPlans.
   ///
   /// In en, this message translates to:
-  /// **'Saved Orchard Plans'**
+  /// **'Orchard Plans'**
   String get savedOrchardPlans;
 
   /// No description provided for @callHistory.
@@ -1493,6 +1493,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sunset'**
   String get sunset;
+
+  /// No description provided for @whichOrchardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which orchard do you want to plant?'**
+  String get whichOrchardTitle;
+
+  /// No description provided for @whichOrchardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select one or more orchards, or ask an expert.'**
+  String get whichOrchardSubtitle;
+
+  /// No description provided for @mangoOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Mango'**
+  String get mangoOrchard;
+
+  /// No description provided for @orangeOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Orange'**
+  String get orangeOrchard;
+
+  /// No description provided for @guavaOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Guava'**
+  String get guavaOrchard;
+
+  /// No description provided for @pomegranateOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Pomegranate'**
+  String get pomegranateOrchard;
+
+  /// No description provided for @bananaOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Banana'**
+  String get bananaOrchard;
+
+  /// No description provided for @papayaOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Papaya'**
+  String get papayaOrchard;
+
+  /// No description provided for @cashewOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashew'**
+  String get cashewOrchard;
+
+  /// No description provided for @coconutOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Coconut'**
+  String get coconutOrchard;
+
+  /// No description provided for @custardAppleOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Custard Apple'**
+  String get custardAppleOrchard;
+
+  /// No description provided for @dragonFruitOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dragon Fruit'**
+  String get dragonFruitOrchard;
+
+  /// No description provided for @grapesOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Grapes'**
+  String get grapesOrchard;
+
+  /// No description provided for @jackfruitOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Jackfruit'**
+  String get jackfruitOrchard;
+
+  /// No description provided for @pineappleOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Pineapple'**
+  String get pineappleOrchard;
+
+  /// No description provided for @sapotaOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Sapota'**
+  String get sapotaOrchard;
+
+  /// No description provided for @notDecided.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Decided'**
+  String get notDecided;
+
+  /// No description provided for @othersOrchard.
+  ///
+  /// In en, this message translates to:
+  /// **'Others'**
+  String get othersOrchard;
+
+  /// No description provided for @activeRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Requests'**
+  String get activeRequests;
+
+  /// No description provided for @underReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Review'**
+  String get underReview;
+
+  /// No description provided for @requestNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Request'**
+  String get requestNo;
+
+  /// No description provided for @tapToViewTracker.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view 5-stage tracker'**
+  String get tapToViewTracker;
+
+  /// No description provided for @scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get scheduled;
+
+  /// No description provided for @startNewActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Start New Activity'**
+  String get startNewActivity;
+
+  /// No description provided for @newOrchardPlanSurvey.
+  ///
+  /// In en, this message translates to:
+  /// **'New Orchard Plan Survey'**
+  String get newOrchardPlanSurvey;
+
+  /// No description provided for @logoutConfirmationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out?'**
+  String get logoutConfirmationTitle;
+
+  /// No description provided for @logoutConfirmationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your saved data will be cleared from this device.'**
+  String get logoutConfirmationDesc;
+
+  /// No description provided for @yesLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Logout'**
+  String get yesLogout;
 }
 
 class _AppLocalizationsDelegate

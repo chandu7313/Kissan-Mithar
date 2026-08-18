@@ -117,14 +117,24 @@ class ConsultationBookingNotifier extends StateNotifier<AsyncValue<ConsultationB
       if (currentDraft.mode == CommunicationMode.videoCall) backendMode = 'VIDEO';
       if (currentDraft.mode == CommunicationMode.chat) backendMode = 'CHAT';
 
+      String resolvedDate = DateTime.now().toIso8601String();
+      try {
+        if (currentDraft.timeSlot.isNotEmpty) {
+          DateTime.parse(currentDraft.timeSlot); // Check if valid ISO
+          resolvedDate = currentDraft.timeSlot;
+        }
+      } catch (_) {
+        // Not a valid ISO string (e.g. "Today, 4:00 PM"), stick to DateTime.now()
+      }
+
       final payload = {
         'mode': backendMode,
         'category': currentDraft.categories.isEmpty ? 'General' : currentDraft.categories.join(', '),
-        'scheduledAt': currentDraft.timeSlot.isEmpty ? DateTime.now().toIso8601String() : currentDraft.timeSlot,
+        'scheduledAt': resolvedDate,
         'language': currentDraft.language,
         'notes': currentDraft.message,
         if (uploadedMediaUrls.isNotEmpty) 'mediaUrls': uploadedMediaUrls,
-        'voiceNoteUrl': ?uploadedVoiceUrl,
+        if (uploadedVoiceUrl != null) 'voiceNoteUrl': uploadedVoiceUrl,
       };
 
       // 2. Call backend REST endpoint

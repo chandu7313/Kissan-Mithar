@@ -10,6 +10,7 @@ import '../../models/consultation_model.dart';
 import '../../providers/consultation_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../core/services/step_voice_guide_service.dart';
+import '../../../../core/localization/app_language.dart';
 
 class AddConsultationDetailsScreen extends ConsumerStatefulWidget {
   const AddConsultationDetailsScreen({super.key});
@@ -31,6 +32,9 @@ class _AddConsultationDetailsScreenState
     final draft =
         ref.read(consultationBookingProvider).value ?? const ConsultationBookingDraft();
     _messageController.text = draft.message;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _voiceGuide.speak("Add clear photos of the crop issue and record a voice note explaining your problem.");
+    });
   }
 
   @override
@@ -59,125 +63,21 @@ class _AddConsultationDetailsScreenState
     if (bookedItem != null) {
       ref.invalidate(consultationsHistoryProvider);
 
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          backgroundColor: AppColors.surface,
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE8F5E9),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check_circle_rounded,
-                  color: AppColors.primaryGreen,
-                  size: 32,
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  'Consultation Booked!',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.primaryGreen,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Booking ID: ${bookedItem.id}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'An expert agronomist (${bookedItem.expertName}) has been assigned for ${bookedItem.scheduledDate} at ${bookedItem.scheduledTime}.',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1F8F2),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.primaryGreen.withAlpha(80)),
-                ),
-                child: Row(
-                  children: [
-                    Icon(bookedItem.mode.icon,
-                        color: AppColors.primaryGreen, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Mode: ${bookedItem.mode.label} (${bookedItem.language})',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primaryGreen,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                context.go('/home');
-              },
-              child: const Text(
-                'Go to Home',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryGreen,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              ),
-              onPressed: () {
-                Navigator.pop(ctx);
-                context.pushReplacement('/consultation/history');
-              },
-              child: const Text(
-                'View Bookings',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
-            ),
-          ],
-        ),
+      // Play consultation success voice guide
+      final currentLang = LanguageProvider().currentLanguage;
+      StepVoiceGuideService().speakConsultationSuccess(currentLang);
+
+      context.pushReplacement(
+        '/consultation/success',
+        extra: {
+          'bookingId': bookedItem.id,
+          'expertName': bookedItem.expertName,
+          'scheduledDate': bookedItem.scheduledDate,
+          'scheduledTime': bookedItem.scheduledTime,
+          'modeIcon': bookedItem.mode.icon,
+          'modeLabel': bookedItem.mode.label,
+          'language': bookedItem.language,
+        },
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,8 @@
+import http from 'http';
 import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { initFirebase } from './config/firebase.js';
+import { initSocketIO } from './config/socket.js';
 
 const startServer = async () => {
   try {
@@ -9,19 +11,24 @@ const startServer = async () => {
 
     const app = createApp();
 
-    const server = app.listen(env.PORT, () => {
+    // Create HTTP server and attach Socket.IO for real-time events
+    const httpServer = http.createServer(app);
+    initSocketIO(httpServer);
+
+    httpServer.listen(env.PORT, () => {
       console.log('====================================================');
       console.log(`🌾 KISSAN MITHAR BACKEND RUNNING`);
       console.log(`🚀 Environment: ${env.NODE_ENV}`);
       console.log(`📡 URL: http://localhost:${env.PORT}${env.API_PREFIX}`);
       console.log(`🏥 Health: http://localhost:${env.PORT}${env.API_PREFIX}/health`);
+      console.log(`🔌 Socket.IO: ws://localhost:${env.PORT}`);
       console.log('====================================================');
     });
 
     // Graceful Shutdown
     const shutdown = () => {
       console.log('\n[Server] Gracefully shutting down...');
-      server.close(() => {
+      httpServer.close(() => {
         console.log('[Server] Closed all connections. Exiting.');
         process.exit(0);
       });

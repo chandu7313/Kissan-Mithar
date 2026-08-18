@@ -427,9 +427,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ],
         ),
-        content: const Text(
-          'Are you sure you want to log out? Your saved data will be cleared from this device.',
-          style: TextStyle(
+        content: Text(
+          l10n.logoutConfirmationDesc,
+          style: const TextStyle(
             fontSize: 15,
             color: AppColors.textSecondary,
             height: 1.4,
@@ -438,9 +438,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
+            child: Text(
+              l10n.cancel,
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textSecondary,
@@ -463,9 +463,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
-            child: const Text(
-              'Yes, Logout',
-              style: TextStyle(
+            child: Text(
+              l10n.yesLogout,
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -949,7 +949,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           icon: Icons.park_rounded,
                           title: l10n.savedOrchardPlans,
                           badge: '1',
-                          onTap: () => context.push('/orchard/tracker'),
+                          onTap: () => context.go('/activity'),
                         ),
                         const Divider(
                             color: AppColors.borderSubtle, height: 1),

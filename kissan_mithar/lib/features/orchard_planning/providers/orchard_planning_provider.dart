@@ -261,14 +261,14 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
 
   // --- Step Navigation ---
   void setStep(int step) {
-    if (step >= 0 && step <= 3) {
+    if (step >= 0 && step <= 4) {
       state = state.copyWith(currentStep: step);
       saveDraftToStorage();
     }
   }
 
   void nextStep() {
-    if (state.currentStep < 3) {
+    if (state.currentStep < 4) {
       state = state.copyWith(currentStep: state.currentStep + 1);
       saveDraftToStorage();
     }
@@ -576,16 +576,46 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
         debugPrint('Image upload note: $uploadError');
       }
 
+      List<String> finalGallery = [];
+      for (var path in state.galleryPhotos) {
+        if (!path.startsWith('http')) {
+          try {
+            finalGallery.add(await CloudinaryService.uploadImage(path));
+          } catch (_) {}
+        } else {
+          finalGallery.add(path);
+        }
+      }
+
+      String? finalSurveyMapUrl = state.surveyMapPath;
+      if (finalSurveyMapUrl != null && finalSurveyMapUrl.isNotEmpty && !finalSurveyMapUrl.startsWith('http')) {
+        try {
+          finalSurveyMapUrl = await CloudinaryService.uploadImage(finalSurveyMapUrl);
+        } catch (_) {}
+      }
+
+      String? finalVoiceUrl = state.voiceNotePath;
+      if (finalVoiceUrl != null && !finalVoiceUrl.startsWith('http')) {
+        try {
+          finalVoiceUrl = await CloudinaryService.uploadImage(finalVoiceUrl);
+        } catch (_) {
+          // ignore
+        }
+      }
+
       final now = DateTime.now();
       final dateStr = '${now.day} ${_monthName(now.month)} ${now.year}';
 
       final payload = {
         'photos': {
-          'front': ?frontUrl,
-          'left': ?leftUrl,
-          'right': ?rightUrl,
-          'center': ?centerUrl,
+          if (frontUrl != null) 'front': frontUrl,
+          if (leftUrl != null) 'left': leftUrl,
+          if (rightUrl != null) 'right': rightUrl,
+          if (centerUrl != null) 'center': centerUrl,
+          if (finalGallery.isNotEmpty) 'gallery': finalGallery,
         },
+        if (finalSurveyMapUrl != null) 'surveyMapUrl': finalSurveyMapUrl,
+        if (state.surveyMapType != null) 'surveyMapType': state.surveyMapType,
         'gps': {
           'latitude': state.latitude,
           'longitude': state.longitude,
@@ -595,13 +625,19 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
         },
         'landDetails': {
           'size': state.landSize,
-          'soilTypes': state.soilTypes,
+          'soilType': state.soilTypes.join(', '),
           'waterSources': state.waterSources,
           'existingCrops': state.existingCrops,
           'electricity': state.hasElectricity,
           'drip': state.hasDripIrrigation,
         },
-        'notes': 'Budget: ${state.budget}, Goals: ${state.expectedGoal}, Orchards: ${state.preferredOrchards.join(", ")}',
+        'preferences': {
+          'budget': state.budget,
+          'expectedGoal': state.expectedGoal,
+          'preferredOrchards': state.preferredOrchards,
+          'needExpertSuggestion': state.needExpertSuggestion,
+        },
+        if (finalVoiceUrl != null) 'voiceNoteUrl': finalVoiceUrl,
       };
 
       final res = await _networkClient.post<dynamic>('/orchard-requests', data: payload);

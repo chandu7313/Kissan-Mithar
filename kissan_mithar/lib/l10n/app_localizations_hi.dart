@@ -731,4 +731,90 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get sunset => 'सूर्यास्त';
+
+  @override
+  String get whichOrchardTitle => 'Which orchard do you want to plant?';
+
+  @override
+  String get whichOrchardSubtitle =>
+      'Select one or more orchards, or ask an expert.';
+
+  @override
+  String get mangoOrchard => 'Mango';
+
+  @override
+  String get orangeOrchard => 'Orange';
+
+  @override
+  String get guavaOrchard => 'Guava';
+
+  @override
+  String get pomegranateOrchard => 'Pomegranate';
+
+  @override
+  String get bananaOrchard => 'Banana';
+
+  @override
+  String get papayaOrchard => 'Papaya';
+
+  @override
+  String get cashewOrchard => 'Cashew';
+
+  @override
+  String get coconutOrchard => 'Coconut';
+
+  @override
+  String get custardAppleOrchard => 'Custard Apple';
+
+  @override
+  String get dragonFruitOrchard => 'Dragon Fruit';
+
+  @override
+  String get grapesOrchard => 'Grapes';
+
+  @override
+  String get jackfruitOrchard => 'Jackfruit';
+
+  @override
+  String get pineappleOrchard => 'Pineapple';
+
+  @override
+  String get sapotaOrchard => 'Sapota';
+
+  @override
+  String get notDecided => 'Not Decided';
+
+  @override
+  String get othersOrchard => 'Others';
+
+  @override
+  String get activeRequests => 'सक्रिय अनुरोध';
+
+  @override
+  String get underReview => 'समीक्षा के तहत';
+
+  @override
+  String get requestNo => 'अनुरोध';
+
+  @override
+  String get tapToViewTracker => '5-चरणीय ट्रैकर देखने के लिए टैप करें';
+
+  @override
+  String get scheduled => 'निर्धारित';
+
+  @override
+  String get startNewActivity => 'नई गतिविधि शुरू करें';
+
+  @override
+  String get newOrchardPlanSurvey => 'नया बाग योजना सर्वेक्षण';
+
+  @override
+  String get logoutConfirmationTitle => 'क्या आप वाकई लॉग आउट करना चाहते हैं?';
+
+  @override
+  String get logoutConfirmationDesc =>
+      'आपका सहेजा गया डेटा इस डिवाइस से साफ़ हो जाएगा।';
+
+  @override
+  String get yesLogout => 'हाँ, लॉग आउट करें';
 }

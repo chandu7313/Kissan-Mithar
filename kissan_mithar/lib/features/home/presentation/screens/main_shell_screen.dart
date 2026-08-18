@@ -20,7 +20,7 @@ class MainShellScreen extends ConsumerWidget {
     if (location.startsWith('/home')) {
       return 0;
     }
-    if (location.startsWith('/notifications')) {
+    if (location.startsWith('/activity')) {
       return 1;
     }
     if (location.startsWith('/profile')) {
@@ -35,7 +35,7 @@ class MainShellScreen extends ConsumerWidget {
         context.go('/home');
         break;
       case 1:
-        context.go('/notifications');
+        context.go('/activity');
         break;
       case 2:
         context.go('/profile');
@@ -84,10 +84,9 @@ class MainShellScreen extends ConsumerWidget {
                   context: context,
                   index: 1,
                   isSelected: selectedIndex == 1,
-                  icon: Icons.notifications_none_rounded,
-                  activeIcon: Icons.notifications_rounded,
-                  label: l10n.notifications,
-                  badgeCount: unreadCount,
+                  icon: Icons.list_alt_rounded,
+                  activeIcon: Icons.list_alt_rounded,
+                  label: l10n.myActivity,
                   onTap: () => _onItemTapped(1, context),
                 ),
                 _buildNavItem(

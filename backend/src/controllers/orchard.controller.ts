@@ -99,4 +99,19 @@ export class OrchardController {
       next(error);
     }
   }
+
+  static async updateDetails(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const updated = await OrchardService.updateRequestDetails(id, req.body);
+
+      res.status(200).json({
+        success: true,
+        message: 'Details updated successfully',
+        data: updated,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

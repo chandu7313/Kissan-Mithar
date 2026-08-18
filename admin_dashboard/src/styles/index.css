@@ -74,6 +74,11 @@ h1, h2, h3, h4, h5, h6 {
   animation: fadeIn 0.25s ease-out forwards;
 }
 
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Utility buttons */
 .btn-primary {
   display: inline-flex;

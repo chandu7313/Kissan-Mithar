@@ -231,5 +231,15 @@
   "windDir": "हवा की दिशा",
   "foliarDriftFactor": "पत्तेदार बहाव कारक",
   "sunrise": "सूर्योदय",
-  "sunset": "सूर्यास्त"
+  "sunset": "सूर्यास्त",
+  "activeRequests": "सक्रिय अनुरोध",
+  "underReview": "समीक्षा के तहत",
+  "requestNo": "अनुरोध",
+  "tapToViewTracker": "5-चरणीय ट्रैकर देखने के लिए टैप करें",
+  "scheduled": "निर्धारित",
+  "startNewActivity": "नई गतिविधि शुरू करें",
+  "newOrchardPlanSurvey": "नया बाग योजना सर्वेक्षण",
+  "logoutConfirmationTitle": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
+  "logoutConfirmationDesc": "आपका सहेजा गया डेटा इस डिवाइस से साफ़ हो जाएगा।",
+  "yesLogout": "हाँ, लॉग आउट करें"
 }

@@ -9,18 +9,21 @@ import { RequestDetailPage } from './pages/RequestDetailPage.js';
 import { ReportBuilderPage } from './pages/ReportBuilderPage.js';
 import { ConsultationsPage } from './pages/ConsultationsPage.js';
 import { ExpertsPage } from './pages/ExpertsPage.js';
+import { SocketProvider } from './context/SocketContext.js';
 
 export const App: React.FC = () => {
   const [session, setSession] = useState<UserSession | null>(AuthStore.getSession());
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [selectedRequest, setSelectedRequest] = useState<OrchardRequest | null>(null);
-  const [isBuildingReport, setIsBuildingReport] = useState<boolean>(false);
+  
+  // Tracks if Report Builder is open and where it was opened from
+  const [reportBuilderSource, setReportBuilderSource] = useState<'list' | 'detail' | null>(null);
 
   const handleLogout = () => {
     AuthStore.clearSession();
     setSession(null);
     setSelectedRequest(null);
-    setIsBuildingReport(false);
+    setReportBuilderSource(null);
   };
 
   if (!session) {
@@ -29,17 +32,33 @@ export const App: React.FC = () => {
 
   const handleSelectRequest = (req: OrchardRequest) => {
     setSelectedRequest(req);
-    setIsBuildingReport(false);
+    setReportBuilderSource(null);
   };
 
-  const handleOpenReportBuilder = (req: OrchardRequest) => {
+  const handleOpenReportBuilderFromList = (req: OrchardRequest) => {
     setSelectedRequest(req);
-    setIsBuildingReport(true);
+    setReportBuilderSource('list');
+  };
+
+  const handleOpenReportBuilderFromDetail = (req: OrchardRequest) => {
+    setSelectedRequest(req);
+    setReportBuilderSource('detail');
   };
 
   const handleBackToRequests = () => {
     setSelectedRequest(null);
-    setIsBuildingReport(false);
+    setReportBuilderSource(null);
+  };
+
+  const handleReportBuilderBack = () => {
+    if (reportBuilderSource === 'list') {
+      // Go all the way back to the list
+      setSelectedRequest(null);
+      setReportBuilderSource(null);
+    } else {
+      // Just close builder, go back to detail page
+      setReportBuilderSource(null);
+    }
   };
 
   const renderContent = () => {
@@ -57,21 +76,21 @@ export const App: React.FC = () => {
         </div>
 
         <div style={{ display: activeTab === 'requests' ? 'block' : 'none', height: '100%' }}>
-          {isBuildingReport && selectedRequest ? (
+          {reportBuilderSource && selectedRequest ? (
             <ReportBuilderPage
               request={selectedRequest}
-              onBack={() => setIsBuildingReport(false)}
+              onBack={handleReportBuilderBack}
             />
           ) : selectedRequest ? (
             <RequestDetailPage
               request={selectedRequest}
               onBack={handleBackToRequests}
-              onOpenReportBuilder={handleOpenReportBuilder}
+              onOpenReportBuilder={handleOpenReportBuilderFromDetail}
             />
           ) : (
             <RequestsListPage
               onSelectRequest={handleSelectRequest}
-              onOpenReportBuilder={handleOpenReportBuilder}
+              onOpenReportBuilder={handleOpenReportBuilderFromList}
             />
           )}
         </div>
@@ -86,19 +105,21 @@ export const App: React.FC = () => {
   };
 
   return (
-    <Layout
-      activeTab={activeTab}
-      setActiveTab={(tab) => {
-        setActiveTab(tab);
-        setSelectedRequest(null);
-        setIsBuildingReport(false);
-      }}
-      session={session}
-      onSessionChange={(s) => setSession(s)}
-      onLogout={handleLogout}
-    >
-      {renderContent()}
-    </Layout>
+    <SocketProvider>
+      <Layout
+        activeTab={activeTab}
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setSelectedRequest(null);
+          setReportBuilderSource(null);
+        }}
+        session={session}
+        onSessionChange={(s) => setSession(s)}
+        onLogout={handleLogout}
+      >
+        {renderContent()}
+      </Layout>
+    </SocketProvider>
   );
 };
 

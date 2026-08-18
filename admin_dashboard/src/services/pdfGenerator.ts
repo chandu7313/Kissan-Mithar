@@ -234,4 +234,9 @@ export class PdfGenerator {
 
     return doc;
   }
+
+  static generateOrchardReportArrayBuffer(request: OrchardRequest, report: OrchardReport): ArrayBuffer {
+    const doc = this.generateOrchardReportPdf(request, report);
+    return doc.output('arraybuffer');
+  }
 }

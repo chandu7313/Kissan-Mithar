@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../consultation/presentation/screens/book_consultation_screen.dart';
 import '../../../consultation/presentation/screens/consultation_history_screen.dart';
@@ -31,9 +32,9 @@ class MyActivityScreen extends StatelessWidget {
             }
           },
         ),
-        title: const Text(
-          'My Activity',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.myActivity,
+          style: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w800,
             color: AppColors.primaryGreen,
@@ -52,9 +53,9 @@ class MyActivityScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Section: Active Requests
-                  const Text(
-                    'Active Requests',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.activeRequests,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
@@ -104,9 +105,9 @@ class MyActivityScreen extends StatelessWidget {
                                   color: const Color(0xFFE8F5E9),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Text(
-                                  'Orchard Planning',
-                                  style: TextStyle(
+                                child: Text(
+                                  AppLocalizations.of(context)!.orchardPlanning,
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
                                     color: Color(0xFF1B6327),
@@ -119,9 +120,9 @@ class MyActivityScreen extends StatelessWidget {
                                   color: const Color(0xFFE3F2FD),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Text(
-                                  'Under Review',
-                                  style: TextStyle(
+                                child: Text(
+                                  AppLocalizations.of(context)!.underReview,
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF1976D2),
@@ -131,9 +132,9 @@ class MyActivityScreen extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 14),
-                          const Text(
-                            'Request #4928 • 2.5 Acres Land',
-                            style: TextStyle(
+                          Text(
+                            '${AppLocalizations.of(context)!.requestNo} #4928 • 2.5 Acres Land',
+                            style: const TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w800,
                               color: AppColors.textPrimary,
@@ -150,18 +151,18 @@ class MyActivityScreen extends StatelessWidget {
                           const SizedBox(height: 14),
                           const Divider(height: 1),
                           const SizedBox(height: 12),
-                          const Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Tap to view 5-stage tracker',
-                                style: TextStyle(
+                                AppLocalizations.of(context)!.tapToViewTracker,
+                                style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xFF1B6327),
                                 ),
                               ),
-                              Icon(Icons.arrow_forward_rounded, size: 18, color: Color(0xFF1B6327)),
+                              const Icon(Icons.arrow_forward_rounded, size: 18, color: Color(0xFF1B6327)),
                             ],
                           ),
                         ],
@@ -207,9 +208,9 @@ class MyActivityScreen extends StatelessWidget {
                                   color: const Color(0xFFFFF3E0),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Text(
-                                  'Expert Consultation',
-                                  style: TextStyle(
+                                child: Text(
+                                  AppLocalizations.of(context)!.expertConsultation,
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
                                     color: Color(0xFFE65100),
@@ -222,9 +223,9 @@ class MyActivityScreen extends StatelessWidget {
                                   color: const Color(0xFFE8F5E9),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Text(
-                                  'Scheduled',
-                                  style: TextStyle(
+                                child: Text(
+                                  AppLocalizations.of(context)!.scheduled,
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF2E7D32),
@@ -258,9 +259,9 @@ class MyActivityScreen extends StatelessWidget {
                   const SizedBox(height: 28),
 
                   // Section: Start New Activity
-                  const Text(
-                    'Start New Activity',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.startNewActivity,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
@@ -287,9 +288,9 @@ class MyActivityScreen extends StatelessWidget {
                         );
                       },
                       icon: const Icon(Icons.add_circle_outline_rounded),
-                      label: const Text(
-                        'New Orchard Plan Survey',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      label: Text(
+                        AppLocalizations.of(context)!.newOrchardPlanSurvey,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ),
@@ -300,106 +301,6 @@ class MyActivityScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: _buildBottomNavigationBar(context),
-    );
-  }
-
-  Widget _buildBottomNavigationBar(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(
-          top: BorderSide(color: AppColors.borderSubtle, width: 1.0),
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          // 1. Home
-          InkWell(
-            onTap: () {
-              if (onHomeTap != null) {
-                onHomeTap!();
-              } else {
-                Navigator.pop(context);
-              }
-            },
-            borderRadius: BorderRadius.circular(20),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.home_outlined, color: Color(0xFF4A554A), size: 20),
-                  SizedBox(width: 4),
-                  Text(
-                    'Home',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF4A554A),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // 2. My Activity (Selected Pill)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF236B28),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.assignment_outlined, color: Colors.white, size: 20),
-                SizedBox(width: 6),
-                Text(
-                  'My Activity',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // 3. Support
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const BookConsultationScreen()),
-              );
-            },
-            borderRadius: BorderRadius.circular(20),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.help_outline_rounded, color: Color(0xFF4A554A), size: 20),
-                  SizedBox(width: 4),
-                  Text(
-                    'Support',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF4A554A),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

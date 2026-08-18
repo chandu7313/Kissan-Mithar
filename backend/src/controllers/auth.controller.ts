@@ -187,7 +187,7 @@ export class AuthController {
 
   static async verifyPhoneOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { phoneNumber, otp, name } = req.body;
+      const { phoneNumber, otp, name, languageCode } = req.body;
       const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
       const userAgent = req.headers['user-agent'] || 'Unknown Client';
 
@@ -195,6 +195,7 @@ export class AuthController {
         phoneNumber,
         otp,
         name,
+        languageCode,
         ipAddress,
         userAgent,
       });

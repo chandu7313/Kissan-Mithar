@@ -28,6 +28,9 @@ class _BookConsultationScreenState extends ConsumerState<BookConsultationScreen>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _voiceGuide.speak("Choose your consultation mode and select crop issue category to proceed.");
+    });
   }
 
   @override
@@ -112,6 +115,9 @@ class _BookConsultationScreenState extends ConsumerState<BookConsultationScreen>
         onTap: () =>
             ref.read(consultationBookingProvider.notifier).setMode(mode),
         borderRadius: BorderRadius.circular(16),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
@@ -192,6 +198,9 @@ class _BookConsultationScreenState extends ConsumerState<BookConsultationScreen>
               .read(consultationBookingProvider.notifier)
               .toggleCategory(cat.title),
           borderRadius: BorderRadius.circular(16),
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             decoration: BoxDecoration(
@@ -421,12 +430,14 @@ class _BookConsultationScreenState extends ConsumerState<BookConsultationScreen>
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                Text(
-                                  l10n.step1Of2SessionPreference,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.primaryGreen,
+                                Expanded(
+                                  child: Text(
+                                    l10n.step1Of2SessionPreference,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryGreen,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 8),

@@ -565,8 +565,8 @@ class _OrchardGuidedFlowScreenState
     final notifier = ref.read(orchardPlanningProvider.notifier);
     final currentLang = ref.watch(languageProvider);
 
-    final stepProgress = (state.currentStep + 1) / 4.0;
-    final stepPercent = '${((state.currentStep + 1) * 25).toInt()}%';
+    final stepProgress = (state.currentStep + 1) / 5.0;
+    final stepPercent = '${((state.currentStep + 1) * 20).toInt()}%';
 
     return Scaffold(
       backgroundColor: const Color(0xFFFBF9F2),
@@ -596,7 +596,7 @@ class _OrchardGuidedFlowScreenState
                       l10n.step +
                           ' ${state.currentStep + 1} ' +
                           l10n.ofText +
-                          ' 4',
+                          ' 5',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -660,7 +660,8 @@ class _OrchardGuidedFlowScreenState
                 _buildStep0SurveyMap(context, state, notifier),
                 _buildStep1Photos(context, state, notifier),
                 _buildStep2Location(context, state, notifier),
-                _buildStep3LandDetails(context, state, notifier),
+                _buildStep3OrchardPreference(context, state, notifier),
+                _buildStep4LandDetails(context, state, notifier),
               ],
             ),
           ),
@@ -690,10 +691,10 @@ class _OrchardGuidedFlowScreenState
                   onPressed: state.isSubmitting
                       ? null
                       : () async {
-                          if (state.currentStep < 3) {
+                          if (state.currentStep < 4) {
                             _goToStep(state.currentStep + 1);
                           } else {
-                            // Step 4 -> Final Submit
+                            // Step 5 -> Final Submit
                             final success = await notifier.submitOrchardPlan();
                             if (success && context.mounted) {
                               context.pushNamed(
@@ -703,6 +704,14 @@ class _OrchardGuidedFlowScreenState
                                   'soilType': state.soilTypes.join(', '),
                                   'hasMap': state.surveyMapPath != null,
                                 },
+                              );
+                            } else if (!success && context.mounted) {
+                              final error = ref.read(orchardPlanningProvider).errorMessage ?? 'Submission failed';
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(error),
+                                  backgroundColor: Colors.red,
+                                ),
                               );
                             }
                           }
@@ -733,7 +742,7 @@ class _OrchardGuidedFlowScreenState
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              state.currentStep == 3
+                              state.currentStep == 4
                                   ? l10n.submitFarmPlan
                                   : l10n.nextStep,
                               style: const TextStyle(
@@ -743,7 +752,7 @@ class _OrchardGuidedFlowScreenState
                             ),
                             const SizedBox(width: 8),
                             Icon(
-                              state.currentStep == 3
+                              state.currentStep == 4
                                   ? Icons.send_rounded
                                   : Icons.arrow_forward_rounded,
                               size: 24,
@@ -1243,9 +1252,151 @@ class _OrchardGuidedFlowScreenState
   }
 
   // ==========================================
-  // STEP 3: LAND DETAILS
+  // STEP 3: ORCHARD PREFERENCE
   // ==========================================
-  Widget _buildStep3LandDetails(
+  Widget _buildStep3OrchardPreference(
+    BuildContext context,
+    OrchardDraftState state,
+    OrchardPlanningNotifier notifier,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.whichOrchardTitle,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AppLocalizations.of(context)!.whichOrchardSubtitle,
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          GridView.count(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            childAspectRatio: 0.85,
+            children: [
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.mangoOrchard,
+                imageUrl: 'assets/fruits/mango.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.mangoOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.mangoOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.orangeOrchard,
+                imageUrl: 'assets/fruits/ORANGE.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.orangeOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.orangeOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.guavaOrchard,
+                imageUrl: 'assets/fruits/guava.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.guavaOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.guavaOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.pomegranateOrchard,
+                imageUrl: 'assets/fruits/promogranet.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.pomegranateOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.pomegranateOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.bananaOrchard,
+                imageUrl: 'assets/fruits/banana.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.bananaOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.bananaOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.papayaOrchard,
+                imageUrl: 'assets/fruits/papaya.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.papayaOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.papayaOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.cashewOrchard,
+                imageUrl: 'assets/fruits/cashew.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.cashewOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.cashewOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.coconutOrchard,
+                imageUrl: 'assets/fruits/coconut.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.coconutOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.coconutOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.custardAppleOrchard,
+                imageUrl: 'assets/fruits/custard apple.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.custardAppleOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.custardAppleOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.dragonFruitOrchard,
+                imageUrl: 'assets/fruits/dragon.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.dragonFruitOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.dragonFruitOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.grapesOrchard,
+                imageUrl: 'assets/fruits/grapes.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.grapesOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.grapesOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.jackfruitOrchard,
+                imageUrl: 'assets/fruits/jackfruit.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.jackfruitOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.jackfruitOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.pineappleOrchard,
+                imageUrl: 'assets/fruits/pineapple.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.pineappleOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.pineappleOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.sapotaOrchard,
+                imageUrl: 'assets/fruits/sapota.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.sapotaOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.sapotaOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.othersOrchard,
+                imageUrl: 'assets/images/others.png',
+                isSelected: state.preferredOrchards.contains(AppLocalizations.of(context)!.othersOrchard),
+                onTap: () => notifier.togglePreferredOrchard(AppLocalizations.of(context)!.othersOrchard),
+              ),
+              _buildImageCard(
+                title: AppLocalizations.of(context)!.notDecided,
+                imageUrl: 'assets/images/thinking.png',
+                isSelected: state.needExpertSuggestion,
+                onTap: () => notifier.toggleExpertSuggestion(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==========================================
+  // STEP 4: LAND DETAILS
+  // ==========================================
+  Widget _buildStep4LandDetails(
     BuildContext context,
     OrchardDraftState state,
     OrchardPlanningNotifier notifier,

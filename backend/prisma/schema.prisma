@@ -103,17 +103,20 @@ model Admin {
 }
 
 model OrchardRequest {
-  id           String               @id @default(uuid())
-  farmerId     String
-  expertId     String?
-  status       OrchardRequestStatus @default(SUBMITTED)
-  photos       Json                 // { front: string, left: string, right: string, center: string }
-  gps          Json                 // { latitude: number, longitude: number, accuracy: number, village: string, district: string, state: string }
-  landDetails  Json                 // { size: string, soilType: string, waterSources: string[], electricity: boolean, drip: boolean, existingCrops: string[] }
-  notes        String?
-  voiceNoteUrl String?
-  submittedAt  DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
+  id             String               @id @default(uuid())
+  farmerId       String
+  expertId       String?
+  status         OrchardRequestStatus @default(SUBMITTED)
+  surveyMapUrl   String?
+  surveyMapType  String?              // "Camera", "Gallery", "PDF"
+  photos         Json                 // { front: string, left: string, right: string, center: string, gallery: string[] }
+  gps            Json                 // { latitude: number, longitude: number, accuracy: number, village: string, district: string, state: string }
+  landDetails    Json                 // { size: string, soilType: string, waterSources: string[], electricity: boolean, drip: boolean, existingCrops: string[] }
+  preferences    Json?                // { budget: number, expectedGoal: string, preferredOrchards: string[], needExpertSuggestion: boolean, notes: string }
+  notes          String?              // Kept for backward compatibility
+  voiceNoteUrl   String?
+  submittedAt    DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
 
   farmer Farmer         @relation(fields: [farmerId], references: [id], onDelete: Cascade)
   expert Expert?        @relation(fields: [expertId], references: [id], onDelete: SetNull)

@@ -2,6 +2,7 @@ import { prisma } from '../config/db.js';
 import { OrchardRequestStatus } from '@prisma/client';
 import { NotificationService } from './notification.service.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { getIO } from '../config/socket.js';
 
 export interface CreateOrchardRequestDto {
   farmerId: string;
@@ -10,6 +11,7 @@ export interface CreateOrchardRequestDto {
     left?: string;
     right?: string;
     center?: string;
+    gallery?: string[];
   };
   gps: {
     latitude: number;
@@ -28,6 +30,15 @@ export interface CreateOrchardRequestDto {
     existingCrops: string[];
   };
   notes?: string;
+  surveyMapUrl?: string;
+  surveyMapType?: string;
+  preferences?: {
+    budget?: number;
+    expectedGoal?: string;
+    preferredOrchards?: string[];
+    needExpertSuggestion?: boolean;
+    notes?: string;
+  };
   voiceNoteUrl?: string;
 }
 
@@ -64,9 +75,12 @@ export class OrchardService {
     const request = await prisma.orchardRequest.create({
       data: {
         farmerId: dto.farmerId,
+        surveyMapUrl: dto.surveyMapUrl,
+        surveyMapType: dto.surveyMapType,
         photos: dto.photos as any,
         gps: dto.gps as any,
         landDetails: dto.landDetails as any,
+        preferences: dto.preferences as any,
         notes: dto.notes,
         voiceNoteUrl: dto.voiceNoteUrl,
         status: 'SUBMITTED',
@@ -88,6 +102,17 @@ export class OrchardService {
       });
     } catch (err) {
       console.warn('[OrchardService] Notification send failed:', err);
+    }
+
+    // Broadcast to admin/expert dashboards in real-time
+    try {
+      const io = getIO();
+      if (io) {
+        io.to('room:staff').emit('new_orchard_request', request);
+        console.log('[Socket.IO] 📢 Broadcasted new_orchard_request to staff room');
+      }
+    } catch (err) {
+      console.warn('[OrchardService] Socket broadcast failed:', err);
     }
 
     return request;
@@ -167,6 +192,71 @@ export class OrchardService {
   }
 
   /**
+   * Updates details of an orchard request
+   */
+  static async updateRequestDetails(id: string, details: any) {
+    const request = await prisma.orchardRequest.findUnique({
+      where: { id },
+      include: { farmer: true }
+    });
+
+    if (!request) {
+      throw new AppError('Orchard request not found', 404);
+    }
+
+    // Update Farmer
+    if (details.farmerName || details.phoneNumber) {
+      await prisma.farmer.update({
+        where: { id: request.farmerId },
+        data: {
+          ...(details.farmerName ? { name: details.farmerName } : {}),
+          ...(details.phoneNumber ? { phoneNumber: details.phoneNumber } : {})
+        }
+      });
+    }
+
+    // Prepare updated JSON fields
+    const updatedGps = { ...(request.gps as any) };
+    if (details.village !== undefined) updatedGps.village = details.village;
+    if (details.district !== undefined) updatedGps.district = details.district;
+    if (details.state !== undefined) updatedGps.state = details.state;
+
+    const updatedLandDetails = { ...(request.landDetails as any) };
+    if (details.landSize !== undefined) updatedLandDetails.size = details.landSize;
+    if (details.soilType !== undefined) updatedLandDetails.soilType = details.soilType;
+    if (details.waterSources !== undefined) updatedLandDetails.waterSources = details.waterSources;
+    if (details.existingCrops !== undefined) updatedLandDetails.existingCrops = details.existingCrops;
+    if (details.drip !== undefined) updatedLandDetails.drip = details.drip;
+    if (details.electricity !== undefined) updatedLandDetails.electricity = details.electricity;
+
+    const updatedRequest = await prisma.orchardRequest.update({
+      where: { id },
+      data: {
+        gps: updatedGps,
+        landDetails: updatedLandDetails,
+      },
+      include: {
+        farmer: {
+          select: {
+            id: true,
+            name: true,
+            phoneNumber: true,
+            village: true,
+            district: true,
+            state: true,
+            landAcres: true,
+            primaryCrop: true,
+          }
+        },
+        expert: true,
+        report: true,
+      }
+    });
+
+    return updatedRequest;
+  }
+
+  /**
    * Updates status of an orchard request
    */
   static async updateStatus(
@@ -224,6 +314,17 @@ export class OrchardService {
       } catch (err) {
         console.warn('[OrchardService] Notification send failed:', err);
       }
+    }
+
+    // Broadcast status update to admin/expert dashboards in real-time
+    try {
+      const io = getIO();
+      if (io) {
+        io.to('room:staff').emit('updated_orchard_request', updated);
+        console.log(`[Socket.IO] 📢 Broadcasted updated_orchard_request (${newStatus}) to staff room`);
+      }
+    } catch (err) {
+      console.warn('[OrchardService] Socket broadcast failed:', err);
     }
 
     return updated;

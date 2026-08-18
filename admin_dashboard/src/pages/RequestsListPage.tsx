@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Search, ArrowUpRight, Eye } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Search, ArrowUpRight, Eye, Bell } from 'lucide-react';
 import { OrchardApi } from '../api/orchard.api.js';
 import { OrchardRequest } from '../types/index.js';
 import { StatusBadge } from '../components/common/StatusBadge.js';
-
+import { useSocket } from '../context/SocketContext.js';
 interface Props {
   onSelectRequest: (request: OrchardRequest) => void;
   onOpenReportBuilder: (request: OrchardRequest) => void;
@@ -18,6 +18,15 @@ export const RequestsListPage: React.FC<Props> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [landSizeFilter, setLandSizeFilter] = useState<string>('ALL');
+  const [toast, setToast] = useState<string | null>(null);
+  const [highlightedIds, setHighlightedIds] = useState<Set<string>>(new Set());
+  const { socket } = useSocket();
+  const requestsRef = useRef<OrchardRequest[]>([]);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    requestsRef.current = requests;
+  }, [requests]);
 
   useEffect(() => {
     OrchardApi.getRequests().then((data) => {
@@ -25,6 +34,47 @@ export const RequestsListPage: React.FC<Props> = ({
       setLoading(false);
     });
   }, []);
+
+  // Real-time Socket.IO event listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewRequest = (newRequest: OrchardRequest) => {
+      console.log('[Socket.IO] 🌱 New orchard request received:', newRequest.id);
+      setRequests((prev) => {
+        // Avoid duplicates
+        if (prev.some((r) => r.id === newRequest.id)) return prev;
+        return [newRequest, ...prev];
+      });
+      // Highlight the new row
+      setHighlightedIds((prev) => new Set(prev).add(newRequest.id));
+      setTimeout(() => {
+        setHighlightedIds((prev) => {
+          const next = new Set(prev);
+          next.delete(newRequest.id);
+          return next;
+        });
+      }, 5000);
+      // Show toast
+      setToast(`🌱 New survey from ${newRequest.farmer?.name || 'a farmer'}!`);
+      setTimeout(() => setToast(null), 4000);
+    };
+
+    const handleUpdatedRequest = (updated: OrchardRequest) => {
+      console.log('[Socket.IO] 🔄 Orchard request updated:', updated.id);
+      setRequests((prev) =>
+        prev.map((r) => (r.id === updated.id ? { ...r, ...updated } : r))
+      );
+    };
+
+    socket.on('new_orchard_request', handleNewRequest);
+    socket.on('updated_orchard_request', handleUpdatedRequest);
+
+    return () => {
+      socket.off('new_orchard_request', handleNewRequest);
+      socket.off('updated_orchard_request', handleUpdatedRequest);
+    };
+  }, [socket]);
 
   const filteredRequests = requests.filter((req) => {
     // 1. Text Search
@@ -64,6 +114,29 @@ export const RequestsListPage: React.FC<Props> = ({
           Showing {filteredRequests.length} of {requests.length} surveys
         </div>
       </div>
+
+      {/* Real-time toast notification */}
+      {toast && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.75rem 1.25rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f0fdf4',
+            border: '1px solid #86efac',
+            color: '#15803d',
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            animation: 'slideDown 0.3s ease-out',
+            boxShadow: '0 4px 12px rgba(34,197,94,0.15)',
+          }}
+        >
+          <Bell size={16} color="#16a34a" />
+          <span>{toast}</span>
+        </div>
+      )}
 
       {/* Filter & Search Bar */}
       <div
@@ -168,10 +241,16 @@ export const RequestsListPage: React.FC<Props> = ({
                   key={req.id}
                   style={{
                     borderBottom: idx === filteredRequests.length - 1 ? 'none' : '1px solid var(--border-light)',
-                    transition: 'background-color 0.15s ease',
+                    transition: 'background-color 0.4s ease',
+                    backgroundColor: highlightedIds.has(req.id) ? '#f0fdf4' : 'transparent',
+                    boxShadow: highlightedIds.has(req.id) ? 'inset 3px 0 0 #22c55e' : 'none',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                  onMouseEnter={(e) => {
+                    if (!highlightedIds.has(req.id)) e.currentTarget.style.backgroundColor = '#f8fafc';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = highlightedIds.has(req.id) ? '#f0fdf4' : 'transparent';
+                  }}
                 >
                   {/* Farmer Info */}
                   <td style={{ padding: '1rem 1.25rem' }}>

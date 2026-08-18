@@ -43,17 +43,19 @@ class _PlanTrackerScreenState extends ConsumerState<PlanTrackerScreen> {
     final displayLandSize = widget.landSize ?? state.landSize;
     final stage = state.currentStage; // 0: Submitted, 1: Under Review, 2: Expert Assigned, 3: Plan Ready, 4: Completed
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        context.go('/home');
+      },
+      child: Scaffold(
       backgroundColor: const Color(0xFFFBF9F2),
       appBar: FarmerAppBar(
         showBrandTitle: false,
         showTractorIcon: false,
         onBackTap: () {
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            context.goNamed(AppRoutes.home);
-          }
+          context.go('/home');
         },
         customActions: [
           TextButton.icon(
@@ -271,6 +273,7 @@ class _PlanTrackerScreenState extends ConsumerState<PlanTrackerScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 

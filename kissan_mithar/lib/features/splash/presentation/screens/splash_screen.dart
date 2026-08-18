@@ -148,6 +148,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 },
                               ),
 
+                              const SizedBox(height: 16),
+
+                              const Text(
+                                'KISSAN MITHAR',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.primaryGreen,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+
                               const SizedBox(height: 24),
 
                               // Tagline

@@ -15,6 +15,7 @@ export interface VerifyAuthDto {
   name?: string;
   email?: string;
   role?: UserRole;
+  languageCode?: string;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -397,14 +398,15 @@ export class AuthService {
         farmerRecord = await prisma.farmer.upsert({
           where: { phoneNumber },
           update: {
-            name: name !== 'User' ? name : undefined,
+            name: name && name !== 'farmer' && name !== 'User' && name !== 'Farmer' ? name : undefined,
             firebaseUid: firebaseUid || undefined,
+            languageCode: dto.languageCode || undefined,
           },
           create: {
             firebaseUid,
             phoneNumber,
-            name,
-            languageCode: 'en',
+            name: 'farmer',
+            languageCode: dto.languageCode || 'en',
           },
         });
       } else {
@@ -633,6 +635,7 @@ export class AuthService {
     phoneNumber: string;
     otp: string;
     name?: string;
+    languageCode?: string;
     ipAddress?: string;
     userAgent?: string;
   }) {
@@ -687,7 +690,8 @@ export class AuthService {
     const fullPhone = `+91${number10Digit}`;
     return await this.verifyAndAuthenticate({
       phoneNumber: fullPhone,
-      name: params.name || 'Farmer',
+      name: params.name || 'farmer',
+      languageCode: params.languageCode,
       role: 'FARMER',
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,

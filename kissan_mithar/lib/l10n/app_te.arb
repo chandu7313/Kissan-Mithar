@@ -231,5 +231,15 @@
   "windDir": "గాలి దిశ",
   "foliarDriftFactor": "ఆకుల డ్రిఫ్ట్ కారకం",
   "sunrise": "సూర్యోదయం",
-  "sunset": "సూర్యాస్తమయం"
+  "sunset": "సూర్యాస్తమయం",
+  "activeRequests": "క్రియాశీల అభ్యర్థనలు",
+  "underReview": "సమీక్షలో ఉంది",
+  "requestNo": "అభ్యర్థన",
+  "tapToViewTracker": "5-దశల ట్రాకర్‌ను వీక్షించడానికి నొక్కండి",
+  "scheduled": "షెడ్యూల్ చేయబడింది",
+  "startNewActivity": "కొత్త కార్యాచరణ ప్రారంభించండి",
+  "newOrchardPlanSurvey": "కొత్త ఆర్చర్డ్ ప్లాన్ సర్వే",
+  "logoutConfirmationTitle": "మీరు లాగౌట్ చేయాలనుకుంటున్నారా?",
+  "logoutConfirmationDesc": "మీ సేవ్ చేసిన డేటా ఈ పరికరం నుండి తొలగించబడుతుంది.",
+  "yesLogout": "అవును, లాగౌట్ చేయండి"
 }

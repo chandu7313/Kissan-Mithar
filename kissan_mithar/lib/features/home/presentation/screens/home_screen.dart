@@ -209,6 +209,62 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 12),
+                    // Notification Bell
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        InkWell(
+                          onTap: () => context.push('/notifications'),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: const Color(0xFF1B6327).withAlpha(40)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(8),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.notifications_none_rounded,
+                              color: Color(0xFF1B6327),
+                              size: 22,
+                            ),
+                          ),
+                        ),
+                        if (notificationsState.unreadCount > 0)
+                          Positioned(
+                            top: -2,
+                            right: -2,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD32F2F),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 1.5),
+                              ),
+                              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                              child: Center(
+                                child: Text(
+                                  notificationsState.unreadCount > 9 ? '9+' : '${notificationsState.unreadCount}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
 
@@ -436,11 +492,14 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Image.asset(
-                  'assets/images/weather-logo.webp',
-                  width: 105,
-                  height: 105,
-                  fit: BoxFit.contain,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Image.asset(
+                    _getWeatherImage(weather.condition),
+                    width: 105,
+                    height: 105,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ],
             ),
@@ -896,4 +955,18 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+String _getWeatherImage(String condition) {
+  final cond = condition.toLowerCase();
+  if (cond.contains('thunder') || cond.contains('storm')) {
+    return 'assets/images/thunderstorm_weather.jpg';
+  } else if (cond.contains('heavy rain') || cond.contains('pouring') || cond.contains('rain') || cond.contains('drizzle') || cond.contains('shower')) {
+    return 'assets/images/rainy_weather.jpg';
+  } else if (cond.contains('cloud') || cond.contains('overcast')) {
+    return 'assets/images/cloudy_weather.jpg';
+  } else if (cond.contains('wind') || cond.contains('breeze') || cond.contains('fog') || cond.contains('mist') || cond.contains('haze')) {
+    return 'assets/images/cloudy_weather.jpg'; // fallback to cloudy
+  }
+  return 'assets/images/sunny_weather.jpg';
 }

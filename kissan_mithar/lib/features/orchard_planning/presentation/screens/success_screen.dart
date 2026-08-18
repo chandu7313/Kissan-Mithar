@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/widgets/large_button.dart';
+import '../../../../core/services/step_voice_guide_service.dart';
+import '../../../../core/localization/app_language.dart';
 
 class OrchardSuccessScreen extends StatefulWidget {
   final String landSize;
@@ -34,6 +36,10 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
       CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
     );
     _controller.forward();
+
+    // Play voice guide for success screen
+    final currentLang = LanguageProvider().currentLanguage;
+    StepVoiceGuideService().speakSuccess(currentLang);
   }
 
   @override
@@ -44,8 +50,14 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        context.go('/home');
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -171,6 +183,7 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
           ),
         ),
       ),
+    ),
     );
   }
 }

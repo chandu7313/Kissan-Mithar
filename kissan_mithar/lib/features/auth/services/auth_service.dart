@@ -65,6 +65,7 @@ class AuthService {
     required String phoneNumber,
     required String otp,
     String? name,
+    String? languageCode,
   }) async {
     try {
       final response = await _networkClient.post<dynamic>(
@@ -73,6 +74,7 @@ class AuthService {
           'phoneNumber': phoneNumber,
           'otp': otp,
           if (name != null && name.isNotEmpty) 'name': name,
+          if (languageCode != null && languageCode.isNotEmpty) 'languageCode': languageCode,
         },
       );
 
@@ -101,7 +103,7 @@ class AuthService {
       await _networkClient.post<dynamic>(
         '/auth/logout',
         data: {
-          'userId': ?userId,
+          if (userId != null) 'userId': userId,
           'role': 'FARMER',
         },
       );

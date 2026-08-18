@@ -12,6 +12,7 @@ import {
   Droplets,
   CheckCircle2,
   XCircle,
+  MessageCircle,
 } from 'lucide-react';
 import { OrchardRequest, OrchardStatus } from '../types/index.js';
 import { StatusBadge } from '../components/common/StatusBadge.js';
@@ -19,6 +20,16 @@ import { ImageGallery } from '../components/common/ImageGallery.js';
 import { AudioPlayer } from '../components/common/AudioPlayer.js';
 import { MapPreview } from '../components/common/MapPreview.js';
 import { OrchardApi } from '../api/orchard.api.js';
+
+// --- CONFIGURATION ---
+// If you want to use a fixed WhatsApp number (e.g. your business number), set it here.
+// Example: const WHATSAPP_TARGET_NUMBER = "919392699963";
+// If left null, it will automatically use the current farmer's phone number.
+const WHATSAPP_TARGET_NUMBER: string | null = null;
+
+// Change this message to customize the pre-filled text when opening WhatsApp.
+const WHATSAPP_DEFAULT_MESSAGE = "";
+// ---------------------
 
 interface Props {
   request: OrchardRequest;
@@ -36,6 +47,59 @@ export const RequestDetailPage: React.FC<Props> = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    farmerName: request.farmer?.name || '',
+    phoneNumber: request.farmer?.phoneNumber || '',
+    village: request.gps.village || '',
+    district: request.gps.district || '',
+    state: request.gps.state || 'Maharashtra',
+    landSize: request.landDetails.size || '',
+    soilType: request.landDetails.soilType || '',
+    waterSources: request.landDetails.waterSources?.join(', ') || '',
+    drip: request.landDetails.drip || false,
+    electricity: request.landDetails.electricity || false,
+    existingCrops: request.landDetails.existingCrops?.join(', ') || '',
+  });
+
+  const handleSaveDetails = async () => {
+    try {
+      setIsUpdating(true);
+      const updatedDetails = {
+        ...editForm,
+        waterSources: editForm.waterSources.split(',').map(s => s.trim()).filter(Boolean),
+        existingCrops: editForm.existingCrops.split(',').map(s => s.trim()).filter(Boolean),
+      };
+      const updatedRequest = await OrchardApi.updateDetails(request.id, updatedDetails);
+      setRequest(updatedRequest);
+      setIsEditing(false);
+      setFeedbackMsg('Details successfully updated!');
+      setTimeout(() => setFeedbackMsg(null), 3500);
+    } catch (error) {
+      console.error("Error updating details", error);
+      alert("Failed to update details");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditForm({
+      farmerName: request.farmer?.name || '',
+      phoneNumber: request.farmer?.phoneNumber || '',
+      village: request.gps.village || '',
+      district: request.gps.district || '',
+      state: request.gps.state || 'Maharashtra',
+      landSize: request.landDetails.size || '',
+      soilType: request.landDetails.soilType || '',
+      waterSources: request.landDetails.waterSources?.join(', ') || '',
+      drip: request.landDetails.drip || false,
+      electricity: request.landDetails.electricity || false,
+      existingCrops: request.landDetails.existingCrops?.join(', ') || '',
+    });
+    setIsEditing(false);
+  };
+
   const handleStatusChange = async (newStatus: OrchardStatus) => {
     setIsUpdating(true);
     setStatus(newStatus);
@@ -44,6 +108,31 @@ export const RequestDetailPage: React.FC<Props> = ({
     setIsUpdating(false);
     setFeedbackMsg(`Status successfully changed to ${newStatus.replace('_', ' ')}!`);
     setTimeout(() => setFeedbackMsg(null), 3500);
+  };
+
+  const handleWhatsAppClick = () => {
+    let rawNumber = WHATSAPP_TARGET_NUMBER || request.farmer?.phoneNumber;
+    
+    if (!rawNumber) {
+      alert("No phone number available to message.");
+      return;
+    }
+    
+    // Remove all non-numeric characters from the phone number
+    let formattedPhone = rawNumber.replace(/\D/g, '');
+    
+    // Ensure it has the Indian country code if it's exactly 10 digits
+    if (formattedPhone.length === 10) {
+      formattedPhone = `91${formattedPhone}`;
+    }
+
+    let waUrl = `https://wa.me/${formattedPhone}`;
+    if (WHATSAPP_DEFAULT_MESSAGE) {
+      const text = encodeURIComponent(WHATSAPP_DEFAULT_MESSAGE);
+      waUrl += `?text=${text}`;
+    }
+    
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -107,27 +196,92 @@ export const RequestDetailPage: React.FC<Props> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Farmer Contact Card */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <User size={18} color="var(--primary-700)" />
-              <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, margin: 0 }}>Farmer Information</h3>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <User size={18} color="var(--primary-700)" />
+                <h3 style={{ fontSize: '1.0625rem', fontWeight: 600, margin: 0 }}>Farmer Information</h3>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {isEditing ? (
+                  <>
+                    <button onClick={handleCancelEdit} className="btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}>Cancel</button>
+                    <button onClick={handleSaveDetails} disabled={isUpdating} className="btn-gold" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}>Save</button>
+                  </>
+                ) : (
+                  <button onClick={() => setIsEditing(true)} className="btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}>Edit Details</button>
+                )}
+              </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
               <div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Full Name</span>
-                <div style={{ fontWeight: 600 }}>{request.farmer?.name}</div>
+                {isEditing ? (
+                  <input type="text" value={editForm.farmerName} onChange={e => setEditForm({...editForm, farmerName: e.target.value})} style={{ width: '100%', padding: '0.25rem' }} />
+                ) : (
+                  <div style={{ fontWeight: 600 }}>{request.farmer?.name}</div>
+                )}
               </div>
               <div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Phone Number</span>
-                <div style={{ fontWeight: 600 }}>{request.farmer?.phoneNumber}</div>
+                {isEditing ? (
+                  <input type="text" value={editForm.phoneNumber} onChange={e => setEditForm({...editForm, phoneNumber: e.target.value})} style={{ width: '100%', padding: '0.25rem' }} />
+                ) : (
+                  <div style={{ fontWeight: 600 }}>{request.farmer?.phoneNumber}</div>
+                )}
               </div>
               <div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Village & District</span>
-                <div style={{ fontWeight: 500 }}>{request.gps.village}, {request.gps.district}</div>
+                {isEditing ? (
+                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                    <input type="text" placeholder="Village" value={editForm.village} onChange={e => setEditForm({...editForm, village: e.target.value})} style={{ width: '100%', padding: '0.25rem' }} />
+                    <input type="text" placeholder="District" value={editForm.district} onChange={e => setEditForm({...editForm, district: e.target.value})} style={{ width: '100%', padding: '0.25rem' }} />
+                  </div>
+                ) : (
+                  <div style={{ fontWeight: 500 }}>{request.gps.village}, {request.gps.district}</div>
+                )}
               </div>
               <div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>State</span>
-                <div style={{ fontWeight: 500 }}>{request.gps.state || 'Maharashtra'}</div>
+                {isEditing ? (
+                  <input type="text" value={editForm.state} onChange={e => setEditForm({...editForm, state: e.target.value})} style={{ width: '100%', padding: '0.25rem' }} />
+                ) : (
+                  <div style={{ fontWeight: 500 }}>{request.gps.state || 'Maharashtra'}</div>
+                )}
               </div>
+            </div>
+
+            {/* WhatsApp Contact Button */}
+            <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '0.75rem' }}>
+              <button
+                onClick={handleWhatsAppClick}
+                style={{
+                  width: '100%',
+                  padding: '0.625rem 1rem',
+                  borderRadius: '0.5rem',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #25d366 0%, #128c7e 100%)',
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  transition: 'opacity 0.15s, transform 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = '0.9';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <MessageCircle size={16} />
+                <span>Message on WhatsApp</span>
+              </button>
             </div>
           </div>
 
@@ -140,49 +294,76 @@ export const RequestDetailPage: React.FC<Props> = ({
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.875rem' }}>
               <div style={{ backgroundColor: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem' }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Total Survey Area</span>
-                <div style={{ fontWeight: 700, color: 'var(--primary-800)', fontSize: '1.125rem' }}>
-                  {request.landDetails.size}
-                </div>
+                {isEditing ? (
+                  <input type="text" value={editForm.landSize} onChange={e => setEditForm({...editForm, landSize: e.target.value})} style={{ width: '100%', padding: '0.25rem', marginTop: '0.25rem' }} />
+                ) : (
+                  <div style={{ fontWeight: 700, color: 'var(--primary-800)', fontSize: '1.125rem' }}>
+                    {request.landDetails.size}
+                  </div>
+                )}
               </div>
 
               <div style={{ backgroundColor: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem' }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Soil Type</span>
-                <div style={{ fontWeight: 700, color: '#b45309', fontSize: '0.9375rem' }}>
-                  {request.landDetails.soilType}
-                </div>
+                {isEditing ? (
+                  <input type="text" value={editForm.soilType} onChange={e => setEditForm({...editForm, soilType: e.target.value})} style={{ width: '100%', padding: '0.25rem', marginTop: '0.25rem' }} />
+                ) : (
+                  <div style={{ fontWeight: 700, color: '#b45309', fontSize: '0.9375rem' }}>
+                    {request.landDetails.soilType}
+                  </div>
+                )}
               </div>
 
               <div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Water Resources</span>
-                <div style={{ fontWeight: 500 }}>
-                  {request.landDetails.waterSources.join(', ') || 'Borewell'}
-                </div>
+                {isEditing ? (
+                  <input type="text" value={editForm.waterSources} onChange={e => setEditForm({...editForm, waterSources: e.target.value})} placeholder="Comma separated" style={{ width: '100%', padding: '0.25rem', marginTop: '0.25rem' }} />
+                ) : (
+                  <div style={{ fontWeight: 500 }}>
+                    {request.landDetails.waterSources?.join(', ') || 'Borewell'}
+                  </div>
+                )}
               </div>
 
               <div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Drip & Power Status</span>
-                <div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.375rem', flexWrap: 'wrap' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                    {request.landDetails.drip ? <Droplets size={13} color="#0284c7" /> : <XCircle size={13} color="#dc2626" />}
-                    {request.landDetails.drip ? 'Drip installed' : 'No drip yet'}
-                  </span>
-                  <span>·</span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                    {request.landDetails.electricity ? <Zap size={13} color="#eab308" /> : null}
-                    {request.landDetails.electricity ? '3-Phase Power' : 'No power'}
-                  </span>
-                </div>
+                {isEditing ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.25rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <input type="checkbox" checked={editForm.drip} onChange={e => setEditForm({...editForm, drip: e.target.checked})} />
+                      Drip installed
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <input type="checkbox" checked={editForm.electricity} onChange={e => setEditForm({...editForm, electricity: e.target.checked})} />
+                      3-Phase Power
+                    </label>
+                  </div>
+                ) : (
+                  <div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.375rem', flexWrap: 'wrap' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                      {request.landDetails.drip ? <Droplets size={13} color="#0284c7" /> : <XCircle size={13} color="#dc2626" />}
+                      {request.landDetails.drip ? 'Drip installed' : 'No drip yet'}
+                    </span>
+                    <span>·</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                      {request.landDetails.electricity ? <Zap size={13} color="#eab308" /> : null}
+                      {request.landDetails.electricity ? '3-Phase Power' : 'No power'}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {request.landDetails.existingCrops?.length > 0 && (
               <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '0.75rem' }}>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Existing Crops / Trees</span>
-                <div style={{ fontWeight: 500, fontSize: '0.875rem' }}>
-                  {request.landDetails.existingCrops.join(', ')}
-                </div>
+                {isEditing ? (
+                  <input type="text" value={editForm.existingCrops} onChange={e => setEditForm({...editForm, existingCrops: e.target.value})} placeholder="Comma separated" style={{ width: '100%', padding: '0.25rem', marginTop: '0.25rem' }} />
+                ) : (
+                  <div style={{ fontWeight: 500, fontSize: '0.875rem' }}>
+                    {request.landDetails.existingCrops?.join(', ')}
+                  </div>
+                )}
               </div>
-            )}
           </div>
 
           {/* Farmer Notes & Voice Note */}
@@ -271,3 +452,4 @@ export const RequestDetailPage: React.FC<Props> = ({
     </div>
   );
 };
+

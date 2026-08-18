@@ -78,18 +78,40 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await _networkClient.loadPersistedToken();
       if (_networkClient.hasToken) {
         final prefs = await SharedPreferences.getInstance();
-        final userId = prefs.getString(_prefUserIdKey);
-        final phone = prefs.getString(_prefPhoneKey);
-        final name = prefs.getString(_prefNameKey);
-        final photo = prefs.getString(_prefPhotoKey);
+        var userId = prefs.getString(_prefUserIdKey);
+        var phone = prefs.getString(_prefPhoneKey);
+        var name = prefs.getString(_prefNameKey);
+        var photo = prefs.getString(_prefPhotoKey);
+        var languageCode = state.languageCode;
+
+        // Try to fetch latest profile from backend to sync admin edits
+        try {
+          final response = await _networkClient.get<dynamic>('/farmers/me');
+          if (response.data is Map<String, dynamic>) {
+            final data = response.data as Map<String, dynamic>;
+            name = data['name'] as String? ?? name;
+            photo = data['photoUrl'] as String? ?? photo;
+            phone = data['phoneNumber'] as String? ?? phone;
+            if (data['languageCode'] != null) {
+              languageCode = data['languageCode'] as String;
+            }
+
+            // Update prefs with latest
+            await prefs.setString(_prefNameKey, name ?? 'farmer');
+            if (photo != null) await prefs.setString(_prefPhotoKey, photo);
+          }
+        } catch (e) {
+          debugPrint('[AuthNotifier] Failed to sync profile on auto-login: $e');
+        }
 
         state = state.copyWith(
           isAuthenticated: true,
           isLoading: false,
           userId: userId,
           phoneNumber: phone,
-          userName: name ?? 'Farmer',
+          userName: name ?? 'farmer',
           photoUrl: photo,
+          languageCode: languageCode,
           token: _networkClient.authToken,
         );
         debugPrint('[AuthNotifier] Auto-login restored for $name ($phone)');
@@ -134,6 +156,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         phoneNumber: phoneNumber,
         otp: otp,
         name: name,
+        languageCode: state.languageCode,
       );
 
       // Persist user info locally

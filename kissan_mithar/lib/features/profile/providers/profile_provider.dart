@@ -86,6 +86,14 @@ class ProfileNotifier extends StateNotifier<ProfileState> {
         final fetched = FarmerProfile.fromJson(data);
         state = state.copyWith(profile: fetched, isLoading: false);
         _cacheProfile(fetched);
+
+        try {
+          final appLang = AppLanguage.values.firstWhere(
+            (l) => l.code == fetched.languageCode,
+            orElse: () => AppLanguage.english,
+          );
+          LanguageProvider().setLanguage(appLang);
+        } catch (_) {}
       } else {
         state = state.copyWith(isLoading: false);
       }
