@@ -1,11 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kissan_mithar/features/consultation/models/consultation_model.dart';
-import 'package:kissan_mithar/features/consultation/presentation/screens/add_consultation_details_screen.dart';
-import 'package:kissan_mithar/features/consultation/presentation/screens/book_consultation_screen.dart';
-import 'package:kissan_mithar/features/consultation/presentation/screens/consultation_detail_screen.dart';
-import 'package:kissan_mithar/features/consultation/presentation/screens/consultation_history_screen.dart';
 import 'package:kissan_mithar/features/consultation/providers/consultation_provider.dart';
 
 void main() {

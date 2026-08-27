@@ -817,4 +817,82 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get yesLogout => 'हाँ, लॉग आउट करें';
+
+  @override
+  String get notification1Title => 'आपकी बाग योजना तैयार है! 🌳';
+
+  @override
+  String get notification1Message =>
+      '2 एकड़ लाल मिट्टी के लिए कस्टम लेआउट और वृक्षारोपण रोडमैप तैयार है।';
+
+  @override
+  String get notification2Title => 'कल भारी बारिश की चेतावनी 🌧️';
+
+  @override
+  String get notification2Message =>
+      'कल दोपहर 24 मिमी बारिश होने की उम्मीद है। रासायनिक छिड़काव को 24-48 घंटे के लिए टाल दें।';
+
+  @override
+  String get notification3Title => 'विशेषज्ञ परामर्श की पुष्टि 👨‍🌾';
+
+  @override
+  String get notification3Message =>
+      'डॉ. अनन्या शर्मा के साथ आपका वीडियो सत्र कल सुबह 10:00 बजे निर्धारित है।';
+
+  @override
+  String get notification4Title => 'मंडी बाजार मूल्य अपडेट 📈';
+
+  @override
+  String get notification4Message =>
+      'आपके स्थानीय बाजार में आम की कीमतों में 5% की वृद्धि हुई और अमरूद ₹45/किग्रा तक पहुंच गया।';
+
+  @override
+  String get notification5Title => 'मिट्टी की नमी संबंधी सलाह 💧';
+
+  @override
+  String get notification5Message =>
+      'इस सप्ताह आम के बाग में फर्टिगेशन के लिए मिट्टी की नमी का आदर्श स्तर पाया गया है।';
+
+  @override
+  String get farmDetailsSubmittedTitle => 'खेत का विवरण सबमिट कर दिया गया!';
+
+  @override
+  String farmDetailsReviewDesc(String landSize) {
+    return 'हमारे कृषि विशेषज्ञ आपके $landSize खेत प्रोफ़ाइल की समीक्षा कर रहे हैं। आपकी व्यक्तिगत बाग योजना तैयार होने पर हम आपको सूचित करेंगे।';
+  }
+
+  @override
+  String get trackOrchardPlanDashboard =>
+      'आप अपने डैशबोर्ड में अपनी बाग योजना की प्रगति को ट्रैक कर सकते हैं।';
+
+  @override
+  String get trackProgressBtn => 'प्रगति ट्रैक करें';
+
+  @override
+  String get consultationBookedTitle => 'परामर्श बुक हो गया!';
+
+  @override
+  String bookingIdLabel(String id) {
+    return 'बुकिंग आईडी: $id';
+  }
+
+  @override
+  String expertAssignedDesc(
+    String expertName,
+    String scheduledDate,
+    String scheduledTime,
+  ) {
+    return 'एक विशेषज्ञ कृषिविज्ञानी ($expertName) को $scheduledDate को $scheduledTime के लिए सौंपा गया है।';
+  }
+
+  @override
+  String modeLabelWithLang(String modeLabel, String language) {
+    return 'मोड: $modeLabel ($language)';
+  }
+
+  @override
+  String get goToHomeBtn => 'होम पर जाएं';
+
+  @override
+  String get viewBookingsBtn => 'बुकिंग देखें';
 }

@@ -3,11 +3,15 @@ import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { initFirebase } from './config/firebase.js';
 import { initSocketIO } from './config/socket.js';
+import { warmupDatabase } from './config/db.js';
 
 const startServer = async () => {
   try {
     // Initialize Firebase Admin (or dev mock)
     initFirebase();
+
+    // Pre-warm the database connection (handles Supabase cold starts)
+    await warmupDatabase();
 
     const app = createApp();
 

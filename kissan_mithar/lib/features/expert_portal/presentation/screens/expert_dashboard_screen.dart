@@ -71,7 +71,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
                         },
                       ),
                     );
-                  }).toList(),
+                  }),
                   const SizedBox(height: 24),
                   const Text(
                     'Consultations Booked',
@@ -106,7 +106,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
                         onTap: () {},
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

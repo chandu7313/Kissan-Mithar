@@ -817,4 +817,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yesLogout => 'Yes, Logout';
+
+  @override
+  String get notification1Title => 'Your Orchard Plan is Ready! 🌳';
+
+  @override
+  String get notification1Message =>
+      'Custom layout and tree plantation roadmap for 2 Acres Red Soil is generated.';
+
+  @override
+  String get notification2Title => 'Heavy Rain Warning Tomorrow 🌧️';
+
+  @override
+  String get notification2Message =>
+      'Expected 24mm rainfall tomorrow afternoon. Delay chemical spraying by 24-48 hours.';
+
+  @override
+  String get notification3Title => 'Expert Consultation Confirmed 👨‍🌾';
+
+  @override
+  String get notification3Message =>
+      'Your video session with Dr. Ananya Sharma is scheduled for tomorrow at 10:00 AM.';
+
+  @override
+  String get notification4Title => 'Mandi Market Prices Updated 📈';
+
+  @override
+  String get notification4Message =>
+      'Mango prices increased by 5% and Guava reached ₹45/kg at your local market.';
+
+  @override
+  String get notification5Title => 'Soil Moisture Advisory 💧';
+
+  @override
+  String get notification5Message =>
+      'Ideal soil moisture level detected for mango orchard fertigation this week.';
+
+  @override
+  String get farmDetailsSubmittedTitle => 'Farm Details Submitted!';
+
+  @override
+  String farmDetailsReviewDesc(String landSize) {
+    return 'Our agronomy experts are reviewing your $landSize farm profile. We will notify you once your personalized orchard plan is ready.';
+  }
+
+  @override
+  String get trackOrchardPlanDashboard =>
+      'You can track the progress of your orchard plan in your dashboard.';
+
+  @override
+  String get trackProgressBtn => 'Track Progress';
+
+  @override
+  String get consultationBookedTitle => 'Consultation Booked!';
+
+  @override
+  String bookingIdLabel(String id) {
+    return 'Booking ID: $id';
+  }
+
+  @override
+  String expertAssignedDesc(
+    String expertName,
+    String scheduledDate,
+    String scheduledTime,
+  ) {
+    return 'An expert agronomist ($expertName) has been assigned for $scheduledDate at $scheduledTime.';
+  }
+
+  @override
+  String modeLabelWithLang(String modeLabel, String language) {
+    return 'Mode: $modeLabel ($language)';
+  }
+
+  @override
+  String get goToHomeBtn => 'Go to Home';
+
+  @override
+  String get viewBookingsBtn => 'View Bookings';
 }

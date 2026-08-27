@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kissan_mithar/core/constants/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ConsultationSuccessScreen extends StatelessWidget {
   final String bookingId;
@@ -24,6 +25,7 @@ class ConsultationSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
@@ -55,10 +57,10 @@ class ConsultationSuccessScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Consultation Booked!',
+              Text(
+                l10n.consultationBookedTitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w900,
                   color: AppColors.primaryGreen,
@@ -82,7 +84,7 @@ class ConsultationSuccessScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Booking ID: $bookingId',
+                      l10n.bookingIdLabel(bookingId),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
@@ -91,7 +93,7 @@ class ConsultationSuccessScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'An expert agronomist ($expertName) has been assigned for $scheduledDate at $scheduledTime.',
+                      l10n.expertAssignedDesc(expertName, scheduledDate, scheduledTime),
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -114,7 +116,7 @@ class ConsultationSuccessScreen extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Mode: $modeLabel ($language)',
+                              l10n.modeLabelWithLang(modeLabel, language),
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
@@ -143,9 +145,9 @@ class ConsultationSuccessScreen extends StatelessWidget {
                       onPressed: () {
                         context.go('/home');
                       },
-                      child: const Text(
-                        'Go to Home',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.goToHomeBtn,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                           color: AppColors.primaryGreen,
@@ -167,9 +169,9 @@ class ConsultationSuccessScreen extends StatelessWidget {
                       onPressed: () {
                         context.pushReplacement('/consultation/history');
                       },
-                      child: const Text(
-                        'View Bookings',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.viewBookingsBtn,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                         ),

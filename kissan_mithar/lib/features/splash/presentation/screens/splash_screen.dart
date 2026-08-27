@@ -46,21 +46,42 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _animationController.forward();
 
-    // Navigate based on auth state after splash delay
-    Future.delayed(const Duration(milliseconds: 2200), () {
-      if (mounted) {
-        if (widget.onSplashComplete != null) {
-          widget.onSplashComplete!();
-        } else {
-          final authState = ref.read(authProvider);
-          if (authState.isAuthenticated) {
-            context.go('/home');
-          } else {
-            context.go('/language');
-          }
-        }
-      }
+    // Wait for both the splash animation minimum duration AND for auth
+    // state to finish loading before navigating.
+    _navigateWhenReady();
+  }
+
+  /// Waits for both the minimum splash animation and auth state resolution,
+  /// then navigates to the appropriate screen.
+  Future<void> _navigateWhenReady() async {
+    // Minimum splash display time for the animation to play
+    final minSplashDelay = Future.delayed(const Duration(milliseconds: 2200));
+
+    // Wait for auth state to finish loading (auto-login check)
+    final authReady = Future.doWhile(() async {
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (!mounted) return false; // Stop polling if widget is disposed
+      final authState = ref.read(authProvider);
+      return authState.isLoading; // Keep polling while still loading
     });
+
+    // Wait for both to complete
+    await Future.wait([minSplashDelay, authReady]);
+
+    if (!mounted) return;
+
+    if (widget.onSplashComplete != null) {
+      widget.onSplashComplete!();
+    } else {
+      final authState = ref.read(authProvider);
+      if (authState.isAuthenticated) {
+        // User has a persisted session — skip language/phone/OTP, go straight home
+        context.go('/home');
+      } else {
+        // No persisted session — start the login flow
+        context.go('/language');
+      }
+    }
   }
 
   @override

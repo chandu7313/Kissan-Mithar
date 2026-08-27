@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppLanguage {
   english('en', 'English', 'English'),
@@ -47,10 +48,34 @@ final languageNotifierProvider = StateNotifierProvider<LanguageStateNotifier, Ap
 final languageProvider = languageNotifierProvider;
 
 class LanguageStateNotifier extends StateNotifier<AppLanguage> {
-  LanguageStateNotifier() : super(AppLanguage.english);
+  static const String _prefLanguageKey = 'kissan_auth_language';
+
+  LanguageStateNotifier() : super(AppLanguage.english) {
+    _loadPersistedLanguage();
+  }
+
+  /// Restores the previously selected language from SharedPreferences
+  Future<void> _loadPersistedLanguage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final langCode = prefs.getString(_prefLanguageKey);
+      if (langCode != null && langCode.isNotEmpty) {
+        final lang = AppLanguage.fromCode(langCode);
+        state = lang;
+        LanguageProvider().setLanguage(lang);
+      }
+    } catch (e) {
+      debugPrint('[LanguageStateNotifier] Failed to load persisted language: $e');
+    }
+  }
 
   void setLanguage(AppLanguage lang) {
     state = lang;
     LanguageProvider().setLanguage(lang);
+    // Persist language choice
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString(_prefLanguageKey, lang.code);
+    });
   }
 }
+

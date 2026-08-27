@@ -22,10 +22,43 @@ export const DashboardPage: React.FC<Props> = ({
   onNavigateToConsultations,
 }) => {
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchAnalytics = () => {
+    setError(null);
+    AnalyticsApi.getSummary()
+      .then(setAnalytics)
+      .catch((err) => {
+        console.error('[DashboardPage] Failed to load analytics:', err);
+        setError('Failed to load dashboard data. The database may be temporarily unavailable.');
+      });
+  };
 
   useEffect(() => {
-    AnalyticsApi.getSummary().then(setAnalytics);
+    fetchAnalytics();
   }, []);
+
+  if (error) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <p style={{ color: '#ef4444', marginBottom: '1rem' }}>{error}</p>
+        <button
+          onClick={fetchAnalytics}
+          style={{
+            padding: '0.5rem 1.5rem',
+            borderRadius: '0.5rem',
+            border: 'none',
+            background: 'var(--primary-600)',
+            color: 'white',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+          }}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   if (!analytics) {
     return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Analytics Hub...</div>;

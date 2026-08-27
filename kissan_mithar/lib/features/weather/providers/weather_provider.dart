@@ -132,6 +132,10 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
 
       // Fallback: Native Device GPS
       if (EnvConfig.useNativeGps) {
+        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (!serviceEnabled) {
+          debugPrint('Location services are disabled.');
+        } else {
         LocationPermission permission = await Geolocator.checkPermission();
         if (permission == LocationPermission.denied) {
           permission = await Geolocator.requestPermission();
@@ -140,10 +144,36 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
             permission == LocationPermission.always) {
           final pos = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.medium,
-            timeLimit: const Duration(seconds: 4),
+            timeLimit: const Duration(seconds: 8),
           );
           lat = pos.latitude;
           lng = pos.longitude;
+
+          // Perform reverse geocoding if API key is available
+          if (EnvConfig.isWeatherConfigured) {
+            try {
+              final geoUrl = Uri.parse(
+                'https://api.openweathermap.org/geo/1.0/reverse?lat=$lat&lon=$lng&limit=1&appid=${EnvConfig.weatherApiKey}',
+              );
+              final geoRes = await http.get(geoUrl).timeout(const Duration(seconds: 4));
+              if (geoRes.statusCode == 200) {
+                final geoList = jsonDecode(geoRes.body) as List<dynamic>;
+                if (geoList.isNotEmpty) {
+                  final name = geoList[0]['name'] as String?;
+                  if (name != null && name.isNotEmpty) {
+                    locationName = name;
+                    final stateStr = geoList[0]['state'] as String?;
+                    if (stateStr != null && stateStr.isNotEmpty) {
+                      locationName = '$locationName, $stateStr';
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              debugPrint('Reverse geocoding error: $e');
+            }
+          }
+        }
         }
       }
     } catch (e) {

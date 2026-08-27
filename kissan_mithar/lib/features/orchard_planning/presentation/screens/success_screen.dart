@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../shared/widgets/large_button.dart';
 import '../../../../core/services/step_voice_guide_service.dart';
 import '../../../../core/localization/app_language.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OrchardSuccessScreen extends StatefulWidget {
   final String landSize;
@@ -50,6 +51,7 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
@@ -92,9 +94,9 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
               
               const SizedBox(height: 32),
               
-              const Text(
-                'Farm Details Submitted!', 
-                style: TextStyle(
+              Text(
+                l10n.farmDetailsSubmittedTitle, 
+                style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w900,
                   color: AppColors.textPrimary,
@@ -105,7 +107,7 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
               const SizedBox(height: 16),
               
               Text(
-                'Our agronomy experts are reviewing your ${widget.landSize} farm profile. We will notify you once your personalized orchard plan is ready.',
+                l10n.farmDetailsReviewDesc(widget.landSize),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -124,14 +126,14 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: const Color(0xFFE9E8E1)),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.info_outline_rounded, color: AppColors.primaryGreen, size: 28),
-                    SizedBox(width: 16),
+                    const Icon(Icons.info_outline_rounded, color: AppColors.primaryGreen, size: 28),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Text(
-                        'You can track the progress of your orchard plan in your dashboard.',
-                        style: TextStyle(
+                        l10n.trackOrchardPlanDashboard,
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
@@ -145,7 +147,7 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
               const Spacer(),
 
               LargeButton(
-                label: 'Track Progress',
+                label: l10n.trackProgressBtn,
                 onPressed: () {
                   context.pushReplacementNamed(
                     'planTracker',
@@ -168,9 +170,9 @@ class _OrchardSuccessScreenState extends State<OrchardSuccessScreen> with Single
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: const Text(
-                  'Back to Home',
-                  style: TextStyle(
+                child: Text(
+                  l10n.backToHome,
+                  style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: AppColors.primaryGreen,

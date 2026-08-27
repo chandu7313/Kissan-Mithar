@@ -826,4 +826,82 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get yesLogout => 'Yes, Logout';
+
+  @override
+  String get notification1Title => 'ನಿಮ್ಮ ಹಣ್ಣಿನ ತೋಟದ ಯೋಜನೆ ಸಿದ್ಧವಾಗಿದೆ! 🌳';
+
+  @override
+  String get notification1Message =>
+      '2 ಎಕರೆ ಕೆಂಪು ಮಣ್ಣಿಗೆ ಕಸ್ಟಮ್ ಲೇಔಟ್ ಮತ್ತು ಮರ ನೆಡುವ ಮಾರ್ಗಸೂಚಿ ಸಿದ್ಧವಾಗಿದೆ.';
+
+  @override
+  String get notification2Title => 'ನಾಳೆ ಭಾರಿ ಮಳೆಯ ಎಚ್ಚರಿಕೆ 🌧️';
+
+  @override
+  String get notification2Message =>
+      'ನಾಳೆ ಮಧ್ಯಾಹ್ನ 24 ಮಿಮೀ ಮಳೆಯಾಗುವ ನಿರೀಕ್ಷೆಯಿದೆ. ರಾಸಾಯನಿಕ ಸಿಂಪರಣೆಯನ್ನು 24-48 ಗಂಟೆಗಳ ಕಾಲ ಮುಂದೂಡಿ.';
+
+  @override
+  String get notification3Title => 'ತಜ್ಞರ ಸಮಾಲೋಚನೆ ದೃಢಪಡಿಸಲಾಗಿದೆ 👨‍🌾';
+
+  @override
+  String get notification3Message =>
+      'ಡಾ. ಅನನ್ಯಾ ಶರ್ಮಾ ಅವರೊಂದಿಗಿನ ನಿಮ್ಮ ವೀಡಿಯೊ ಅಧಿವೇಶನವನ್ನು ನಾಳೆ ಬೆಳಗ್ಗೆ 10:00 ಗಂಟೆಗೆ ನಿಗದಿಪಡಿಸಲಾಗಿದೆ.';
+
+  @override
+  String get notification4Title => 'ಮಂಡಿ ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ 📈';
+
+  @override
+  String get notification4Message =>
+      'ನಿಮ್ಮ ಸ್ಥಳೀಯ ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಮಾವಿನ ಬೆಲೆಗಳು 5% ಹೆಚ್ಚಾಗಿವೆ ಮತ್ತು ಪೇರಲ ಕೆಜಿಗೆ ₹45 ತಲುಪಿದೆ.';
+
+  @override
+  String get notification5Title => 'ಮಣ್ಣಿನ ತೇವಾಂಶದ ಸಲಹೆ 💧';
+
+  @override
+  String get notification5Message =>
+      'ಈ ವಾರ ಮಾವಿನ ತೋಟದ ಫರ್ಟಿಗೇಶನ್‌ಗೆ ಸೂಕ್ತವಾದ ಮಣ್ಣಿನ ತೇವಾಂಶ ಮಟ್ಟ ಕಂಡುಬಂದಿದೆ.';
+
+  @override
+  String get farmDetailsSubmittedTitle => 'ಕೃಷಿ ವಿವರಗಳನ್ನು ಸಲ್ಲಿಸಲಾಗಿದೆ!';
+
+  @override
+  String farmDetailsReviewDesc(String landSize) {
+    return 'ನಮ್ಮ ಕೃಷಿ ತಜ್ಞರು ನಿಮ್ಮ $landSize ಕೃಷಿ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಪರಿಶೀಲಿಸುತ್ತಿದ್ದಾರೆ. ನಿಮ್ಮ ವೈಯಕ್ತಿಕಗೊಳಿಸಿದ ಹಣ್ಣಿನ ತೋಟದ ಯೋಜನೆ ಸಿದ್ಧವಾದಾಗ ನಾವು ನಿಮಗೆ ತಿಳಿಸುತ್ತೇವೆ.';
+  }
+
+  @override
+  String get trackOrchardPlanDashboard =>
+      'ನಿಮ್ಮ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಹಣ್ಣಿನ ತೋಟದ ಯೋಜನೆಯ ಪ್ರಗತಿಯನ್ನು ನೀವು ಟ್ರ್ಯಾಕ್ ಮಾಡಬಹುದು.';
+
+  @override
+  String get trackProgressBtn => 'ಪ್ರಗತಿಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ';
+
+  @override
+  String get consultationBookedTitle => 'ಸಮಾಲೋಚನೆ ಬುಕ್ ಮಾಡಲಾಗಿದೆ!';
+
+  @override
+  String bookingIdLabel(String id) {
+    return 'ಬುಕಿಂಗ್ ಐಡಿ: $id';
+  }
+
+  @override
+  String expertAssignedDesc(
+    String expertName,
+    String scheduledDate,
+    String scheduledTime,
+  ) {
+    return 'ಒಬ್ಬ ತಜ್ಞ ಕೃಷಿವಿಜ್ಞಾನಿ ($expertName) ರವರನ್ನು $scheduledDate ರಂದು $scheduledTime ಗೆ ನಿಯೋಜಿಸಲಾಗಿದೆ.';
+  }
+
+  @override
+  String modeLabelWithLang(String modeLabel, String language) {
+    return 'ಮೋಡ್: $modeLabel ($language)';
+  }
+
+  @override
+  String get goToHomeBtn => 'ಮುಖಪುಟಕ್ಕೆ ಹೋಗಿ';
+
+  @override
+  String get viewBookingsBtn => 'ಬುಕಿಂಗ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಿ';
 }

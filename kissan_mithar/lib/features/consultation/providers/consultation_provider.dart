@@ -134,7 +134,7 @@ class ConsultationBookingNotifier extends StateNotifier<AsyncValue<ConsultationB
         'language': currentDraft.language,
         'notes': currentDraft.message,
         if (uploadedMediaUrls.isNotEmpty) 'mediaUrls': uploadedMediaUrls,
-        if (uploadedVoiceUrl != null) 'voiceNoteUrl': uploadedVoiceUrl,
+        'voiceNoteUrl': ?uploadedVoiceUrl,
       };
 
       // 2. Call backend REST endpoint

@@ -259,5 +259,62 @@
   "newOrchardPlanSurvey": "New Orchard Plan Survey",
   "logoutConfirmationTitle": "Are you sure you want to log out?",
   "logoutConfirmationDesc": "Your saved data will be cleared from this device.",
-  "yesLogout": "Yes, Logout"
+  "yesLogout": "Yes, Logout",
+  "notification1Title": "Your Orchard Plan is Ready! 🌳",
+  "notification1Message": "Custom layout and tree plantation roadmap for 2 Acres Red Soil is generated.",
+  "notification2Title": "Heavy Rain Warning Tomorrow 🌧️",
+  "notification2Message": "Expected 24mm rainfall tomorrow afternoon. Delay chemical spraying by 24-48 hours.",
+  "notification3Title": "Expert Consultation Confirmed 👨‍🌾",
+  "notification3Message": "Your video session with Dr. Ananya Sharma is scheduled for tomorrow at 10:00 AM.",
+  "notification4Title": "Mandi Market Prices Updated 📈",
+  "notification4Message": "Mango prices increased by 5% and Guava reached ₹45/kg at your local market.",
+  "notification5Title": "Soil Moisture Advisory 💧",
+  "notification5Message": "Ideal soil moisture level detected for mango orchard fertigation this week.",
+  "farmDetailsSubmittedTitle": "Farm Details Submitted!",
+  "farmDetailsReviewDesc": "Our agronomy experts are reviewing your {landSize} farm profile. We will notify you once your personalized orchard plan is ready.",
+  "@farmDetailsReviewDesc": {
+    "placeholders": {
+      "landSize": {
+        "type": "String"
+      }
+    }
+  },
+  "trackOrchardPlanDashboard": "You can track the progress of your orchard plan in your dashboard.",
+  "trackProgressBtn": "Track Progress",
+  "consultationBookedTitle": "Consultation Booked!",
+  "bookingIdLabel": "Booking ID: {id}",
+  "@bookingIdLabel": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "expertAssignedDesc": "An expert agronomist ({expertName}) has been assigned for {scheduledDate} at {scheduledTime}.",
+  "@expertAssignedDesc": {
+    "placeholders": {
+      "expertName": {
+        "type": "String"
+      },
+      "scheduledDate": {
+        "type": "String"
+      },
+      "scheduledTime": {
+        "type": "String"
+      }
+    }
+  },
+  "modeLabelWithLang": "Mode: {modeLabel} ({language})",
+  "@modeLabelWithLang": {
+    "placeholders": {
+      "modeLabel": {
+        "type": "String"
+      },
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "goToHomeBtn": "Go to Home",
+  "viewBookingsBtn": "View Bookings"
 }

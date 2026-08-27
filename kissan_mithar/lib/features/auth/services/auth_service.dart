@@ -103,7 +103,7 @@ class AuthService {
       await _networkClient.post<dynamic>(
         '/auth/logout',
         data: {
-          if (userId != null) 'userId': userId,
+          'userId': ?userId,
           'role': 'FARMER',
         },
       );

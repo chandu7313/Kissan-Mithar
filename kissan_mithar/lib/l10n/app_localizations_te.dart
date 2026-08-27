@@ -820,4 +820,83 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get yesLogout => 'అవును, లాగౌట్ చేయండి';
+
+  @override
+  String get notification1Title => 'మీ పండ్ల తోట ప్రణాళిక సిద్ధంగా ఉంది! 🌳';
+
+  @override
+  String get notification1Message =>
+      '2 ఎకరాల ఎర్ర నేల కోసం అనుకూల లేఅవుట్ మరియు చెట్ల పెంపకం రోడ్‌మ్యాప్ రూపొందించబడింది.';
+
+  @override
+  String get notification2Title => 'రేపు భారీ వర్ష సూచన 🌧️';
+
+  @override
+  String get notification2Message =>
+      'రేపు మధ్యాహ్నం 24 మి.మీ వర్షపాతం కురిసే అవకాశం ఉంది. రసాయన పిచికారీని 24-48 గంటలు వాయిదా వేయండి.';
+
+  @override
+  String get notification3Title =>
+      'నిపుణుల సంప్రదింపులు ధృవీకరించబడ్డాయి 👨‍🌾';
+
+  @override
+  String get notification3Message =>
+      'డాక్టర్ అనన్య శర్మతో మీ వీడియో సెషన్ రేపు ఉదయం 10:00 గంటలకు షెడ్యూల్ చేయబడింది.';
+
+  @override
+  String get notification4Title => 'మండి మార్కెట్ ధరలు నవీకరించబడ్డాయి 📈';
+
+  @override
+  String get notification4Message =>
+      'మీ స్థానిక మార్కెట్‌లో మామిడి ధరలు 5% పెరిగాయి మరియు జామకాయ రూ. 45/కిలోకు చేరుకుంది.';
+
+  @override
+  String get notification5Title => 'నేల తేమ సలహా 💧';
+
+  @override
+  String get notification5Message =>
+      'ఈ వారం మామిడి తోట ఫెర్టిగేషన్ కోసం సరైన నేల తేమ స్థాయి కనుగొనబడింది.';
+
+  @override
+  String get farmDetailsSubmittedTitle => 'పొలం వివరాలు సమర్పించబడ్డాయి!';
+
+  @override
+  String farmDetailsReviewDesc(String landSize) {
+    return 'మా వ్యవసాయ నిపుణులు మీ $landSize పొలం ప్రొఫైల్‌ను సమీక్షిస్తున్నారు. మీ వ్యక్తిగతీకరించిన పండ్ల తోట ప్రణాళిక సిద్ధమైన తర్వాత మేము మీకు తెలియజేస్తాము.';
+  }
+
+  @override
+  String get trackOrchardPlanDashboard =>
+      'మీరు మీ డ్యాష్‌బోర్డ్‌లో మీ పండ్ల తోట ప్రణాళిక పురోగతిని ట్రాక్ చేయవచ్చు.';
+
+  @override
+  String get trackProgressBtn => 'పురోగతిని ట్రాక్ చేయండి';
+
+  @override
+  String get consultationBookedTitle => 'సంప్రదింపులు బుక్ చేయబడ్డాయి!';
+
+  @override
+  String bookingIdLabel(String id) {
+    return 'బుకింగ్ ID: $id';
+  }
+
+  @override
+  String expertAssignedDesc(
+    String expertName,
+    String scheduledDate,
+    String scheduledTime,
+  ) {
+    return 'ఒక నిపుణుడు అగ్రోనమిస్ట్ ($expertName) $scheduledDate న $scheduledTime కు కేటాయించబడ్డారు.';
+  }
+
+  @override
+  String modeLabelWithLang(String modeLabel, String language) {
+    return 'మోడ్: $modeLabel ($language)';
+  }
+
+  @override
+  String get goToHomeBtn => 'హోమ్‌కు వెళ్లండి';
+
+  @override
+  String get viewBookingsBtn => 'బుకింగ్‌లను చూడండి';
 }

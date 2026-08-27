@@ -366,9 +366,25 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
   Future<void> autoDetectLocation() async {
     state = state.copyWith(isLocating: true);
     try {
+      // First check if location services are enabled on the device
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Prompt user to enable location services
+        serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (!serviceEnabled) {
+          state = state.copyWith(isLocating: false);
+          return;
+        }
+      }
+
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.deniedForever) {
+        // Permissions are permanently denied
+        state = state.copyWith(isLocating: false);
+        return;
       }
 
       Position? position;
@@ -376,7 +392,7 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
           permission == LocationPermission.always) {
         position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
-          timeLimit: const Duration(seconds: 5),
+          timeLimit: const Duration(seconds: 10),
         );
       }
 
@@ -608,13 +624,13 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
 
       final payload = {
         'photos': {
-          if (frontUrl != null) 'front': frontUrl,
-          if (leftUrl != null) 'left': leftUrl,
-          if (rightUrl != null) 'right': rightUrl,
-          if (centerUrl != null) 'center': centerUrl,
+          'front': ?frontUrl,
+          'left': ?leftUrl,
+          'right': ?rightUrl,
+          'center': ?centerUrl,
           if (finalGallery.isNotEmpty) 'gallery': finalGallery,
         },
-        if (finalSurveyMapUrl != null) 'surveyMapUrl': finalSurveyMapUrl,
+        'surveyMapUrl': ?finalSurveyMapUrl,
         if (state.surveyMapType != null) 'surveyMapType': state.surveyMapType,
         'gps': {
           'latitude': state.latitude,
@@ -637,7 +653,7 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
           'preferredOrchards': state.preferredOrchards,
           'needExpertSuggestion': state.needExpertSuggestion,
         },
-        if (finalVoiceUrl != null) 'voiceNoteUrl': finalVoiceUrl,
+        'voiceNoteUrl': ?finalVoiceUrl,
       };
 
       final res = await _networkClient.post<dynamic>('/orchard-requests', data: payload);

@@ -49,56 +49,65 @@ class MainShellScreen extends ConsumerWidget {
     final selectedIndex = _calculateSelectedIndex(context);
     final unreadCount = ref.watch(notificationsProvider).unreadCount;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: child,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(12),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: Container(
-            height: 68,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(
-                  context: context,
-                  index: 0,
-                  isSelected: selectedIndex == 0,
-                  icon: Icons.home_rounded,
-                  activeIcon: Icons.home_rounded,
-                  label: l10n.home,
-                  onTap: () => _onItemTapped(0, context),
-                ),
-                _buildNavItem(
-                  context: context,
-                  index: 1,
-                  isSelected: selectedIndex == 1,
-                  icon: Icons.list_alt_rounded,
-                  activeIcon: Icons.list_alt_rounded,
-                  label: l10n.myActivity,
-                  onTap: () => _onItemTapped(1, context),
-                ),
-                _buildNavItem(
-                  context: context,
-                  index: 2,
-                  isSelected: selectedIndex == 2,
-                  icon: Icons.person_outline_rounded,
-                  activeIcon: Icons.person_rounded,
-                  label: l10n.profile,
-                  onTap: () => _onItemTapped(2, context),
-                ),
-              ],
+    return PopScope(
+      canPop: selectedIndex == 0,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        if (selectedIndex != 0) {
+          context.go('/home');
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: child,
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(12),
+                blurRadius: 16,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: Container(
+              height: 68,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(
+                    context: context,
+                    index: 0,
+                    isSelected: selectedIndex == 0,
+                    icon: Icons.home_rounded,
+                    activeIcon: Icons.home_rounded,
+                    label: l10n.home,
+                    onTap: () => _onItemTapped(0, context),
+                  ),
+                  _buildNavItem(
+                    context: context,
+                    index: 1,
+                    isSelected: selectedIndex == 1,
+                    icon: Icons.list_alt_rounded,
+                    activeIcon: Icons.list_alt_rounded,
+                    label: l10n.myActivity,
+                    onTap: () => _onItemTapped(1, context),
+                  ),
+                  _buildNavItem(
+                    context: context,
+                    index: 2,
+                    isSelected: selectedIndex == 2,
+                    icon: Icons.person_outline_rounded,
+                    activeIcon: Icons.person_rounded,
+                    label: l10n.profile,
+                    onTap: () => _onItemTapped(2, context),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

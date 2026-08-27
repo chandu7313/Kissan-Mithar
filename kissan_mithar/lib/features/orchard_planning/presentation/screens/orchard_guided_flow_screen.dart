@@ -593,10 +593,7 @@ class _OrchardGuidedFlowScreenState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      l10n.step +
-                          ' ${state.currentStep + 1} ' +
-                          l10n.ofText +
-                          ' 5',
+                      '${l10n.step} ${state.currentStep + 1} ${l10n.ofText} 5',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -866,11 +863,10 @@ class _OrchardGuidedFlowScreenState
           if (state.galleryPhotos.isNotEmpty) ...[
             const SizedBox(height: 16),
             Text(
-              '${state.galleryPhotos.length} ' +
-                  l10n.additionalPhotosSelected.replaceAll(
+              '${state.galleryPhotos.length} ${l10n.additionalPhotosSelected.replaceAll(
                     '{count}',
                     state.galleryPhotos.length.toString(),
-                  ),
+                  )}',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13,
@@ -1933,8 +1929,7 @@ class _RipplingIconState extends State<_RipplingIcon>
 class _LoopingGuideVideo extends StatefulWidget {
   final String videoUrl;
 
-  const _LoopingGuideVideo({Key? key, required this.videoUrl})
-    : super(key: key);
+  const _LoopingGuideVideo({super.key, required this.videoUrl});
 
   @override
   State<_LoopingGuideVideo> createState() => _LoopingGuideVideoState();

@@ -1661,6 +1661,130 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, Logout'**
   String get yesLogout;
+
+  /// No description provided for @notification1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Orchard Plan is Ready! 🌳'**
+  String get notification1Title;
+
+  /// No description provided for @notification1Message.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom layout and tree plantation roadmap for 2 Acres Red Soil is generated.'**
+  String get notification1Message;
+
+  /// No description provided for @notification2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy Rain Warning Tomorrow 🌧️'**
+  String get notification2Title;
+
+  /// No description provided for @notification2Message.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected 24mm rainfall tomorrow afternoon. Delay chemical spraying by 24-48 hours.'**
+  String get notification2Message;
+
+  /// No description provided for @notification3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Expert Consultation Confirmed 👨‍🌾'**
+  String get notification3Title;
+
+  /// No description provided for @notification3Message.
+  ///
+  /// In en, this message translates to:
+  /// **'Your video session with Dr. Ananya Sharma is scheduled for tomorrow at 10:00 AM.'**
+  String get notification3Message;
+
+  /// No description provided for @notification4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandi Market Prices Updated 📈'**
+  String get notification4Title;
+
+  /// No description provided for @notification4Message.
+  ///
+  /// In en, this message translates to:
+  /// **'Mango prices increased by 5% and Guava reached ₹45/kg at your local market.'**
+  String get notification4Message;
+
+  /// No description provided for @notification5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Soil Moisture Advisory 💧'**
+  String get notification5Title;
+
+  /// No description provided for @notification5Message.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideal soil moisture level detected for mango orchard fertigation this week.'**
+  String get notification5Message;
+
+  /// No description provided for @farmDetailsSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm Details Submitted!'**
+  String get farmDetailsSubmittedTitle;
+
+  /// No description provided for @farmDetailsReviewDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Our agronomy experts are reviewing your {landSize} farm profile. We will notify you once your personalized orchard plan is ready.'**
+  String farmDetailsReviewDesc(String landSize);
+
+  /// No description provided for @trackOrchardPlanDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'You can track the progress of your orchard plan in your dashboard.'**
+  String get trackOrchardPlanDashboard;
+
+  /// No description provided for @trackProgressBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Progress'**
+  String get trackProgressBtn;
+
+  /// No description provided for @consultationBookedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation Booked!'**
+  String get consultationBookedTitle;
+
+  /// No description provided for @bookingIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking ID: {id}'**
+  String bookingIdLabel(String id);
+
+  /// No description provided for @expertAssignedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'An expert agronomist ({expertName}) has been assigned for {scheduledDate} at {scheduledTime}.'**
+  String expertAssignedDesc(
+    String expertName,
+    String scheduledDate,
+    String scheduledTime,
+  );
+
+  /// No description provided for @modeLabelWithLang.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode: {modeLabel} ({language})'**
+  String modeLabelWithLang(String modeLabel, String language);
+
+  /// No description provided for @goToHomeBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Home'**
+  String get goToHomeBtn;
+
+  /// No description provided for @viewBookingsBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'View Bookings'**
+  String get viewBookingsBtn;
 }
 
 class _AppLocalizationsDelegate

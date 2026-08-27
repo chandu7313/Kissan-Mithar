@@ -84,7 +84,29 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     );
   }
 
-  Widget _buildNotificationCard(NotificationItem item) {
+  String _getLocalizedTitle(AppLocalizations l10n, NotificationItem item) {
+    switch (item.id) {
+      case 'NOTIF-01': return l10n.notification1Title;
+      case 'NOTIF-02': return l10n.notification2Title;
+      case 'NOTIF-03': return l10n.notification3Title;
+      case 'NOTIF-04': return l10n.notification4Title;
+      case 'NOTIF-05': return l10n.notification5Title;
+      default: return item.title;
+    }
+  }
+
+  String _getLocalizedMessage(AppLocalizations l10n, NotificationItem item) {
+    switch (item.id) {
+      case 'NOTIF-01': return l10n.notification1Message;
+      case 'NOTIF-02': return l10n.notification2Message;
+      case 'NOTIF-03': return l10n.notification3Message;
+      case 'NOTIF-04': return l10n.notification4Message;
+      case 'NOTIF-05': return l10n.notification5Message;
+      default: return item.message;
+    }
+  }
+
+  Widget _buildNotificationCard(NotificationItem item, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -167,7 +189,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        item.title,
+                                        _getLocalizedTitle(l10n, item),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -204,7 +226,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  item.message,
+                                  _getLocalizedMessage(l10n, item),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -365,7 +387,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                       itemCount: state.filteredItems.length,
                       itemBuilder: (context, index) {
                         final item = state.filteredItems[index];
-                        return _buildNotificationCard(item);
+                        return _buildNotificationCard(item, l10n);
                       },
                     ),
 

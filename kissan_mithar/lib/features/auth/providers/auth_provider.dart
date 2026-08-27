@@ -58,6 +58,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   static const String _prefPhoneKey = 'kissan_auth_phone';
   static const String _prefNameKey = 'kissan_auth_name';
   static const String _prefPhotoKey = 'kissan_auth_photo';
+  static const String _prefLanguageKey = 'kissan_auth_language';
 
   final AuthService _authService;
   final NetworkClient _networkClient;
@@ -82,28 +83,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
         var phone = prefs.getString(_prefPhoneKey);
         var name = prefs.getString(_prefNameKey);
         var photo = prefs.getString(_prefPhotoKey);
-        var languageCode = state.languageCode;
+        var languageCode = prefs.getString(_prefLanguageKey) ?? state.languageCode;
 
-        // Try to fetch latest profile from backend to sync admin edits
-        try {
-          final response = await _networkClient.get<dynamic>('/farmers/me');
-          if (response.data is Map<String, dynamic>) {
-            final data = response.data as Map<String, dynamic>;
-            name = data['name'] as String? ?? name;
-            photo = data['photoUrl'] as String? ?? photo;
-            phone = data['phoneNumber'] as String? ?? phone;
-            if (data['languageCode'] != null) {
-              languageCode = data['languageCode'] as String;
-            }
-
-            // Update prefs with latest
-            await prefs.setString(_prefNameKey, name ?? 'farmer');
-            if (photo != null) await prefs.setString(_prefPhotoKey, photo);
-          }
-        } catch (e) {
-          debugPrint('[AuthNotifier] Failed to sync profile on auto-login: $e');
-        }
-
+        // Immediately set state from cache so splash screen can proceed
         state = state.copyWith(
           isAuthenticated: true,
           isLoading: false,
@@ -115,6 +97,39 @@ class AuthNotifier extends StateNotifier<AuthState> {
           token: _networkClient.authToken,
         );
         debugPrint('[AuthNotifier] Auto-login restored for $name ($phone)');
+
+        // Fetch latest profile from backend asynchronously to sync admin edits
+        Future.microtask(() async {
+          try {
+            final response = await _networkClient.get<dynamic>('/farmers/me');
+            if (response.data is Map<String, dynamic>) {
+              final data = response.data as Map<String, dynamic>;
+              final newName = data['name'] as String? ?? name;
+              final newPhoto = data['photoUrl'] as String? ?? photo;
+              final newPhone = data['phoneNumber'] as String? ?? phone;
+              var newLanguageCode = languageCode;
+              if (data['languageCode'] != null) {
+                newLanguageCode = data['languageCode'] as String;
+              }
+
+              // Update prefs with latest
+              await prefs.setString(_prefNameKey, newName ?? 'farmer');
+              if (newPhoto != null) await prefs.setString(_prefPhotoKey, newPhoto);
+
+              // Update state with fresh data
+              if (mounted) {
+                state = state.copyWith(
+                  userName: newName ?? 'farmer',
+                  photoUrl: newPhoto,
+                  phoneNumber: newPhone,
+                  languageCode: newLanguageCode,
+                );
+              }
+            }
+          } catch (e) {
+            debugPrint('[AuthNotifier] Failed to sync profile on auto-login: $e');
+          }
+        });
       } else {
         state = state.copyWith(isAuthenticated: false, isLoading: false);
       }
@@ -126,6 +141,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   void setLanguage(String langCode) {
     state = state.copyWith(languageCode: langCode);
+    // Persist language so user is not asked again on next app launch
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString(_prefLanguageKey, langCode);
+    });
   }
 
   /// Sends OTP to the given phone number via backend
@@ -159,11 +178,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         languageCode: state.languageCode,
       );
 
-      // Persist user info locally
+      // Persist user info locally (keeps user logged in across app restarts)
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_prefUserIdKey, result.userId);
       await prefs.setString(_prefPhoneKey, result.phoneNumber);
       await prefs.setString(_prefNameKey, result.name);
+      await prefs.setString(_prefLanguageKey, state.languageCode ?? 'en');
       if (result.photoUrl != null) {
         await prefs.setString(_prefPhotoKey, result.photoUrl!);
       }
@@ -219,6 +239,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await prefs.remove(_prefPhoneKey);
     await prefs.remove(_prefNameKey);
     await prefs.remove(_prefPhotoKey);
+    await prefs.remove(_prefLanguageKey);
 
     state = const AuthState(isAuthenticated: false);
     debugPrint('[AuthNotifier] Logged out');

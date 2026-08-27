@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../consultation/presentation/screens/book_consultation_screen.dart';
 import '../../../consultation/presentation/screens/consultation_history_screen.dart';
 import '../../../orchard_planning/presentation/screens/land_size_screen.dart';
 import '../../../orchard_planning/presentation/screens/plan_tracker_screen.dart';
@@ -27,8 +27,10 @@ class MyActivityScreen extends StatelessWidget {
           onPressed: () {
             if (onHomeTap != null) {
               onHomeTap!();
+            } else if (context.canPop()) {
+              context.pop();
             } else {
-              Navigator.pop(context);
+              context.go('/home');
             }
           },
         ),
