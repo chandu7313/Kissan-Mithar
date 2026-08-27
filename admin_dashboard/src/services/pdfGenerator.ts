@@ -54,10 +54,10 @@ export class PdfGenerator {
       theme: 'grid',
       styles: { fontSize: 8.5, cellPadding: 2.5 },
       columnStyles: {
-        0: { fontStyle: 'bold', fillColor: [248, 250, 252], textColor: darkColor, width: 35 },
-        1: { width: 60 },
-        2: { fontStyle: 'bold', fillColor: [248, 250, 252], textColor: darkColor, width: 35 },
-        3: { width: 60 },
+        0: { fontStyle: 'bold', fillColor: [248, 250, 252], textColor: darkColor, cellWidth: 35 },
+        1: { cellWidth: 60 },
+        2: { fontStyle: 'bold', fillColor: [248, 250, 252], textColor: darkColor, cellWidth: 35 },
+        3: { cellWidth: 60 },
       },
     });
 
@@ -119,7 +119,7 @@ export class PdfGenerator {
       body: layoutData,
       theme: 'striped',
       styles: { fontSize: 8.5, cellPadding: 2.5 },
-      columnStyles: { 0: { fontStyle: 'bold', width: 65 }, 1: { width: 117 } },
+      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 65 }, 1: { cellWidth: 117 } },
     });
 
     currentY = (doc as any).lastAutoTable.finalY + 8;
@@ -147,7 +147,7 @@ export class PdfGenerator {
       body: agronomyData,
       theme: 'grid',
       styles: { fontSize: 8.5, cellPadding: 2.5 },
-      columnStyles: { 0: { fontStyle: 'bold', fillColor: [248, 250, 252], width: 55 }, 1: { width: 127 } },
+      columnStyles: { 0: { fontStyle: 'bold', fillColor: [248, 250, 252], cellWidth: 55 }, 1: { cellWidth: 127 } },
     });
 
     currentY = (doc as any).lastAutoTable.finalY + 8;
@@ -181,7 +181,7 @@ export class PdfGenerator {
       body: financialData,
       theme: 'striped',
       styles: { fontSize: 8.5, cellPadding: 2.5 },
-      columnStyles: { 0: { fontStyle: 'bold', width: 60 }, 1: { width: 122 } },
+      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 60 }, 1: { cellWidth: 122 } },
     });
 
     currentY = (doc as any).lastAutoTable.finalY + 8;
@@ -203,7 +203,7 @@ export class PdfGenerator {
       body: schemeData,
       theme: 'grid',
       styles: { fontSize: 8.5, cellPadding: 2.5 },
-      columnStyles: { 0: { fontStyle: 'bold', fillColor: [248, 250, 252], width: 55 }, 1: { width: 127 } },
+      columnStyles: { 0: { fontStyle: 'bold', fillColor: [248, 250, 252], cellWidth: 55 }, 1: { cellWidth: 127 } },
     });
 
     currentY = (doc as any).lastAutoTable.finalY + 14;

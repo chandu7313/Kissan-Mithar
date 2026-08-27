@@ -84,7 +84,7 @@ export class AuthApi {
         userId: session.userId,
         role: session.role,
         userName: session.name,
-        userEmail: session.email || (session.role === 'ADMIN' ? 'admin@gmail.com' : 'sunil.rao@gmail.com'),
+        userEmail: (session as any).email || (session.role === 'ADMIN' ? 'admin@gmail.com' : 'sunil.rao@gmail.com'),
       });
     } catch (err) {
       console.warn('[AuthApi] Logout record failed:', err);
