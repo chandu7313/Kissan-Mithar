@@ -246,7 +246,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '0.5rem' }}>
           <img
             src="/app_logo.png"
-            alt="Kisan Mithar Logo"
+            alt="Kissan Mithar Logo"
             style={{
               height: '84px',
               maxWidth: '220px',

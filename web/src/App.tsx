@@ -33,7 +33,8 @@ export const App: React.FC = () => {
   // Keep URL in sync with state
   useEffect(() => {
     if (view === 'landing') {
-      if (window.location.pathname !== '/') {
+      const validLandingPaths = ['/', '/about', '/contact', '/services'];
+      if (!validLandingPaths.includes(window.location.pathname)) {
         window.history.replaceState({}, '', '/');
       }
     } else if (view === 'app') {

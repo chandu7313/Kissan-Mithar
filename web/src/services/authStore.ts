@@ -35,7 +35,7 @@ export class AuthStore {
   static getAdminSession(): UserSession {
     return {
       userId: 'ADMIN-001',
-      name: 'Kisan Mithar Ops Admin',
+      name: 'Kissan Mithar Ops Admin',
       role: 'ADMIN',
       phoneNumber: '+919999900000',
       token: 'demo_admin_jwt_token',

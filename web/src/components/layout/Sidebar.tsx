@@ -52,7 +52,7 @@ export const Sidebar: React.FC<Props> = ({
       >
         <img
           src="/app_logo.png"
-          alt="Kisan Mithar"
+          alt="Kissan Mithar"
           style={{
             height: '42px',
             width: '42px',

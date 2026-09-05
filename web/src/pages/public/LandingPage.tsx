@@ -12,6 +12,24 @@ interface LandingPageProps {
 export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
+  React.useEffect(() => {
+    const path = window.location.pathname;
+    let targetId = '';
+    
+    if (path === '/about') targetId = 'about';
+    else if (path === '/services') targetId = 'services';
+    else if (path === '/contact') targetId = 'contact';
+
+    if (targetId) {
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    }
+  }, []);
+
   return (
     <div className="landing-container">
       {/* Navbar */}
@@ -19,7 +37,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
         <div className="navbar-content">
           <div className="logo-container">
             <Leaf className="logo-icon" />
-            <span className="logo-text">Kisan<br/>Mithar</span>
+            <span className="logo-text">Kissan<br/>Mithar</span>
           </div>
 
           {/* Desktop Nav */}
@@ -221,7 +239,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       <section id="how-it-works" className="how-it-works-section">
         <div className="section-header">
           <span className="section-badge">SIMPLE PROCESS</span>
-          <h2 className="section-title">How Kisan Mithar Works</h2>
+          <h2 className="section-title">How Kissan Mithar Works</h2>
           <p className="section-subtitle">
             Four quick steps to boost your farm and yield and cut seasonal crop risks.
           </p>
@@ -307,7 +325,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <h2 className="section-title">Voices from the Field</h2>
             <span className="audio-badge">Over 12,000+ voice recordings submitted <Play size={14} fill="currentColor" /></span>
           </div>
-          <p className="section-subtitle">Real experiences shared by growers using Kisan Mithar every week.</p>
+          <p className="section-subtitle">Real experiences shared by growers using Kissan Mithar every week.</p>
         </div>
 
         <div className="stories-grid">
@@ -319,7 +337,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
               <Star size={16} fill="#FFB800" color="#FFB800" />
               <Star size={16} fill="#FFB800" color="#FFB800" />
             </div>
-            <p className="story-quote">"Kisan Mithar's orchard guidance helped me set up 3 acres of guava with 40% less water usage. The advice on drip lines was completely spot on."</p>
+            <p className="story-quote">"Kissan Mithar's orchard guidance helped me set up 3 acres of guava with 40% less water usage. The advice on drip lines was completely spot on."</p>
             <div className="story-author">
               <div className="author-avatar green">RP</div>
               <div className="author-info">
@@ -366,6 +384,53 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           </div>
         </div>
       </section>
+      {/* About Us & Location Section */}
+      <section className="landing-section bg-white" id="about">
+        <div className="section-content">
+          <div className="section-header text-center">
+            <h2 className="section-title">About Kissan Mithar</h2>
+            <p className="section-subtitle">Founded with a vision to empower every farmer with technology and expert guidance.</p>
+          </div>
+          
+          <div className="about-grid">
+            {/* Founder Info */}
+            <div className="about-card">
+              <div className="founder-profile">
+                <div className="founder-avatar">R</div>
+                <div>
+                  <h3 className="founder-name">Ranjith</h3>
+                  <p className="founder-title">CEO & Founder, Kissan Mithar</p>
+                </div>
+              </div>
+              <p className="founder-quote">
+                "Growing up closely with agricultural communities, I saw firsthand the challenges farmers face with unpredictable weather, soil degradation, and a lack of timely expert advice. I founded Kissan Mithar to bridge this gap, ensuring that every farmer, regardless of their location, has access to world-class agronomy support right in their pocket."
+              </p>
+            </div>
+
+            {/* Location & Map */}
+            <div className="about-card">
+              <div className="location-header">
+                <MapPin className="text-green" size={24} />
+                <div>
+                  <h3 className="location-title">Our Headquarters</h3>
+                  <p className="location-subtitle">Hyderabad, Telangana, India</p>
+                </div>
+              </div>
+              <div className="map-container">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12182.30520634488!2d78.36830595222033!3d17.4475459384784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x19688beb557fa0ee!2sHITEC%20City%2C%20Hyderabad%2C%20Telangana%20500081!5e0!3m2!1sen!2sin!4v1709210214251!5m2!1sen!2sin" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0, borderRadius: '8px' }} 
+                  allowFullScreen={false} 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="cta-section">
@@ -398,12 +463,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       </section>
 
       {/* Footer */}
-      <footer className="landing-footer">
+      <footer className="landing-footer" id="contact">
         <div className="footer-content">
           <div className="footer-col brand-col">
             <div className="logo-container white">
               <Leaf className="logo-icon" />
-              <span className="logo-text">Kisan<br/>Mithar</span>
+              <span className="logo-text">Kissan<br/>Mithar</span>
             </div>
             <p>Empowering millions of Indian farmers with accurate, soil-verified data tailored for maximum harvest. Farm smarter, farm with Mithar.</p>
             <p className="contact-details">
@@ -437,7 +502,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
 
           <div className="footer-col">
             <h4>SUPPORT & TRUST</h4>
-            <a href="#">About Kisan Mithar</a>
+            <a href="#">About Kissan Mithar</a>
             <a href="#">Partner with Mithar</a>
             <a href="#">NGO & Govt Partners</a>
             <a href="#">Agronomist Network</a>

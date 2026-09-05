@@ -648,6 +648,96 @@ section {
 .qr-box span.small { font-weight: 400; font-size: 0.625rem; color: #64748B; }
 
 
+/* About Section */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .about-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.about-card {
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.founder-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.founder-avatar {
+  width: 64px;
+  height: 64px;
+  background-color: #166534;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.founder-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.founder-title {
+  color: #166534;
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.founder-quote {
+  font-style: italic;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.location-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.location-header .location-title {
+  margin: 0;
+  font-size: 1.125rem;
+  color: #111;
+}
+
+.location-header .location-subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.map-container {
+  width: 100%;
+  height: 200px;
+  background-color: #F1F5F9;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
 /* Footer */
 .landing-footer {
   background: #27272A;
