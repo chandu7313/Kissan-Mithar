@@ -54,11 +54,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
               <Globe size={16} />
               <span>Shift: English / हिन्दी</span>
             </div>
-            
-            <div className="helpline">
-              <Phone size={16} />
-              <span>Helpline: 1800-120-XXXX</span>
-            </div>
 
             <button className="btn-primary get-app-btn">
               Get Free App
@@ -169,8 +164,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             </div>
           </div>
           <img 
-            src="https://images.unsplash.com/photo-1595822527889-7cfc9f41df0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-            alt="Indian farmer in field" 
+            src="/assets/orchard1.jpeg" 
+            alt="Kissan Mithar Farm" 
             className="hero-image"
           />
         </div>
@@ -286,6 +281,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
         </div>
       </section>
 
+      {/* Orchard Gallery Section */}
+      <section id="our-work" className="gallery-section">
+        <div className="section-header">
+          <span className="section-badge">OUR WORK</span>
+          <h2 className="section-title">Successful Orchard Planning</h2>
+          <p className="section-subtitle">Take a look at some of the thriving orchards our experts have helped plan and cultivate across India.</p>
+        </div>
+        
+        <div className="gallery-grid">
+          {[1, 2, 3, 4, 5, 6].map((num) => (
+            <div key={num} className="gallery-item">
+              <img src={`/assets/orchard${num}.jpeg`} alt={`Kissan Mithar Orchard Project ${num}`} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Impact Stats */}
       <section id="impact" className="impact-section">
         <div className="section-header">
@@ -396,7 +408,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             {/* Founder Info */}
             <div className="about-card">
               <div className="founder-profile">
-                <div className="founder-avatar">R</div>
+                <div className="founder-avatar">
+                  <img src="/assets/ceo&founder.png" alt="Ranjith - CEO & Founder" />
+                </div>
                 <div>
                   <h3 className="founder-name">Ranjith</h3>
                   <p className="founder-title">CEO & Founder, Kissan Mithar</p>
