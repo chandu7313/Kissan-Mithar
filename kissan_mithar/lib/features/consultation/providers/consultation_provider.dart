@@ -156,7 +156,7 @@ class ConsultationBookingNotifier extends StateNotifier<AsyncValue<ConsultationB
 }
 
 // 3. Provider Definitions
-final consultationBookingProvider = StateNotifierProvider<
+final consultationBookingProvider = StateNotifierProvider.autoDispose<
     ConsultationBookingNotifier, AsyncValue<ConsultationBookingDraft>>((ref) {
   return ConsultationBookingNotifier();
 });

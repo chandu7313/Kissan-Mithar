@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Search, Users, ShieldCheck, Mail, Phone, Briefcase, Star, X } from 'lucide-react';
-import { ExpertApi, Expert } from '../api/expert.api.js';
+import { ExpertApi, Expert } from '../../api/expert.api.js';
 
 export const ExpertsPage: React.FC = () => {
   const [experts, setExperts] = useState<Expert[]>([]);

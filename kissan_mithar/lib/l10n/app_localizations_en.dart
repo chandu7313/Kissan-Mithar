@@ -895,4 +895,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewBookingsBtn => 'View Bookings';
+
+  @override
+  String get farmLandSize => '1. Farm Land Size';
+
+  @override
+  String get lessThan1Acre => '< 1 Acre';
+
+  @override
+  String get oneToThreeAcres => '1 - 3 Acres';
+
+  @override
+  String get threeToFiveAcres => '3 - 5 Acres';
+
+  @override
+  String get above5Acres => 'Above 5 Acres';
+
+  @override
+  String get waterAvailability => '2. Water Availability';
+
+  @override
+  String get borewell => 'Borewell';
+
+  @override
+  String get canal => 'Canal';
+
+  @override
+  String get drip => 'Drip';
+
+  @override
+  String get rainFed => 'Rain-fed';
+
+  @override
+  String get soilTypeSection => '3. Soil Type';
+
+  @override
+  String get forestSoil => 'Forest Soil';
+
+  @override
+  String get lateriteSoil => 'Laterite Soil';
+
+  @override
+  String get alluvialSoil => 'Alluvial Soil';
+
+  @override
+  String get salineSoil => 'Saline Soil';
+
+  @override
+  String get voiceNoteForExpert => '4. Voice Note for Expert (Optional)';
+
+  @override
+  String get recordingTapStop => 'Recording... Tap stop when finished';
+
+  @override
+  String get tapMicToSpeak =>
+      'Tap mic to speak your questions or specific requests in your language.';
 }

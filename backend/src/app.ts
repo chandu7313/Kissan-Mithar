@@ -10,13 +10,31 @@ import routes from './routes/index.js';
 export const createApp = (): Express => {
   const app = express();
 
+  // Trust proxy for correct client IP behind reverse proxies / load balancers
+  if (env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+  }
+
   // 1. Security & HTTP Middleware
   app.use(helmet());
+
+  // CORS: locked to explicit origins in production
+  const allowedOrigins = env.CORS_ORIGINS === '*'
+    ? '*'
+    : env.CORS_ORIGINS.split(',').map((o) => o.trim());
+
   app.use(
     cors({
-      origin: '*',
+      origin: allowedOrigins === '*' ? '*' : (origin, callback) => {
+        if (!origin || (allowedOrigins as string[]).includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error(`CORS: Origin ${origin} not allowed`));
+        }
+      },
       methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
     })
   );
 
@@ -26,7 +44,7 @@ export const createApp = (): Express => {
 
   // 3. Logger & Rate Limiter
   if (env.NODE_ENV !== 'test') {
-    app.use(morgan('dev'));
+    app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
   }
   app.use(globalLimiter);
 

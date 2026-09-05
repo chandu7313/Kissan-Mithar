@@ -733,59 +733,59 @@ class AppLocalizationsHi extends AppLocalizations {
   String get sunset => 'सूर्यास्त';
 
   @override
-  String get whichOrchardTitle => 'Which orchard do you want to plant?';
+  String get whichOrchardTitle => 'आप कौन सा बाग लगाना चाहते हैं?';
 
   @override
   String get whichOrchardSubtitle =>
-      'Select one or more orchards, or ask an expert.';
+      'एक या अधिक बाग चुनें, या किसी विशेषज्ञ से पूछें।';
 
   @override
-  String get mangoOrchard => 'Mango';
+  String get mangoOrchard => 'आम';
 
   @override
-  String get orangeOrchard => 'Orange';
+  String get orangeOrchard => 'संतरा';
 
   @override
-  String get guavaOrchard => 'Guava';
+  String get guavaOrchard => 'अमरूद';
 
   @override
-  String get pomegranateOrchard => 'Pomegranate';
+  String get pomegranateOrchard => 'अनार';
 
   @override
-  String get bananaOrchard => 'Banana';
+  String get bananaOrchard => 'केला';
 
   @override
-  String get papayaOrchard => 'Papaya';
+  String get papayaOrchard => 'पपीता';
 
   @override
-  String get cashewOrchard => 'Cashew';
+  String get cashewOrchard => 'काजू';
 
   @override
-  String get coconutOrchard => 'Coconut';
+  String get coconutOrchard => 'नारियल';
 
   @override
-  String get custardAppleOrchard => 'Custard Apple';
+  String get custardAppleOrchard => 'सीताफल';
 
   @override
-  String get dragonFruitOrchard => 'Dragon Fruit';
+  String get dragonFruitOrchard => 'ड्रैगन फ्रूट';
 
   @override
-  String get grapesOrchard => 'Grapes';
+  String get grapesOrchard => 'अंगूर';
 
   @override
-  String get jackfruitOrchard => 'Jackfruit';
+  String get jackfruitOrchard => 'कटहल';
 
   @override
-  String get pineappleOrchard => 'Pineapple';
+  String get pineappleOrchard => 'अनानास';
 
   @override
-  String get sapotaOrchard => 'Sapota';
+  String get sapotaOrchard => 'चीकू';
 
   @override
-  String get notDecided => 'Not Decided';
+  String get notDecided => 'तय नहीं किया';
 
   @override
-  String get othersOrchard => 'Others';
+  String get othersOrchard => 'अन्य';
 
   @override
   String get activeRequests => 'सक्रिय अनुरोध';
@@ -895,4 +895,60 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get viewBookingsBtn => 'बुकिंग देखें';
+
+  @override
+  String get farmLandSize => '1. खेत का आकार';
+
+  @override
+  String get lessThan1Acre => '< 1 एकड़';
+
+  @override
+  String get oneToThreeAcres => '1 - 3 एकड़';
+
+  @override
+  String get threeToFiveAcres => '3 - 5 एकड़';
+
+  @override
+  String get above5Acres => '5 एकड़ से अधिक';
+
+  @override
+  String get waterAvailability => '2. पानी की उपलब्धता';
+
+  @override
+  String get borewell => 'बोरवेल';
+
+  @override
+  String get canal => 'नहर';
+
+  @override
+  String get drip => 'ड्रिप';
+
+  @override
+  String get rainFed => 'वर्षा आधारित';
+
+  @override
+  String get soilTypeSection => '3. मिट्टी का प्रकार';
+
+  @override
+  String get forestSoil => 'जंगली मिट्टी';
+
+  @override
+  String get lateriteSoil => 'लेटराइट मिट्टी';
+
+  @override
+  String get alluvialSoil => 'जलोढ़ मिट्टी';
+
+  @override
+  String get salineSoil => 'खारी मिट्टी';
+
+  @override
+  String get voiceNoteForExpert => '4. विशेषज्ञ के लिए वॉइस नोट (वैकल्पिक)';
+
+  @override
+  String get recordingTapStop =>
+      'रिकॉर्डिंग हो रही है... पूरा होने पर स्टॉप टैप करें';
+
+  @override
+  String get tapMicToSpeak =>
+      'अपनी भाषा में अपने प्रश्न या विशिष्ट अनुरोध बोलने के लिए माइक पर टैप करें।';
 }

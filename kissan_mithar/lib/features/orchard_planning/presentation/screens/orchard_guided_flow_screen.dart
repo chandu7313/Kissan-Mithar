@@ -13,6 +13,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../../core/services/step_voice_guide_service.dart';
 import '../../providers/orchard_planning_provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class OrchardGuidedFlowScreen extends ConsumerStatefulWidget {
   const OrchardGuidedFlowScreen({super.key});
@@ -38,6 +39,9 @@ class _OrchardGuidedFlowScreenState
     // Speak the instruction for the initial step after the frame is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _speakCurrentStep(currentStep);
+      if (currentStep == 2) {
+        ref.read(orchardPlanningProvider.notifier).autoDetectLocation();
+      }
     });
   }
 
@@ -62,6 +66,10 @@ class _OrchardGuidedFlowScreenState
     );
     // Speak instruction for the new step
     _speakCurrentStep(step);
+    
+    if (step == 2) {
+      ref.read(orchardPlanningProvider.notifier).autoDetectLocation();
+    }
   }
 
   Future<void> _pickImage(String angle, ImageSource source) async {
@@ -216,105 +224,102 @@ class _OrchardGuidedFlowScreenState
     OrchardDraftState state,
     OrchardPlanningNotifier notifier,
   ) {
+    LatLng currentLatLng = LatLng(state.latitude, state.longitude);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (ctx) => Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.selectFarmOnMap,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(ctx),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.dragPinToMark,
-              style: TextStyle(color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Stack(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      color: const Color(0xFFE0E5D5),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.map_rounded,
-                              size: 80,
-                              color: Colors.green.shade700.withOpacity(0.3),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Interactive Map Coordinates:\n${state.latitude.toStringAsFixed(4)}° N, ${state.longitude.toStringAsFixed(4)}° E',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    Text(
+                      l10n.selectFarmOnMap,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    const Center(
-                      child: Icon(
-                        Icons.location_on_rounded,
-                        size: 48,
-                        color: Colors.redAccent,
-                      ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(ctx),
                     ),
                   ],
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.dragPinToMark,
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                            target: currentLatLng,
+                            zoom: 15.0,
+                          ),
+                          myLocationEnabled: true,
+                          myLocationButtonEnabled: true,
+                          zoomControlsEnabled: false,
+                          onCameraMove: (position) {
+                            currentLatLng = position.target;
+                          },
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 24.0), // offset for the pin tip
+                          child: Icon(
+                            Icons.location_on_rounded,
+                            size: 48,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.farmCoordinatesUpdated)),
-                  );
-                },
-                child: Text(
-                  l10n.confirmLocation,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      notifier.setLocationDetails(lat: currentLatLng.latitude, lng: currentLatLng.longitude);
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.farmCoordinatesUpdated)),
+                      );
+                    },
+                    child: Text(
+                      l10n.confirmLocation,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -1051,46 +1056,22 @@ class _OrchardGuidedFlowScreenState
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.green.shade100, Colors.amber.shade50],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.satellite_alt_rounded,
-                            size: 64,
-                            color: Colors.green.shade800.withOpacity(0.4),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'GPS: ${state.latitude.toStringAsFixed(4)}° N, ${state.longitude.toStringAsFixed(4)}° E',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade900,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(state.latitude, state.longitude),
+                  zoom: 14.0,
+                ),
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+                scrollGesturesEnabled: false,
+                zoomGesturesEnabled: false,
+                markers: {
+                  Marker(
+                    markerId: const MarkerId('preview_marker'),
+                    position: LatLng(state.latitude, state.longitude),
                   ),
-                  const Center(
-                    child: Icon(
-                      Icons.location_pin,
-                      size: 48,
-                      color: Colors.redAccent,
-                    ),
-                  ),
-                ],
+                },
               ),
             ),
           ),
@@ -1419,29 +1400,29 @@ class _OrchardGuidedFlowScreenState
           const SizedBox(height: 24),
 
           // 1. Land Size (Single-select)
-          _buildSectionHeader('1. Farm Land Size', Icons.square_foot_rounded),
+          _buildSectionHeader(l10n.farmLandSize, Icons.square_foot_rounded),
           const SizedBox(height: 12),
           Wrap(
             spacing: 12,
             runSpacing: 12,
             children: [
               _buildFilterChip(
-                '< 1 Acre',
+                l10n.lessThan1Acre,
                 state.landSize == '<1 Acre',
                 () => notifier.setLandSize('<1 Acre'),
               ),
               _buildFilterChip(
-                '1 - 3 Acres',
+                l10n.oneToThreeAcres,
                 state.landSize == '1-3 Acres',
                 () => notifier.setLandSize('1-3 Acres'),
               ),
               _buildFilterChip(
-                '3 - 5 Acres',
+                l10n.threeToFiveAcres,
                 state.landSize == '3-5 Acres',
                 () => notifier.setLandSize('3-5 Acres'),
               ),
               _buildFilterChip(
-                'Above 5 Acres',
+                l10n.above5Acres,
                 state.landSize == 'Above 5 Acres',
                 () => notifier.setLandSize('Above 5 Acres'),
               ),
@@ -1452,7 +1433,7 @@ class _OrchardGuidedFlowScreenState
 
           // 2. Water Availability (Multi-select)
           _buildSectionHeader(
-            '2. Water Availability',
+            l10n.waterAvailability,
             Icons.water_drop_rounded,
           ),
           const SizedBox(height: 12),
@@ -1465,25 +1446,25 @@ class _OrchardGuidedFlowScreenState
             childAspectRatio: 0.85,
             children: [
               _buildImageCard(
-                title: 'Borewell',
+                title: l10n.borewell,
                 imageUrl: 'assets/images/borewell.png',
                 isSelected: state.waterSources.contains('Borewell'),
                 onTap: () => notifier.toggleWaterSource('Borewell'),
               ),
               _buildImageCard(
-                title: 'Canal',
+                title: l10n.canal,
                 imageUrl: 'assets/images/canal.png',
                 isSelected: state.waterSources.contains('Canal'),
                 onTap: () => notifier.toggleWaterSource('Canal'),
               ),
               _buildImageCard(
-                title: 'Drip',
+                title: l10n.drip,
                 imageUrl: 'assets/images/drip.png',
                 isSelected: state.waterSources.contains('Drip'),
                 onTap: () => notifier.toggleWaterSource('Drip'),
               ),
               _buildImageCard(
-                title: 'Rain-fed',
+                title: l10n.rainFed,
                 imageUrl: 'assets/images/rain.png',
                 isSelected: state.waterSources.contains('Rain-fed'),
                 onTap: () => notifier.toggleWaterSource('Rain-fed'),
@@ -1494,7 +1475,7 @@ class _OrchardGuidedFlowScreenState
           const SizedBox(height: 28),
 
           // 3. Soil Type (Multi-select)
-          _buildSectionHeader('3. Soil Type', Icons.landscape_rounded),
+          _buildSectionHeader(l10n.soilTypeSection, Icons.landscape_rounded),
           const SizedBox(height: 12),
           GridView.count(
             crossAxisCount: 3,
@@ -1505,19 +1486,19 @@ class _OrchardGuidedFlowScreenState
             childAspectRatio: 0.85,
             children: [
               _buildImageCard(
-                title: 'Red Soil',
+                title: l10n.redSoil,
                 imageUrl: 'assets/images/ red soil.png',
                 isSelected: state.soilTypes.contains('Red Soil (Lal Mitti)'),
                 onTap: () => notifier.toggleSoilType('Red Soil (Lal Mitti)'),
               ),
               _buildImageCard(
-                title: 'Black Soil',
+                title: l10n.blackSoil,
                 imageUrl: 'assets/images/black soil.png',
                 isSelected: state.soilTypes.contains('Black Soil (Kali Mitti)'),
                 onTap: () => notifier.toggleSoilType('Black Soil (Kali Mitti)'),
               ),
               _buildImageCard(
-                title: 'Sandy Soil',
+                title: l10n.sandySoil,
                 imageUrl: 'assets/images/sandy soil.png',
                 isSelected: state.soilTypes.contains(
                   'Sandy Soil (Balui Mitti)',
@@ -1526,25 +1507,25 @@ class _OrchardGuidedFlowScreenState
                     notifier.toggleSoilType('Sandy Soil (Balui Mitti)'),
               ),
               _buildImageCard(
-                title: 'Forest Soil',
+                title: l10n.forestSoil,
                 imageUrl: 'assets/images/alluvial soil.png',
                 isSelected: state.soilTypes.contains('Forest Soil'),
                 onTap: () => notifier.toggleSoilType('Forest Soil'),
               ),
               _buildImageCard(
-                title: 'Laterite Soil',
+                title: l10n.lateriteSoil,
                 imageUrl: 'assets/images/laterite soil.png',
                 isSelected: state.soilTypes.contains('Laterite Soil'),
                 onTap: () => notifier.toggleSoilType('Laterite Soil'),
               ),
               _buildImageCard(
-                title: 'Alluvial Soil',
+                title: l10n.alluvialSoil,
                 imageUrl: 'assets/images/alluvial soil01.png',
                 isSelected: state.soilTypes.contains('Alluvial Soil'),
                 onTap: () => notifier.toggleSoilType('Alluvial Soil'),
               ),
               _buildImageCard(
-                title: 'Saline Soil',
+                title: l10n.salineSoil,
                 imageUrl: 'assets/images/saline soil.png',
                 isSelected: state.soilTypes.contains('Saline Soil'),
                 onTap: () => notifier.toggleSoilType('Saline Soil'),
@@ -1556,7 +1537,7 @@ class _OrchardGuidedFlowScreenState
 
           // 4. Voice Note
           _buildSectionHeader(
-            '4. Voice Note for Expert (Optional)',
+            l10n.voiceNoteForExpert,
             Icons.mic_rounded,
           ),
           const SizedBox(height: 12),
@@ -1606,8 +1587,8 @@ class _OrchardGuidedFlowScreenState
                       Expanded(
                         child: Text(
                           state.isRecordingVoice
-                              ? 'Recording... Tap stop when finished'
-                              : 'Tap mic to speak your questions or specific requests in your language.',
+                              ? l10n.recordingTapStop
+                              : l10n.tapMicToSpeak,
                           style: TextStyle(
                             fontSize: 14,
                             color: state.isRecordingVoice

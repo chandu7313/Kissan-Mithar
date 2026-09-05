@@ -126,7 +126,7 @@ class AppLocalizationsTe extends AppLocalizations {
   String get redSoil => 'ఎర్ర నేల';
 
   @override
-  String get blackSoil => 'నల్ల నేల';
+  String get blackSoil => 'నల్ల రేగడి నేల';
 
   @override
   String get sandySoil => 'ఇసుక నేల';
@@ -736,59 +736,59 @@ class AppLocalizationsTe extends AppLocalizations {
   String get sunset => 'సూర్యాస్తమయం';
 
   @override
-  String get whichOrchardTitle => 'Which orchard do you want to plant?';
+  String get whichOrchardTitle => 'మీరు ఏ పండ్ల తోటను పెంచాలనుకుంటున్నారు?';
 
   @override
   String get whichOrchardSubtitle =>
-      'Select one or more orchards, or ask an expert.';
+      'ఒకటి లేదా అంతకంటే ఎక్కువ పండ్ల తోటలను ఎంచుకోండి లేదా నిపుణుడిని అడగండి.';
 
   @override
-  String get mangoOrchard => 'Mango';
+  String get mangoOrchard => 'మామిడి';
 
   @override
-  String get orangeOrchard => 'Orange';
+  String get orangeOrchard => 'బత్తాయి';
 
   @override
-  String get guavaOrchard => 'Guava';
+  String get guavaOrchard => 'జామ';
 
   @override
-  String get pomegranateOrchard => 'Pomegranate';
+  String get pomegranateOrchard => 'దానిమ్మ';
 
   @override
-  String get bananaOrchard => 'Banana';
+  String get bananaOrchard => 'అరటి';
 
   @override
-  String get papayaOrchard => 'Papaya';
+  String get papayaOrchard => 'బొప్పాయి';
 
   @override
-  String get cashewOrchard => 'Cashew';
+  String get cashewOrchard => 'జీడిమామిడి';
 
   @override
-  String get coconutOrchard => 'Coconut';
+  String get coconutOrchard => 'కొబ్బరి';
 
   @override
-  String get custardAppleOrchard => 'Custard Apple';
+  String get custardAppleOrchard => 'సీతాఫలం';
 
   @override
-  String get dragonFruitOrchard => 'Dragon Fruit';
+  String get dragonFruitOrchard => 'డ్రాగన్ ఫ్రూట్';
 
   @override
-  String get grapesOrchard => 'Grapes';
+  String get grapesOrchard => 'ద్రాక్ష';
 
   @override
-  String get jackfruitOrchard => 'Jackfruit';
+  String get jackfruitOrchard => 'పనస';
 
   @override
-  String get pineappleOrchard => 'Pineapple';
+  String get pineappleOrchard => 'పైనాపిల్';
 
   @override
-  String get sapotaOrchard => 'Sapota';
+  String get sapotaOrchard => 'సపోటా';
 
   @override
-  String get notDecided => 'Not Decided';
+  String get notDecided => 'నిర్ణయించలేదు';
 
   @override
-  String get othersOrchard => 'Others';
+  String get othersOrchard => 'ఇతరాలు';
 
   @override
   String get activeRequests => 'క్రియాశీల అభ్యర్థనలు';
@@ -899,4 +899,60 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get viewBookingsBtn => 'బుకింగ్‌లను చూడండి';
+
+  @override
+  String get farmLandSize => '1. పొలం విస్తీర్ణం';
+
+  @override
+  String get lessThan1Acre => '< 1 ఎకరం';
+
+  @override
+  String get oneToThreeAcres => '1 - 3 ఎకరాలు';
+
+  @override
+  String get threeToFiveAcres => '3 - 5 ఎకరాలు';
+
+  @override
+  String get above5Acres => '5 ఎకరాలకు పైగా';
+
+  @override
+  String get waterAvailability => '2. నీటి లభ్యత';
+
+  @override
+  String get borewell => 'బోరుబావి';
+
+  @override
+  String get canal => 'కాలువ';
+
+  @override
+  String get drip => 'డ్రిప్';
+
+  @override
+  String get rainFed => 'వర్షాధారం';
+
+  @override
+  String get soilTypeSection => '3. నేల రకం';
+
+  @override
+  String get forestSoil => 'అటవీ నేల';
+
+  @override
+  String get lateriteSoil => 'ల్యాటరైట్ నేల';
+
+  @override
+  String get alluvialSoil => 'ఒండ్రు నేల';
+
+  @override
+  String get salineSoil => 'చౌడు నేల';
+
+  @override
+  String get voiceNoteForExpert => '4. నిపుణుల కోసం వాయిస్ నోట్ (ఐచ్ఛికం)';
+
+  @override
+  String get recordingTapStop =>
+      'రికార్డింగ్ అవుతోంది... పూర్తయిన తర్వాత ఆపడానికి నొక్కండి';
+
+  @override
+  String get tapMicToSpeak =>
+      'మీ ప్రశ్నలు లేదా నిర్దిష్ట అభ్యర్థనలను మీ భాషలో చెప్పడానికి మైక్‌ను నొక్కండి.';
 }

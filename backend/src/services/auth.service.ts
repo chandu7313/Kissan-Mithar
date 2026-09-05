@@ -1,13 +1,21 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 import { prisma } from '../config/db.js';
 import { env } from '../config/env.js';
+import { logger } from '../config/logger.js';
 import { getFirebaseAuth } from '../config/firebase.js';
+import { SmsService } from './sms.service.js';
 import { AuthUserPayload, UserRole } from '../types/index.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-// In-memory fallback cache for OTPs in case DB is offline/initializing
-const memoryOtpStore = new Map<string, { otp: string; purpose: string; expiresAt: number; isUsed: boolean }>();
+// In-memory OTP store — ONLY used in development mode
+const memoryOtpStore = new Map<string, { otp: string; purpose: string; expiresAt: number; isUsed: boolean; attempts: number }>();
+
+const isProduction = env.NODE_ENV === 'production';
+
+// Max OTP verification attempts before lockout
+const MAX_OTP_ATTEMPTS = 5;
 
 export interface VerifyAuthDto {
   idToken?: string;
@@ -31,10 +39,34 @@ export interface RecordLogoutDto {
 
 export class AuthService {
   /**
-   * Hashes a password string with SHA-256 (or bcrypt in production)
+   * Hashes a password using bcrypt (10 salt rounds)
    */
-  static hashPassword(password: string): string {
-    return crypto.createHash('sha256').update(password + (env.JWT_SECRET || 'kissan_salt')).digest('hex');
+  static async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
+  }
+
+  /**
+   * Compares a plaintext password against a bcrypt hash.
+   * Also supports legacy SHA-256 hashes for backward compatibility.
+   */
+  static async verifyPassword(password: string, hash: string): Promise<boolean> {
+    // Try bcrypt first
+    try {
+      const bcryptMatch = await bcrypt.compare(password, hash);
+      if (bcryptMatch) return true;
+    } catch {
+      // Not a bcrypt hash, try legacy
+    }
+    // Legacy SHA-256 fallback (for existing passwords before migration)
+    const legacyHash = crypto.createHash('sha256').update(password + (env.JWT_SECRET || 'kissan_salt')).digest('hex');
+    return legacyHash === hash;
+  }
+
+  /**
+   * Generates a cryptographically secure 6-digit OTP
+   */
+  static generateOtp(): string {
+    return crypto.randomInt(100000, 999999).toString();
   }
 
   /**
@@ -47,7 +79,7 @@ export class AuthService {
   }
 
   /**
-   * Records a user authentication event (LOGIN, LOGOUT, PASSWORD_RESET) in database
+   * Records a user authentication event in database
    */
   static async recordAuthAudit(params: {
     userId: string;
@@ -75,7 +107,7 @@ export class AuthService {
         });
       }
     } catch (err) {
-      console.warn('[AuthService] Could not persist auth audit log:', err);
+      logger.warn({ err }, 'Could not persist auth audit log');
     }
     return null;
   }
@@ -88,8 +120,7 @@ export class AuthService {
     const purpose = params.purpose || 'LOGIN';
     const role = params.role || 'EXPERT';
 
-    // Generate cryptographically secure 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = this.generateOtp();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
 
     // Save in Database
@@ -106,30 +137,39 @@ export class AuthService {
         });
       }
     } catch (err) {
-      console.warn('[AuthService] DB OTP save fallback:', err);
+      logger.warn({ err }, 'DB OTP save fallback');
     }
 
-    // In-memory fallback cache
-    memoryOtpStore.set(`${email}_${purpose}`, {
-      otp,
-      purpose,
-      expiresAt: expiresAt.getTime(),
-      isUsed: false,
-    });
+    // In-memory fallback — DEVELOPMENT ONLY
+    if (!isProduction) {
+      memoryOtpStore.set(`${email}_${purpose}`, {
+        otp,
+        purpose,
+        expiresAt: expiresAt.getTime(),
+        isUsed: false,
+        attempts: 0,
+      });
+    }
 
-    console.log(`\n======================================================`);
-    console.log(`📧 [KISAN MITHAR] OTP SENT TO EMAIL: ${email}`);
-    console.log(`🔑 PURPOSE: ${purpose} | ROLE: ${role}`);
-    console.log(`✨ 6-DIGIT CODE: [ ${otp} ] (Valid for 10 minutes)`);
-    console.log(`======================================================\n`);
+    logger.info({ email, purpose, role }, 'Email OTP generated');
 
+    // In development, log the OTP for convenience
+    if (!isProduction) {
+      console.log(`\n======================================================`);
+      console.log(`📧 [KISAN MITHAR] OTP FOR: ${email}`);
+      console.log(`🔑 PURPOSE: ${purpose} | CODE: [ ${otp} ]`);
+      console.log(`======================================================\n`);
+    }
+
+    // TODO: Send actual email via SendGrid/SES in production
     return {
       success: true,
       message: `A 6-digit verification code has been dispatched to ${email}`,
       email,
       purpose,
       expiresInMinutes: 10,
-      devOtp: otp, // For local testing convenience
+      // TEMPORARY: Returning devOtp in production as requested by user
+      devOtp: otp,
     };
   }
 
@@ -172,19 +212,23 @@ export class AuthService {
         }
       }
     } catch (err) {
-      console.warn('[AuthService] DB OTP verification fallback:', err);
+      logger.warn({ err }, 'DB OTP verification fallback');
     }
 
-    // Fallback to memory store
-    if (!isValid) {
+    // Fallback to memory store — DEVELOPMENT ONLY
+    if (!isValid && !isProduction) {
       const memRecord = memoryOtpStore.get(`${email}_LOGIN`);
-      if (memRecord && memRecord.otp === otp && !memRecord.isUsed && Date.now() < memRecord.expiresAt) {
-        isValid = true;
-        memRecord.isUsed = true;
+      if (memRecord) {
+        memRecord.attempts = (memRecord.attempts || 0) + 1;
+        if (memRecord.attempts > MAX_OTP_ATTEMPTS) {
+          throw new AppError('Too many OTP attempts. Please request a new code.', 429);
+        }
+        if (memRecord.otp === otp && !memRecord.isUsed && Date.now() < memRecord.expiresAt) {
+          isValid = true;
+          memRecord.isUsed = true;
+        }
       }
     }
-
-    // Strict OTP check - removed bypass codes
 
     if (!isValid) {
       throw new AppError('Invalid or expired OTP verification code. Please request a new code.', 400);
@@ -229,12 +273,15 @@ export class AuthService {
         }
       }
     } catch (err) {
-      console.warn('[AuthService] DB query fallback:', err);
+      logger.warn({ err }, 'DB query during login');
     }
 
-    const hashedInput = this.hashPassword(password);
     const userHash = expertRecord?.passwordHash || adminRecord?.passwordHash;
-    const isPasswordValid = userHash && userHash === hashedInput;
+    if (!userHash) {
+      throw new AppError('Incorrect email or password. Please verify your credentials or sign in with OTP.', 401);
+    }
+
+    const isPasswordValid = await this.verifyPassword(password, userHash);
 
     if (!isPasswordValid) {
       throw new AppError('Incorrect email or password. Please verify your credentials or sign in with OTP.', 401);
@@ -293,11 +340,11 @@ export class AuthService {
         }
       }
     } catch (err) {
-      console.warn('[AuthService] DB reset OTP verification fallback:', err);
+      logger.warn({ err }, 'DB reset OTP verification');
     }
 
-    // Fallback to memory store
-    if (!isValid) {
+    // Fallback to memory store — DEVELOPMENT ONLY
+    if (!isValid && !isProduction) {
       const memRecord = memoryOtpStore.get(`${email}_RESET_PASSWORD`);
       if (memRecord && memRecord.otp === otp && !memRecord.isUsed && Date.now() < memRecord.expiresAt) {
         isValid = true;
@@ -305,13 +352,11 @@ export class AuthService {
       }
     }
 
-    // Strict OTP check - removed bypass codes
-
     if (!isValid) {
       throw new AppError('Invalid or expired password reset OTP.', 400);
     }
 
-    const passwordHash = this.hashPassword(newPassword);
+    const passwordHash = await this.hashPassword(newPassword);
 
     // Update in Database
     let updatedUserType: UserRole = 'EXPERT';
@@ -338,7 +383,7 @@ export class AuthService {
         }
       }
     } catch (err) {
-      console.warn('[AuthService] DB password update fallback:', err);
+      logger.warn({ err }, 'DB password update');
     }
 
     // Record PASSWORD_RESET in Audit Trail
@@ -410,24 +455,24 @@ export class AuthService {
           },
         });
       } else {
-        // For EXPERT and ADMIN, we strictly query the DB, and fallback to the other if misidentified
+        // For EXPERT and ADMIN, strictly query the DB
         if (role === 'EXPERT') {
           if (email) expertRecord = await prisma.expert.findUnique({ where: { email } });
           else if (phoneNumber) expertRecord = await prisma.expert.findUnique({ where: { phoneNumber } });
-          
+
           if (!expertRecord && email) {
             adminRecord = await prisma.admin.findUnique({ where: { email } });
             if (adminRecord) role = 'ADMIN';
           }
         } else if (role === 'ADMIN') {
           if (email) adminRecord = await prisma.admin.findUnique({ where: { email } });
-          
+
           if (!adminRecord && email) {
             expertRecord = await prisma.expert.findUnique({ where: { email } });
             if (expertRecord) role = 'EXPERT';
           }
         }
-        
+
         if (!expertRecord && !adminRecord) {
           throw new AppError('Account not found. Please contact administration.', 401);
         }
@@ -504,7 +549,7 @@ export class AuthService {
   }
 
   /**
-   * Retrieves recent login/logout audit history for a user or entire console
+   * Retrieves recent login/logout audit history
    */
   static async getAuthAuditLogs(userId?: string, limit: number = 20) {
     try {
@@ -517,23 +562,11 @@ export class AuthService {
         });
       }
     } catch (err) {
-      console.warn('[AuthService] Error querying auth audit logs:', err);
+      logger.warn({ err }, 'Error querying auth audit logs');
     }
-    // Fallback mock logs if database is initializing
-    return [
-      {
-        id: 'log-1',
-        userId: userId || 'EXPERT-001',
-        userType: 'EXPERT',
-        userName: 'Dr. Sunil Rao',
-        userEmail: 'sunil.rao@gmail.com',
-        action: 'LOGIN',
-        ipAddress: '127.0.0.1',
-        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X)',
-        timestamp: new Date().toISOString(),
-      },
-    ];
+    return [];
   }
+
   /**
    * Updates user profile (like photoUrl)
    */
@@ -543,7 +576,7 @@ export class AuthService {
     photoUrl?: string;
   }) {
     const { userId, role, photoUrl } = params;
-    
+
     let updatedProfile = null;
     try {
       if (role === 'FARMER') {
@@ -563,10 +596,10 @@ export class AuthService {
         });
       }
     } catch (err) {
-      console.error('[AuthService] Failed to update profile:', err);
+      logger.error({ err }, 'Failed to update profile');
       throw new AppError('Failed to update profile', 500);
     }
-    
+
     return {
       success: true,
       user: updatedProfile,
@@ -582,8 +615,7 @@ export class AuthService {
       ? phoneNumber.substring(phoneNumber.length - 10)
       : phoneNumber;
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = this.generateOtp();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     // Store in DB using EmailOtp table (reuse for phone OTPs)
@@ -600,31 +632,45 @@ export class AuthService {
         });
       }
     } catch (err) {
-      console.warn('[AuthService] DB phone OTP save fallback:', err);
+      logger.warn({ err }, 'DB phone OTP save fallback');
     }
 
-    // In-memory fallback
-    memoryOtpStore.set(`phone_${number10Digit}_LOGIN`, {
-      otp,
-      purpose: 'LOGIN',
-      expiresAt: expiresAt.getTime(),
-      isUsed: false,
-    });
+    // In-memory fallback — DEVELOPMENT ONLY
+    if (!isProduction) {
+      memoryOtpStore.set(`phone_${number10Digit}_LOGIN`, {
+        otp,
+        purpose: 'LOGIN',
+        expiresAt: expiresAt.getTime(),
+        isUsed: false,
+        attempts: 0,
+      });
+    }
 
-    console.log(`\n======================================================`);
-    console.log(`📱 [KISAN MITHAR] PHONE OTP SENT TO: +91 ${number10Digit}`);
-    console.log(`🔑 6-DIGIT CODE: [ ${otp} ] (Valid for 10 minutes)`);
-    console.log(`======================================================\n`);
-
-    // TODO: Send via Fast2SMS in production
-    // For now, OTP is returned in response for dev convenience
+    // Send SMS via configured provider (Fast2SMS in production)
+    if (isProduction) {
+      /* TEMPORARILY DISABLED: User wants to use devOtp in production for now
+      const smsResult = await SmsService.sendOtp(number10Digit, otp);
+      if (!smsResult.success) {
+        logger.error({ phone: `***${number10Digit.slice(-4)}`, error: smsResult.message }, 'SMS delivery failed');
+        // Don't expose internal failure details to client
+        throw new AppError('Failed to send OTP. Please try again.', 500);
+      }
+      */
+      console.log(`[Prod-Simulated] OTP FOR: +91 ${number10Digit} -> ${otp}`);
+    } else {
+      console.log(`\n======================================================`);
+      console.log(`📱 [KISAN MITHAR] PHONE OTP FOR: +91 ${number10Digit}`);
+      console.log(`🔑 6-DIGIT CODE: [ ${otp} ] (Valid for 10 minutes)`);
+      console.log(`======================================================\n`);
+    }
 
     return {
       success: true,
       message: `OTP sent to +91 ${number10Digit}`,
       phoneNumber: `+91 ${number10Digit}`,
       expiresInMinutes: 10,
-      devOtp: otp, // Remove in production
+      // TEMPORARY: Returning devOtp in production as requested by user
+      devOtp: otp,
     };
   }
 
@@ -670,15 +716,21 @@ export class AuthService {
         }
       }
     } catch (err) {
-      console.warn('[AuthService] DB phone OTP verify fallback:', err);
+      logger.warn({ err }, 'DB phone OTP verify fallback');
     }
 
-    // Memory fallback
-    if (!isValid) {
+    // Memory fallback — DEVELOPMENT ONLY
+    if (!isValid && !isProduction) {
       const memRecord = memoryOtpStore.get(`phone_${number10Digit}_LOGIN`);
-      if (memRecord && memRecord.otp === otp && !memRecord.isUsed && Date.now() < memRecord.expiresAt) {
-        isValid = true;
-        memRecord.isUsed = true;
+      if (memRecord) {
+        memRecord.attempts = (memRecord.attempts || 0) + 1;
+        if (memRecord.attempts > MAX_OTP_ATTEMPTS) {
+          throw new AppError('Too many OTP attempts. Please request a new code.', 429);
+        }
+        if (memRecord.otp === otp && !memRecord.isUsed && Date.now() < memRecord.expiresAt) {
+          isValid = true;
+          memRecord.isUsed = true;
+        }
       }
     }
 

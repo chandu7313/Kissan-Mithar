@@ -68,30 +68,21 @@ class EnvConfig {
     return null;
   }
 
-  // 2. SMS / OTP Provider Config (Fast2SMS)
-  static String get smsProvider => _getEnv('SMS_PROVIDER', 'FAST2SMS');
-  static String get smsApiKey => _getEnv('SMS_API_KEY');
-  static String get smsSenderId => _getEnv('SMS_SENDER_ID', 'KISSAN_MITHAR');
-  static bool get isSmsConfigured => smsApiKey.isNotEmpty && !smsApiKey.contains('your-');
-
-  // 3. Location / GPS
+  // 2. Location / GPS
   static bool get useNativeGps => (_getEnv('USE_NATIVE_GPS', 'true')) == 'true';
 
-  // 4. Live Weather API Config (OpenWeatherMap)
+  // 3. Live Weather API Config (OpenWeatherMap)
   static String get weatherApiKey => _getEnv('WEATHER_API_KEY');
   static bool get isWeatherConfigured => weatherApiKey.isNotEmpty && !weatherApiKey.contains('your-');
 
-  // 5. Cloudinary Image Storage
+  // 4. Cloudinary Image Storage (public config only — NO secrets on client)
   static String get cloudinaryCloudName => _getEnv('CLOUDINARY_CLOUD_NAME');
-  static String get cloudinaryApiKey => _getEnv('CLOUDINARY_API_KEY');
-  static String get cloudinaryApiSecret => _getEnv('CLOUDINARY_API_SECRET');
   static String get cloudinaryUploadPreset => _getEnv('CLOUDINARY_UPLOAD_PRESET', 'kissan_mithar_uploads');
   static bool get isCloudinaryConfigured =>
       cloudinaryCloudName.isNotEmpty &&
-      cloudinaryApiKey.isNotEmpty &&
       !cloudinaryCloudName.contains('your-');
 
-  // 6. REST API Base URL
+  // 5. REST API Base URL
   static String get apiBaseUrl =>
-      _getEnv('API_BASE_URL', 'https://api.kissanmithar.in/v1');
+      _getEnv('API_BASE_URL', 'https://api.kissanmithar.in/api');
 }

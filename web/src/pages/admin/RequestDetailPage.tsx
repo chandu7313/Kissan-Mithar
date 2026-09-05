@@ -14,12 +14,12 @@ import {
   XCircle,
   MessageCircle,
 } from 'lucide-react';
-import { OrchardRequest, OrchardStatus } from '../types/index.js';
-import { StatusBadge } from '../components/common/StatusBadge.js';
-import { ImageGallery } from '../components/common/ImageGallery.js';
-import { AudioPlayer } from '../components/common/AudioPlayer.js';
-import { MapPreview } from '../components/common/MapPreview.js';
-import { OrchardApi } from '../api/orchard.api.js';
+import { OrchardRequest, OrchardStatus } from '../../types/index.js';
+import { StatusBadge } from '../../components/common/StatusBadge.js';
+import { ImageGallery } from '../../components/common/ImageGallery.js';
+import { AudioPlayer } from '../../components/common/AudioPlayer.js';
+import { MapPreview } from '../../components/common/MapPreview.js';
+import { OrchardApi } from '../../api/orchard.api.js';
 
 // --- CONFIGURATION ---
 // If you want to use a fixed WhatsApp number (e.g. your business number), set it here.

@@ -742,59 +742,60 @@ class AppLocalizationsKn extends AppLocalizations {
   String get sunset => 'ಸೂರ್ಯಾಸ್ತ';
 
   @override
-  String get whichOrchardTitle => 'Which orchard do you want to plant?';
+  String get whichOrchardTitle =>
+      'ನೀವು ಯಾವ ಹಣ್ಣಿನ ತೋಟವನ್ನು ಬೆಳೆಸಲು ಬಯಸುತ್ತೀರಿ?';
 
   @override
   String get whichOrchardSubtitle =>
-      'Select one or more orchards, or ask an expert.';
+      'ಒಂದು ಅಥವಾ ಹೆಚ್ಚು ತೋಟಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ, ಅಥವಾ ತಜ್ಞರನ್ನು ಕೇಳಿ.';
 
   @override
-  String get mangoOrchard => 'Mango';
+  String get mangoOrchard => 'ಮಾವು';
 
   @override
-  String get orangeOrchard => 'Orange';
+  String get orangeOrchard => 'ಕಿತ್ತಳೆ';
 
   @override
-  String get guavaOrchard => 'Guava';
+  String get guavaOrchard => 'ಪೇರಲ';
 
   @override
-  String get pomegranateOrchard => 'Pomegranate';
+  String get pomegranateOrchard => 'ದಾಳಿಂಬೆ';
 
   @override
-  String get bananaOrchard => 'Banana';
+  String get bananaOrchard => 'ಬಾಳೆ';
 
   @override
-  String get papayaOrchard => 'Papaya';
+  String get papayaOrchard => 'ಪಪ್ಪಾಯಿ';
 
   @override
-  String get cashewOrchard => 'Cashew';
+  String get cashewOrchard => 'ಗೋಡಂಬಿ';
 
   @override
-  String get coconutOrchard => 'Coconut';
+  String get coconutOrchard => 'ತೆಂಗು';
 
   @override
-  String get custardAppleOrchard => 'Custard Apple';
+  String get custardAppleOrchard => 'ಸೀತಾಫಲ';
 
   @override
-  String get dragonFruitOrchard => 'Dragon Fruit';
+  String get dragonFruitOrchard => 'ಡ್ರ್ಯಾಗನ್ ಹಣ್ಣು';
 
   @override
-  String get grapesOrchard => 'Grapes';
+  String get grapesOrchard => 'ದ್ರಾಕ್ಷಿ';
 
   @override
-  String get jackfruitOrchard => 'Jackfruit';
+  String get jackfruitOrchard => 'ಹಲಸು';
 
   @override
-  String get pineappleOrchard => 'Pineapple';
+  String get pineappleOrchard => 'ಅನಾನಸ್';
 
   @override
-  String get sapotaOrchard => 'Sapota';
+  String get sapotaOrchard => 'ಸಪೋಟಾ';
 
   @override
-  String get notDecided => 'Not Decided';
+  String get notDecided => 'ನಿರ್ಧರಿಸಿಲ್ಲ';
 
   @override
-  String get othersOrchard => 'Others';
+  String get othersOrchard => 'ಇತರ';
 
   @override
   String get activeRequests => 'Active Requests';
@@ -904,4 +905,60 @@ class AppLocalizationsKn extends AppLocalizations {
 
   @override
   String get viewBookingsBtn => 'ಬುಕಿಂಗ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಿ';
+
+  @override
+  String get farmLandSize => '1. ಕೃಷಿ ಭೂಮಿಯ ಗಾತ್ರ';
+
+  @override
+  String get lessThan1Acre => '< 1 ಎಕರೆ';
+
+  @override
+  String get oneToThreeAcres => '1 - 3 ಎಕರೆ';
+
+  @override
+  String get threeToFiveAcres => '3 - 5 ಎಕರೆ';
+
+  @override
+  String get above5Acres => '5 ಎಕರೆಗಿಂತ ಹೆಚ್ಚು';
+
+  @override
+  String get waterAvailability => '2. ನೀರಿನ ಲಭ್ಯತೆ';
+
+  @override
+  String get borewell => 'ಬೋರ್‌ವೆಲ್';
+
+  @override
+  String get canal => 'ಕಾಲುವೆ';
+
+  @override
+  String get drip => 'ಹನಿ ನೀರಾವರಿ';
+
+  @override
+  String get rainFed => 'ಮಳೆಯಾಶ್ರಿತ';
+
+  @override
+  String get soilTypeSection => '3. ಮಣ್ಣಿನ ಪ್ರಕಾರ';
+
+  @override
+  String get forestSoil => 'ಅರಣ್ಯ ಮಣ್ಣು';
+
+  @override
+  String get lateriteSoil => 'ಲ್ಯಾಟರೈಟ್ ಮಣ್ಣು';
+
+  @override
+  String get alluvialSoil => 'ಮೆಕ್ಕಲು ಮಣ್ಣು';
+
+  @override
+  String get salineSoil => 'ಉಪ್ಪು ಮಣ್ಣು';
+
+  @override
+  String get voiceNoteForExpert => '4. ತಜ್ಞರಿಗಾಗಿ ಧ್ವನಿ ಟಿಪ್ಪಣಿ (ಐಚ್ಛಿಕ)';
+
+  @override
+  String get recordingTapStop =>
+      'ರೆಕಾರ್ಡಿಂಗ್ ಆಗುತ್ತಿದೆ... ಮುಗಿದ ನಂತರ ನಿಲ್ಲಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ';
+
+  @override
+  String get tapMicToSpeak =>
+      'ನಿಮ್ಮ ಪ್ರಶ್ನೆಗಳು ಅಥವಾ ನಿರ್ದಿಷ್ಟ ವಿನಂತಿಗಳನ್ನು ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಮಾತನಾಡಲು ಮೈಕ್ ಟ್ಯಾಪ್ ಮಾಡಿ.';
 }

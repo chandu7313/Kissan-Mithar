@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Search, ArrowUpRight, Eye, Bell } from 'lucide-react';
-import { OrchardApi } from '../api/orchard.api.js';
-import { OrchardRequest } from '../types/index.js';
-import { StatusBadge } from '../components/common/StatusBadge.js';
-import { useSocket } from '../context/SocketContext.js';
+import { OrchardApi } from '../../api/orchard.api.js';
+import { OrchardRequest } from '../../types/index.js';
+import { StatusBadge } from '../../components/common/StatusBadge.js';
+import { useSocket } from '../../context/SocketContext.js';
 interface Props {
   onSelectRequest: (request: OrchardRequest) => void;
   onOpenReportBuilder: (request: OrchardRequest) => void;

@@ -8,8 +8,8 @@ import {
   Send,
   CheckCircle2,
 } from 'lucide-react';
-import { ConsultationApi } from '../api/consultation.api.js';
-import { ConsultationItem } from '../types/index.js';
+import { ConsultationApi } from '../../api/consultation.api.js';
+import { ConsultationItem } from '../../types/index.js';
 
 export const ConsultationsPage: React.FC = () => {
   const [consultations, setConsultations] = useState<ConsultationItem[]>([]);

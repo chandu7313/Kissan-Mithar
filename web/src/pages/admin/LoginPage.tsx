@@ -13,15 +13,16 @@ import {
   ArrowLeft,
   Sparkles,
 } from 'lucide-react';
-import { UserSession } from '../types/index.js';
-import { AuthStore } from '../services/authStore.js';
-import { AuthApi } from '../api/auth.api.js';
+import { UserSession } from '../../types/index.js';
+import { AuthStore } from '../../services/authStore.js';
+import { AuthApi } from '../../api/auth.api.js';
 
 interface Props {
   onLoginSuccess: (session: UserSession) => void;
+  onBackToHome?: () => void;
 }
 
-export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
+export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => {
   // Login Method: default is 'PASSWORD', can toggle to 'OTP'
   const [loginMethod, setLoginMethod] = useState<'PASSWORD' | 'OTP'>('PASSWORD');
   const [isForgotPassword, setIsForgotPassword] = useState<boolean>(false);
@@ -225,6 +226,22 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess }) => {
           gap: '1.25rem',
         }}
       >
+        {/* Back Button */}
+        {onBackToHome && (
+          <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '-0.5rem' }}>
+            <button 
+              onClick={onBackToHome}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.25rem',
+                background: 'none', border: 'none', color: '#64748b',
+                fontSize: '0.75rem', cursor: 'pointer', padding: '0.25rem'
+              }}
+            >
+              <ArrowLeft size={14} /> Back to Website
+            </button>
+          </div>
+        )}
+
         {/* Brand Header */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '0.5rem' }}>
           <img

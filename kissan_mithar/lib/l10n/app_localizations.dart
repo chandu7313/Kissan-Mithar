@@ -1785,6 +1785,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Bookings'**
   String get viewBookingsBtn;
+
+  /// No description provided for @farmLandSize.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Farm Land Size'**
+  String get farmLandSize;
+
+  /// No description provided for @lessThan1Acre.
+  ///
+  /// In en, this message translates to:
+  /// **'< 1 Acre'**
+  String get lessThan1Acre;
+
+  /// No description provided for @oneToThreeAcres.
+  ///
+  /// In en, this message translates to:
+  /// **'1 - 3 Acres'**
+  String get oneToThreeAcres;
+
+  /// No description provided for @threeToFiveAcres.
+  ///
+  /// In en, this message translates to:
+  /// **'3 - 5 Acres'**
+  String get threeToFiveAcres;
+
+  /// No description provided for @above5Acres.
+  ///
+  /// In en, this message translates to:
+  /// **'Above 5 Acres'**
+  String get above5Acres;
+
+  /// No description provided for @waterAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Water Availability'**
+  String get waterAvailability;
+
+  /// No description provided for @borewell.
+  ///
+  /// In en, this message translates to:
+  /// **'Borewell'**
+  String get borewell;
+
+  /// No description provided for @canal.
+  ///
+  /// In en, this message translates to:
+  /// **'Canal'**
+  String get canal;
+
+  /// No description provided for @drip.
+  ///
+  /// In en, this message translates to:
+  /// **'Drip'**
+  String get drip;
+
+  /// No description provided for @rainFed.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain-fed'**
+  String get rainFed;
+
+  /// No description provided for @soilTypeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Soil Type'**
+  String get soilTypeSection;
+
+  /// No description provided for @forestSoil.
+  ///
+  /// In en, this message translates to:
+  /// **'Forest Soil'**
+  String get forestSoil;
+
+  /// No description provided for @lateriteSoil.
+  ///
+  /// In en, this message translates to:
+  /// **'Laterite Soil'**
+  String get lateriteSoil;
+
+  /// No description provided for @alluvialSoil.
+  ///
+  /// In en, this message translates to:
+  /// **'Alluvial Soil'**
+  String get alluvialSoil;
+
+  /// No description provided for @salineSoil.
+  ///
+  /// In en, this message translates to:
+  /// **'Saline Soil'**
+  String get salineSoil;
+
+  /// No description provided for @voiceNoteForExpert.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Voice Note for Expert (Optional)'**
+  String get voiceNoteForExpert;
+
+  /// No description provided for @recordingTapStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording... Tap stop when finished'**
+  String get recordingTapStop;
+
+  /// No description provided for @tapMicToSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap mic to speak your questions or specific requests in your language.'**
+  String get tapMicToSpeak;
 }
 
 class _AppLocalizationsDelegate

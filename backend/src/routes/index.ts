@@ -14,7 +14,7 @@ import expertRoutes from './expert.routes.js';
 
 const router = Router();
 
-// Health Check
+// Health Check — lightweight, always returns 200
 router.get('/health', async (_req, res) => {
   let dbStatus = 'disconnected';
   try {
@@ -25,13 +25,31 @@ router.get('/health', async (_req, res) => {
     dbStatus = 'error';
   }
 
+  const memUsage = process.memoryUsage();
   res.status(200).json({
     status: 'healthy',
     service: 'kissan-mithar-backend',
     version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development',
     database: dbStatus,
+    uptime: `${Math.floor(process.uptime())}s`,
+    memory: {
+      rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`,
+      heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
+    },
     timestamp: new Date().toISOString(),
   });
+});
+
+// Readiness Probe — returns 503 if database is unavailable (for load balancers)
+router.get('/readiness', async (_req, res) => {
+  try {
+    const { prisma } = await import('../config/db.js');
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ ready: true });
+  } catch {
+    res.status(503).json({ ready: false, reason: 'database_unavailable' });
+  }
 });
 
 router.use('/auth', authRoutes);

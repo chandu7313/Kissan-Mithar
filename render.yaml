@@ -1,0 +1,64 @@
+services:
+  - type: web
+    name: kissan-mithar-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: API_PREFIX
+        value: /api
+      - key: CORS_ORIGINS
+        value: '*'
+      
+      # Database Connections (Sync these manually in the Render Dashboard for security)
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+        
+      # Secrets (Sync these manually in the Render Dashboard)
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 30d
+        
+      # Provider APIs (Sync these manually in the Render Dashboard)
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dazwmir34
+      - key: CLOUDINARY_UPLOAD_PRESET
+        value: kissan_mithar_uploads
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: WEATHER_API_KEY
+        value: 715864a6159b11b88752aa8f746ee1a7
+      - key: WEATHER_API_URL
+        value: https://api.openweathermap.org/data/2.5
+      - key: SMS_PROVIDER
+        value: FAST2SMS
+      - key: SMS_API_KEY
+        sync: false
+        
+      # Firebase / Supabase
+      - key: SUPABASE_URL
+        value: https://iwywcdckncowfkoklypx.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eXdjZGNrbmNvd2Zrb2tseXB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMTI0NTYsImV4cCI6MjEwMTY4ODQ1Nn0.UbTL41Lixfc7-Tt74HwNOuGX7NEV6pNOSqtUTXeRJtw
+      - key: FIREBASE_PROJECT_ID
+        value: kissan-mithar-app
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+
+      # Mock disabling
+      - key: MOCK_FIREBASE_AUTH
+        value: 'false'
+      - key: MOCK_WEATHER_FALLBACK
+        value: 'false'

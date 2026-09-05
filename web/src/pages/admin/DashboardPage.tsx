@@ -8,9 +8,9 @@ import {
   Zap,
   Star,
 } from 'lucide-react';
-import { AnalyticsApi } from '../api/analytics.api.js';
-import { AnalyticsSummary } from '../types/index.js';
-import { StatCard } from '../components/common/StatCard.js';
+import { AnalyticsApi } from '../../api/analytics.api.js';
+import { AnalyticsSummary } from '../../types/index.js';
+import { StatCard } from '../../components/common/StatCard.js';
 
 interface Props {
   onNavigateToRequests: () => void;

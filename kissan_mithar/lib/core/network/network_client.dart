@@ -12,6 +12,10 @@ class NetworkClient {
   final Dio _dio;
   String? _authToken;
 
+  // Retry configuration
+  static const int _maxRetries = 3;
+  static const Duration _initialRetryDelay = Duration(milliseconds: 500);
+
   factory NetworkClient({Dio? dio}) {
     _instance ??= NetworkClient._internal(dio: dio);
     return _instance!;
@@ -24,6 +28,7 @@ class NetworkClient {
                 baseUrl: AppConstants.baseUrl,
                 connectTimeout: const Duration(milliseconds: AppConstants.connectTimeoutMs),
                 receiveTimeout: const Duration(milliseconds: AppConstants.receiveTimeoutMs),
+                sendTimeout: const Duration(milliseconds: AppConstants.sendTimeoutMs),
                 headers: {
                   'Content-Type': 'application/json',
                   'Accept': 'application/json',
@@ -98,25 +103,61 @@ class NetworkClient {
   /// Returns the current auth token
   String? get authToken => _authToken;
 
+  /// Determines if a request should be retried based on the error
+  bool _shouldRetry(DioException error) {
+    // Retry on connection timeout, receive timeout, or connection errors
+    if (error.type == DioExceptionType.connectionTimeout ||
+        error.type == DioExceptionType.receiveTimeout ||
+        error.type == DioExceptionType.sendTimeout ||
+        error.type == DioExceptionType.connectionError) {
+      return true;
+    }
+    // Retry on server errors (5xx) but not client errors (4xx)
+    final statusCode = error.response?.statusCode;
+    if (statusCode != null && statusCode >= 500 && statusCode < 600) {
+      return true;
+    }
+    return false;
+  }
+
+  /// Executes a request with exponential backoff retry logic
+  Future<Response<T>> _executeWithRetry<T>(
+    Future<Response<T>> Function() requestFn,
+  ) async {
+    DioException? lastError;
+
+    for (int attempt = 0; attempt <= _maxRetries; attempt++) {
+      try {
+        return await requestFn();
+      } on DioException catch (e) {
+        lastError = e;
+        if (attempt < _maxRetries && _shouldRetry(e)) {
+          final delay = _initialRetryDelay * (1 << attempt); // Exponential backoff
+          debugPrint('[NetworkClient] Retry ${attempt + 1}/$_maxRetries after ${delay.inMilliseconds}ms');
+          await Future.delayed(delay);
+        } else {
+          throw ErrorHandler.handleDioError(e);
+        }
+      } catch (e) {
+        throw ServerFailure(e.toString());
+      }
+    }
+
+    throw ErrorHandler.handleDioError(lastError!);
+  }
+
   Future<Response<T>> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await _dio.get<T>(
-        path,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-      );
-      return response;
-    } on DioException catch (e) {
-      throw ErrorHandler.handleDioError(e);
-    } catch (e) {
-      throw ServerFailure(e.toString());
-    }
+    return _executeWithRetry(() => _dio.get<T>(
+      path,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    ));
   }
 
   Future<Response<T>> post<T>(
@@ -126,20 +167,13 @@ class NetworkClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await _dio.post<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-      );
-      return response;
-    } on DioException catch (e) {
-      throw ErrorHandler.handleDioError(e);
-    } catch (e) {
-      throw ServerFailure(e.toString());
-    }
+    return _executeWithRetry(() => _dio.post<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    ));
   }
 
   Future<Response<T>> put<T>(
@@ -149,20 +183,13 @@ class NetworkClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await _dio.put<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-      );
-      return response;
-    } on DioException catch (e) {
-      throw ErrorHandler.handleDioError(e);
-    } catch (e) {
-      throw ServerFailure(e.toString());
-    }
+    return _executeWithRetry(() => _dio.put<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    ));
   }
 
   Future<Response<T>> patch<T>(
@@ -172,20 +199,13 @@ class NetworkClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await _dio.patch<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-      );
-      return response;
-    } on DioException catch (e) {
-      throw ErrorHandler.handleDioError(e);
-    } catch (e) {
-      throw ServerFailure(e.toString());
-    }
+    return _executeWithRetry(() => _dio.patch<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    ));
   }
 
   Future<Response<T>> delete<T>(
@@ -195,19 +215,12 @@ class NetworkClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await _dio.delete<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-      );
-      return response;
-    } on DioException catch (e) {
-      throw ErrorHandler.handleDioError(e);
-    } catch (e) {
-      throw ServerFailure(e.toString());
-    }
+    return _executeWithRetry(() => _dio.delete<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    ));
   }
 }

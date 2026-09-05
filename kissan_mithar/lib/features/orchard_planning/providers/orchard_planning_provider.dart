@@ -776,6 +776,6 @@ class OrchardPlanningNotifier extends StateNotifier<OrchardDraftState> {
 }
 
 final orchardPlanningProvider =
-    StateNotifierProvider<OrchardPlanningNotifier, OrchardDraftState>((ref) {
+    StateNotifierProvider.autoDispose<OrchardPlanningNotifier, OrchardDraftState>((ref) {
   return OrchardPlanningNotifier();
 });

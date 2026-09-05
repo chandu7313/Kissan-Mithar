@@ -4,8 +4,9 @@ class AppConstants {
   AppConstants._();
 
   static String get baseUrl => EnvConfig.apiBaseUrl;
-  static const int connectTimeoutMs = 15000;
-  static const int receiveTimeoutMs = 15000;
+  static const int connectTimeoutMs = 30000; // 30s — rural networks can be slow
+  static const int receiveTimeoutMs = 30000; // 30s
+  static const int sendTimeoutMs = 30000;    // 30s for photo/file uploads
 
   // Measurement conversions
   static const int guntasPerAcre = 40;

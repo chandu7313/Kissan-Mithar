@@ -316,5 +316,23 @@
     }
   },
   "goToHomeBtn": "Go to Home",
-  "viewBookingsBtn": "View Bookings"
+  "viewBookingsBtn": "View Bookings",
+  "farmLandSize": "1. Farm Land Size",
+  "lessThan1Acre": "< 1 Acre",
+  "oneToThreeAcres": "1 - 3 Acres",
+  "threeToFiveAcres": "3 - 5 Acres",
+  "above5Acres": "Above 5 Acres",
+  "waterAvailability": "2. Water Availability",
+  "borewell": "Borewell",
+  "canal": "Canal",
+  "drip": "Drip",
+  "rainFed": "Rain-fed",
+  "soilTypeSection": "3. Soil Type",
+  "forestSoil": "Forest Soil",
+  "lateriteSoil": "Laterite Soil",
+  "alluvialSoil": "Alluvial Soil",
+  "salineSoil": "Saline Soil",
+  "voiceNoteForExpert": "4. Voice Note for Expert (Optional)",
+  "recordingTapStop": "Recording... Tap stop when finished",
+  "tapMicToSpeak": "Tap mic to speak your questions or specific requests in your language."
 }

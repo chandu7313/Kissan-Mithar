@@ -1,6 +1,40 @@
+# Dependencies
 node_modules/
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Build outputs
 build/
+dist/
 .dart_tool/
+
+# Logs
 *.log
+
+# Environment & Secrets (NEVER commit these)
 .env
+*.env.local
+.env.production
+
+# Android signing
+*.jks
+*.keystore
+key.properties
+
+# iOS
+*.ipa
+ios/Pods/
+
+# Firebase config (contains API keys)
+google-services.json
+GoogleService-Info.plist
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Flutter
+.flutter-plugins
+.flutter-plugins-dependencies

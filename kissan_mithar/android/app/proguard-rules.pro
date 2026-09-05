@@ -1,23 +1,26 @@
-# Flutter Wrapper ProGuard Rules
--keep class io.flutter.app.** { *; }
--keep class io.flutter.plugin.**  { *; }
--keep class io.flutter.util.**  { *; }
--keep class io.flutter.view.**  { *; }
--keep class io.flutter.**  { *; }
--keep class io.flutter.plugins.**  { *; }
+# Flutter-specific ProGuard rules
 
-# Google Play Core (Flutter deferred components) — not used in standard APK builds
--dontwarn com.google.android.play.core.**
+# Keep Flutter engine classes
+-keep class io.flutter.** { *; }
+-dontwarn io.flutter.embedding.**
 
-# Google Maps ProGuard Rules
+# Keep Google Maps
 -keep class com.google.android.gms.maps.** { *; }
 -keep interface com.google.android.gms.maps.** { *; }
 
-# Local Notifications ProGuard Rules
--keep class com.dexterous.flutterlocalnotifications.** { *; }
+# Keep Gson (used by some plugins)
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.google.gson.** { *; }
 
-# Supabase & JSON Serialization Rules
--keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
--dontwarn javax.annotation.**
--dontwarn org.checkerframework.**
+# Keep video_player
+-keep class io.flutter.plugins.videoplayer.** { *; }
 
+# Keep image_picker
+-keep class io.flutter.plugins.imagepicker.** { *; }
+
+# Keep geolocator
+-keep class com.baseflow.geolocator.** { *; }
+
+# Prevent stripping of annotations used by Firebase
+-keepattributes RuntimeVisibleAnnotations

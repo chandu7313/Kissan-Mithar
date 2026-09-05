@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { ArrowLeft, Download, Send, CheckCircle2, Upload, Eye, X } from 'lucide-react';
-import { OrchardReport, OrchardRequest } from '../types/index.js';
-import { PdfGenerator } from '../services/pdfGenerator.js';
-import { PdfMerger } from '../services/pdfMerger.js';
-import { OrchardApi } from '../api/orchard.api.js';
+import { OrchardReport, OrchardRequest } from '../../types/index.js';
+import { PdfGenerator } from '../../services/pdfGenerator.js';
+import { PdfMerger } from '../../services/pdfMerger.js';
+import { OrchardApi } from '../../api/orchard.api.js';
 
 interface Props {
   request: OrchardRequest;

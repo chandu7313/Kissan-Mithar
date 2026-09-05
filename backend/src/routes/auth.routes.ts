@@ -2,9 +2,9 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { AuthController } from '../controllers/auth.controller.js';
 import { validateRequest } from '../middleware/validate.js';
-import { authLimiter } from '../middleware/rateLimiter.js';
-
+import { authLimiter, otpSendLimiter, otpVerifyLimiter } from '../middleware/rateLimiter.js';
 import { requireAuth } from '../middleware/auth.js';
+import { requireRole } from '../middleware/rbac.js';
 
 const router = Router();
 
@@ -82,15 +82,17 @@ const verifyPhoneOtpSchema = z.object({
 router.patch('/profile', requireAuth, validateRequest(updateProfileSchema), AuthController.updateProfile);
 router.post('/verify', authLimiter, validateRequest(verifyAuthSchema), AuthController.verify);
 router.post('/login', authLimiter, validateRequest(verifyAuthSchema), AuthController.verify);
-router.post('/send-email-otp', authLimiter, validateRequest(sendEmailOtpSchema), AuthController.sendEmailOtp);
-router.post('/verify-email-otp', authLimiter, validateRequest(verifyEmailOtpSchema), AuthController.verifyEmailOtp);
+router.post('/send-email-otp', otpSendLimiter, validateRequest(sendEmailOtpSchema), AuthController.sendEmailOtp);
+router.post('/verify-email-otp', otpVerifyLimiter, validateRequest(verifyEmailOtpSchema), AuthController.verifyEmailOtp);
 router.post('/login-password', authLimiter, validateRequest(loginPasswordSchema), AuthController.loginWithPassword);
-router.post('/reset-password', authLimiter, validateRequest(resetPasswordSchema), AuthController.resetPassword);
+router.post('/reset-password', otpVerifyLimiter, validateRequest(resetPasswordSchema), AuthController.resetPassword);
 router.post('/logout', validateRequest(logoutSchema), AuthController.logout);
-router.get('/audit-logs', AuthController.getAuditLogs);
+
+// SECURED: audit logs now require admin authentication
+router.get('/audit-logs', requireAuth, requireRole('ADMIN'), AuthController.getAuditLogs);
 
 // Phone OTP routes for Farmer mobile app
-router.post('/send-phone-otp', authLimiter, validateRequest(sendPhoneOtpSchema), AuthController.sendPhoneOtp);
-router.post('/verify-phone-otp', authLimiter, validateRequest(verifyPhoneOtpSchema), AuthController.verifyPhoneOtp);
+router.post('/send-phone-otp', otpSendLimiter, validateRequest(sendPhoneOtpSchema), AuthController.sendPhoneOtp);
+router.post('/verify-phone-otp', otpVerifyLimiter, validateRequest(verifyPhoneOtpSchema), AuthController.verifyPhoneOtp);
 
 export default router;

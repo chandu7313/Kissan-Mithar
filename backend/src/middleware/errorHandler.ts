@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
+import { logger } from '../config/logger.js';
 
 export class AppError extends Error {
   public statusCode: number;
@@ -60,7 +61,7 @@ export const errorHandler = (
   } else if (err instanceof Prisma.PrismaClientInitializationError) {
     statusCode = 503;
     message = 'Database connection unavailable. Please try again in a moment.';
-    console.error('[Database] Initialization error:', err.message);
+    logger.error({ err: err.message }, 'Database initialization error');
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
     message = 'Invalid data provided';
@@ -73,19 +74,26 @@ export const errorHandler = (
   ) {
     statusCode = 503;
     message = 'Database temporarily unavailable. Please retry shortly.';
-    console.error('[Database] Connection error:', err.message);
+    logger.error({ err: err.message }, 'Database connection error');
   }
 
-  if (process.env.NODE_ENV !== 'production' && statusCode === 500) {
-    console.error('[Error Details]:', err);
+  // Log server errors
+  if (statusCode >= 500) {
+    logger.error({ err, statusCode }, 'Server error');
+  } else if (statusCode >= 400) {
+    logger.warn({ statusCode, message }, 'Client error');
   }
+
+  // In production: NEVER leak internal error details or stack traces
+  const isProduction = process.env.NODE_ENV === 'production';
 
   res.status(statusCode).json({
     success: false,
     error: {
       message,
       statusCode,
-      details,
+      // Only include details for validation errors, never for 500s in production
+      details: isProduction && statusCode >= 500 ? undefined : details,
       timestamp: new Date().toISOString(),
     },
   });
