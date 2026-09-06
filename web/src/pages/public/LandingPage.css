@@ -71,11 +71,42 @@
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #166534;
+  gap: 0.75rem;
 }
-.logo-icon { width: 32px; height: 32px; }
-.logo-text { font-weight: 800; font-size: 1.125rem; line-height: 1.1; }
+.logo-image { height: 48px; width: auto; object-fit: contain; }
+
+.logo-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  line-height: 1;
+}
+
+.logo-name-top {
+  color: #0B3B60;
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.125rem;
+}
+
+.logo-name-bottom {
+  color: #126433;
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.logo-slogan {
+  color: #3F4756;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-align: center;
+}
 
 .desktop-nav {
   display: none;
@@ -335,6 +366,93 @@ section {
 }
 .soil-badge.orange {
   background: rgba(217, 119, 6, 0.9);
+}
+
+/* What We Actually Do */
+.what-we-do-section {
+  padding: 4rem 1.5rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.wwd-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+  .wwd-card {
+    grid-template-columns: 1fr 1fr;
+  }
+  .wwd-card.reverse .wwd-image {
+    order: 2;
+  }
+  .wwd-card.reverse .wwd-content {
+    order: 1;
+  }
+}
+
+.wwd-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.wwd-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wwd-content {
+  padding: 2rem 2.5rem;
+  background: #F0FDF4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wwd-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #166534;
+  margin: 0 0 1rem 0;
+}
+
+.wwd-content p {
+  color: #475569;
+  line-height: 1.7;
+  margin: 0 0 1.5rem 0;
+}
+
+.wwd-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.wwd-features li {
+  position: relative;
+  padding-left: 1.25rem;
+  color: #334155;
+  font-size: 0.9375rem;
+  margin-bottom: 0.625rem;
+}
+
+.wwd-features li::before {
+  content: '\2014';
+  position: absolute;
+  left: 0;
+  color: #166534;
+  font-weight: 700;
 }
 
 /* Services */
@@ -823,6 +941,11 @@ section {
 .footer-helpline strong { font-size: 1.125rem; }
 
 .logo-container.white { color: white; margin-bottom: 1.5rem; }
+.logo-container.white .logo-name-top,
+.logo-container.white .logo-name-bottom,
+.logo-container.white .logo-slogan {
+  color: white;
+}
 
 .footer-col h4 { color: white; font-size: 0.875rem; margin-bottom: 1.5rem; letter-spacing: 0.05em; }
 .footer-col a { display: block; color: #A1A1AA; text-decoration: none; font-size: 0.875rem; margin-bottom: 0.75rem; }

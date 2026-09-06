@@ -36,8 +36,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       <nav className="landing-navbar">
         <div className="navbar-content">
           <div className="logo-container">
-            <Leaf className="logo-icon" />
-            <span className="logo-text">Kissan<br/>Mithar</span>
+            <img src="/kissan_mithar_logo.PNG" alt="Kissan Mithar Logo" className="logo-image" />
+            <div className="logo-text-wrapper">
+              <span className="logo-name-top">KISSAN</span>
+              <span className="logo-name-bottom">MITHAR</span>
+              <span className="logo-slogan">• SOW • GROW •</span>
+            </div>
           </div>
 
           {/* Desktop Nav */}
@@ -168,6 +172,49 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             alt="Kissan Mithar Farm" 
             className="hero-image"
           />
+        </div>
+      </section>
+
+      {/* What We Actually Do Section */}
+      <section className="what-we-do-section">
+        <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '2.5rem' }}>What we actually do</h2>
+
+        <div className="wwd-card">
+          <div className="wwd-image">
+            <img src="/assets/orchard1.jpeg" alt="Mango Orchard Layout Plan by Kissan Mithar" />
+          </div>
+          <div className="wwd-content">
+            <h3>Orchard Planning</h3>
+            <p>
+              You tell us your acreage, soil type, and water source. We send back a complete
+              planting blueprint — tree spacing, intercrop schedule, drip-line layout, nutrient
+              calendar — matched to your specific land.
+            </p>
+            <ul className="wwd-features">
+              <li>Spacing and row layout for your exact plot shape</li>
+              <li>Intercropping calendar so nothing sits idle</li>
+              <li>Soil nutrient plan based on your test report</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="wwd-card reverse">
+          <div className="wwd-image">
+            <img src="/assets/orchard5.jpeg" alt="Banana Farm Layout Plan by Kissan Mithar" />
+          </div>
+          <div className="wwd-content">
+            <h3>Expert Agri Consultation</h3>
+            <p>
+              Talk directly with certified agricultural scientists in your own language.
+              Get real-time advice on pest control, irrigation, crop diseases, and harvest timing
+              — no middlemen, no jargon.
+            </p>
+            <ul className="wwd-features">
+              <li>1-on-1 audio & video calls with agri-scientists</li>
+              <li>Available in Hindi, Telugu, Kannada & Punjabi</li>
+              <li>Follow-up reports sent to your phone</li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -481,8 +528,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
         <div className="footer-content">
           <div className="footer-col brand-col">
             <div className="logo-container white">
-              <Leaf className="logo-icon" />
-              <span className="logo-text">Kissan<br/>Mithar</span>
+              <img src="/kissan_mithar_logo.PNG" alt="Kissan Mithar Logo" className="logo-image" />
+              <div className="logo-text-wrapper">
+                <span className="logo-name-top">KISSAN</span>
+                <span className="logo-name-bottom">MITHAR</span>
+                <span className="logo-slogan">• SOW • GROW •</span>
+              </div>
             </div>
             <p>Empowering millions of Indian farmers with accurate, soil-verified data tailored for maximum harvest. Farm smarter, farm with Mithar.</p>
             <p className="contact-details">
