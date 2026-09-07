@@ -42,7 +42,7 @@ export const Header: React.FC<Props> = ({ session, onSessionChange, onOpenProfil
         </h2>
         <div className="mobile-header-brand" style={{ alignItems: 'center', gap: '0.5rem' }}>
           <img
-            src="/app_logo.png"
+            src="/kissan_mithar_logo.PNG"
             alt="Kissan Mithar"
             style={{
               height: '32px',

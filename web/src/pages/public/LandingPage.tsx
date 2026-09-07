@@ -1,8 +1,8 @@
 import React from 'react';
 import './LandingPage.css';
-import { 
-  Menu, X, Globe, Phone, MapPin, CloudRain, ShieldCheck, 
-  Leaf, Star, Download, Play, Quote 
+import {
+  Menu, X, Globe, Phone, MapPin, CloudRain, ShieldCheck,
+  Leaf, Star, Download, Play, Quote
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -15,7 +15,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
   React.useEffect(() => {
     const path = window.location.pathname;
     let targetId = '';
-    
+
     if (path === '/about') targetId = 'about';
     else if (path === '/services') targetId = 'services';
     else if (path === '/contact') targetId = 'contact';
@@ -54,22 +54,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           </div>
 
           <div className="navbar-actions">
-            <div className="lang-selector">
-              <Globe size={16} />
-              <span>Shift: English / हिन्दी</span>
-            </div>
+
 
             <button className="btn-primary get-app-btn">
               Get Free App
             </button>
-            
+
             <button className="btn-secondary admin-login-btn" onClick={onAdminLogin}>
               Admin Login
             </button>
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button 
+          <button
             className="mobile-menu-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -83,10 +80,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
             <a href="#impact" onClick={() => setMobileMenuOpen(false)}>Proven Impact</a>
-            <button className="btn-primary full-width" style={{marginTop: '1rem'}}>
+            <button className="btn-primary full-width" style={{ marginTop: '1rem' }}>
               Get Free App
             </button>
-            <button className="btn-secondary full-width" onClick={onAdminLogin} style={{marginTop: '0.5rem'}}>
+            <button className="btn-secondary full-width" onClick={onAdminLogin} style={{ marginTop: '0.5rem' }}>
               Admin / Expert Login
             </button>
           </div>
@@ -100,18 +97,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <ShieldCheck size={16} />
             <span>DIRECT FARMER GUIDANCE & AGRI-ADVISORY</span>
           </div>
-          
+
           <h1 className="hero-title">
-            Smart Farming,<br/>
-            <span className="text-green">Simple Language.</span>
+            Grow Smarter,<br />
+            <span className="text-green">Harvest Better.</span>
           </h1>
-          
+
           <p className="hero-subtitle">
-            Personalised orchard planning, direct agricultural scientist calls, and 
-            hyperlocal weather alerts — delivered in your mother tongue without 
+            Personalised orchard planning, direct agricultural scientist calls, and
+            hyperlocal weather alerts — delivered in your mother tongue without
             complicated jargon.
           </p>
-          
+
           <div className="hero-buttons">
             <button className="btn-primary hero-btn">
               <Download size={20} />
@@ -124,19 +121,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           </div>
 
           <div className="hero-features">
-            <span><ShieldCheck size={16} className="text-green"/> Under 15MB lightweight app</span>
-            <span><ShieldCheck size={16} className="text-green"/> Works on 2G/3G without lag</span>
-            <span><ShieldCheck size={16} className="text-green"/> 100% Free Advisory</span>
+            <span><ShieldCheck size={16} className="text-green" /> Under 15MB lightweight app</span>
+            <span><ShieldCheck size={16} className="text-green" /> Works on 2G/3G without lag</span>
+            <span><ShieldCheck size={16} className="text-green" /> 100% Free Advisory</span>
           </div>
-          
+
           <div className="hero-rating">
-            <div className="avatars">
-               {/* Placeholders for farmer faces */}
-               <div className="avatar a1"></div>
-               <div className="avatar a2"></div>
-               <div className="avatar a3"></div>
-               <div className="avatar a4"></div>
-            </div>
+
             <div className="rating-text">
               <div className="stars">
                 <Star size={16} fill="#FFB800" color="#FFB800" />
@@ -145,31 +136,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
                 <Star size={16} fill="#FFB800" color="#FFB800" />
                 <Star size={16} fill="#FFB800" color="#FFB800" />
               </div>
-              <span><strong>4.8</strong> Rating on Google Play Store from over <strong>50,000+ happy farmers</strong></span>
+              <span><strong>4.0</strong> Rating on Google Play Store from over <strong>100+ happy farmers</strong></span>
             </div>
           </div>
         </div>
 
-        <div className="hero-image-wrapper">
-          <div className="yield-badge">
-            <Leaf size={16} className="text-green" />
-            <div>
-              <span className="badge-title">AVERAGE YIELD</span>
-              <span className="badge-value text-green">+35% Increase</span>
-            </div>
-          </div>
-          <div className="hero-image-overlay">
-            <div className="soil-badge">
-              <ShieldCheck size={16} className="text-green" />
-              <span>100% Soil Tested Solutions</span>
-            </div>
-            <div className="soil-badge orange">
-              <span>Available in 4 Dialects</span>
-            </div>
-          </div>
-          <img 
-            src="/assets/orchard1.jpeg" 
-            alt="Kissan Mithar Farm" 
+          <div className="hero-image-wrapper">
+          <img
+            src="/assets/hero_section_image.png"
+            alt="Kissan Mithar Farm"
             className="hero-image"
           />
         </div>
@@ -224,7 +199,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           <span className="section-badge">WHAT WE PROVIDE</span>
           <h2 className="section-title">Our Farmer Services</h2>
           <p className="section-subtitle">
-            Engineered specifically for regional farmers with step-by-step guidance and zero 
+            Engineered specifically for regional farmers with step-by-step guidance and zero
             complicated terminology.
           </p>
         </div>
@@ -289,7 +264,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
 
         <div className="timeline-container">
           <div className="timeline-line"></div>
-          
+
           <div className="timeline-step">
             <div className="step-number">1</div>
             <div className="step-icon">
@@ -335,7 +310,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           <h2 className="section-title">Successful Orchard Planning</h2>
           <p className="section-subtitle">Take a look at some of the thriving orchards our experts have helped plan and cultivate across India.</p>
         </div>
-        
+
         <div className="gallery-grid">
           {[1, 2, 3, 4, 5, 6].map((num) => (
             <div key={num} className="gallery-item">
@@ -354,12 +329,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
 
         <div className="stats-grid">
           <div className="stat-card">
-            <h3>50,000+</h3>
+            <h3>100+</h3>
             <h4>Happy Farmers</h4>
             <p>Active users across the country</p>
           </div>
           <div className="stat-card">
-            <h3>12+ States</h3>
+            <h3>4+ States</h3>
             <h4>Across India</h4>
             <p>Covering major agricultural zones</p>
           </div>
@@ -369,9 +344,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <p>Reported in the 1st year</p>
           </div>
           <div className="stat-card">
-            <h3>4.8 <Star size={20} fill="#FFB800" color="#FFB800" style={{display: 'inline', verticalAlign: 'text-bottom'}} /></h3>
+            <h3>4.0 <Star size={20} fill="#FFB800" color="#FFB800" style={{ display: 'inline', verticalAlign: 'text-bottom' }} /></h3>
             <h4>Play Store Rating</h4>
-            <p>From 12,000+ verified farmer reviews</p>
+            <p>From 100+ verified farmer reviews</p>
           </div>
         </div>
       </section>
@@ -382,7 +357,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           <span className="section-badge">REAL STORIES</span>
           <div className="header-row">
             <h2 className="section-title">Voices from the Field</h2>
-            <span className="audio-badge">Over 12,000+ voice recordings submitted <Play size={14} fill="currentColor" /></span>
+            <span className="audio-badge">Over 100+ voice recordings submitted <Play size={14} fill="currentColor" /></span>
           </div>
           <p className="section-subtitle">Real experiences shared by growers using Kissan Mithar every week.</p>
         </div>
@@ -450,7 +425,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <h2 className="section-title">About Kissan Mithar</h2>
             <p className="section-subtitle">Founded with a vision to empower every farmer with technology and expert guidance.</p>
           </div>
-          
+
           <div className="about-grid">
             {/* Founder Info */}
             <div className="about-card">
@@ -478,13 +453,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
                 </div>
               </div>
               <div className="map-container">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12182.30520634488!2d78.36830595222033!3d17.4475459384784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x19688beb557fa0ee!2sHITEC%20City%2C%20Hyderabad%2C%20Telangana%20500081!5e0!3m2!1sen!2sin!4v1709210214251!5m2!1sen!2sin" 
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0, borderRadius: '8px' }} 
-                  allowFullScreen={false} 
-                  loading="lazy" 
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12182.30520634488!2d78.36830595222033!3d17.4475459384784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x19688beb557fa0ee!2sHITEC%20City%2C%20Hyderabad%2C%20Telangana%20500081!5e0!3m2!1sen!2sin!4v1709210214251!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, borderRadius: '8px' }}
+                  allowFullScreen={false}
+                  loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade">
                 </iframe>
               </div>
@@ -497,10 +472,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       <section className="cta-section">
         <div className="cta-container">
           <div className="cta-content">
-            <span className="cta-badge">START TODAY • FREE ADVISORY</span>
-            <h2>Ready for Better Harvests &<br/>Smarter Farming?</h2>
-            <p>Join over 50,000 farmers growing smarter with personalized blueprints today. Works smoothly on all basic Android smartphones.</p>
-            
+            <span className="cta-badge">START TODAY</span>
+            <h2>Ready for Better Harvests &<br />Smarter Farming?</h2>
+            <p>Join over 500+ farmers growing smarter with personalized blueprints today. Works smoothly on all basic Android smartphones.</p>
+
             <div className="cta-buttons">
               <button className="btn-light">
                 <Download size={20} className="text-green" />
@@ -537,14 +512,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             </div>
             <p>Empowering millions of Indian farmers with accurate, soil-verified data tailored for maximum harvest. Farm smarter, farm with Mithar.</p>
             <p className="contact-details">
-              Registered Office: Hyderabad • +91 9876543210
+              Registered Office: Hyderabad • +91 9392699963
             </p>
-            <div className="footer-helpline">
-              <span>Toll-Free Helpline:</span>
-              <strong>1800-120-6472</strong>
-            </div>
-          </div>
 
+          </div>
+          x
           <div className="footer-col">
             <h4>FARMER SERVICES</h4>
             <a href="#">Orchard Planning</a>
@@ -557,19 +529,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
 
           <div className="footer-col">
             <h4>SUPPORTED DIALECTS</h4>
+            <a href="#">• English</a>
             <a href="#">• हिन्दी (Hindi)</a>
-            <a href="#">• ਪੰਜਾਬੀ (Punjabi)</a>
-            <a href="#">• मराठी (Marathi)</a>
             <a href="#">• ಕನ್ನಡ (Kannada)</a>
             <a href="#">• తెలుగు (Telugu)</a>
-            <a href="#">• ગુજરાતી (Gujarati)</a>
           </div>
 
           <div className="footer-col">
             <h4>SUPPORT & TRUST</h4>
             <a href="#">About Kissan Mithar</a>
-            <a href="#">Partner with Mithar</a>
-            <a href="#">NGO & Govt Partners</a>
             <a href="#">Agronomist Network</a>
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>

@@ -51,7 +51,7 @@ export const Sidebar: React.FC<Props> = ({
         }}
       >
         <img
-          src="/app_logo.png"
+          src="/kissan_mithar_logo.PNG"
           alt="Kissan Mithar"
           style={{
             height: '42px',

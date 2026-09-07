@@ -157,7 +157,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                'assets/images/app_logo.png',
+                                'assets/images/kissan_mithar_logo.PNG',
                                 width: logoWidth,
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) {

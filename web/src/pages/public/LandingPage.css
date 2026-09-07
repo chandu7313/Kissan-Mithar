@@ -314,15 +314,14 @@ section {
 .hero-image-wrapper {
   position: relative;
   width: 100%;
-  border-radius: 1.5rem;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: scale(1.35) translateX(5%) translateY(5%);
+  z-index: 10;
 }
 
 .hero-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   display: block;
 }
 

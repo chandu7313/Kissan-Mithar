@@ -1,7 +1,7 @@
 # 🌾 Kisan Mithar (కిసాన్ మిత్ర / किसान मित्र / ಕಿಸಾನ್ ಮಿತ್ರ)
 
 <p align="center">
-  <img src="app_logo.png" alt="Kisan Mithar Logo" width="120" style="border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  <img src="kissan_mithar_logo.PNG" alt="Kisan Mithar Logo" width="120" style="border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
 </p>
 
 <p align="center">
@@ -129,7 +129,7 @@ flowchart TD
 ```
 Kissan-Mithar-App/
 ├── .vscode/                      # Shared IDE workspace configuration
-├── app_logo.png                  # Brand logo and application icon
+├── kissan_mithar_logo.PNG                  # Brand logo and application icon
 │
 ├── kissan_mithar/                # 📱 Flutter Mobile Application
 │   ├── android/                  # Android native project (minSdk 24, R8 shrinking)

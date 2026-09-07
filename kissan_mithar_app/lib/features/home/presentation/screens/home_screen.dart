@@ -135,7 +135,7 @@ class HomeScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(4),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/images/app_logo.png',
+                          'assets/images/kissan_mithar_logo.PNG',
                           fit: BoxFit.contain,
                           errorBuilder: (_, _, _) => const Icon(
                             Icons.agriculture_rounded,

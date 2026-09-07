@@ -125,7 +125,7 @@ class FarmerAppBar extends ConsumerWidget implements PreferredSizeWidget {
             children: [
               if (showTractorIcon) ...[
                 Image.asset(
-                  'assets/images/app_logo.png',
+                  'assets/images/kissan_mithar_logo.PNG',
                   height: 32,
                   width: 32,
                   fit: BoxFit.contain,
