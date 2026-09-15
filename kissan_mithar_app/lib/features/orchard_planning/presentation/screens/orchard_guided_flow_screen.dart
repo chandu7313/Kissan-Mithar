@@ -1910,7 +1910,7 @@ class _RipplingIconState extends State<_RipplingIcon>
 class _LoopingGuideVideo extends StatefulWidget {
   final String videoUrl;
 
-  const _LoopingGuideVideo({super.key, required this.videoUrl});
+  const _LoopingGuideVideo({required this.videoUrl});
 
   @override
   State<_LoopingGuideVideo> createState() => _LoopingGuideVideoState();

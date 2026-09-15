@@ -56,9 +56,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           <div className="navbar-actions">
 
 
-            <button className="btn-primary get-app-btn">
+            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary get-app-btn" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               Get Free App
-            </button>
+            </a>
 
             <button className="btn-secondary admin-login-btn" onClick={onAdminLogin}>
               Admin Login
@@ -80,9 +80,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
             <a href="#impact" onClick={() => setMobileMenuOpen(false)}>Proven Impact</a>
-            <button className="btn-primary full-width" style={{ marginTop: '1rem' }}>
+            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary full-width" style={{ marginTop: '1rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               Get Free App
-            </button>
+            </a>
             <button className="btn-secondary full-width" onClick={onAdminLogin} style={{ marginTop: '0.5rem' }}>
               Admin / Expert Login
             </button>
@@ -110,10 +110,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           </p>
 
           <div className="hero-buttons">
-            <button className="btn-primary hero-btn">
-              <Download size={20} />
+            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary hero-btn" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Download size={20} style={{ marginRight: '8px' }} />
               Download KisanMithar App
-            </button>
+            </a>
             <button className="btn-outline hero-btn">
               <Phone size={20} />
               Book Free Expert Call
@@ -477,10 +477,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <p>Join over 500+ farmers growing smarter with personalized blueprints today. Works smoothly on all basic Android smartphones.</p>
 
             <div className="cta-buttons">
-              <button className="btn-light">
-                <Download size={20} className="text-green" />
+              <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-light" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Download size={20} className="text-green" style={{ marginRight: '8px' }} />
                 Download Free APK (15 MB)
-              </button>
+              </a>
               <button className="btn-dark">
                 <Play size={20} />
                 GET IT ON Google Play
@@ -489,8 +489,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           </div>
           <div className="cta-qr">
             <div className="qr-box">
-              {/* Fake QR code visualization */}
-              <div className="qr-placeholder"></div>
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" alt="Download QR Code" className="qr-placeholder" style={{ border: 'none', background: 'transparent' }} />
               <span>Scan to install App</span>
               <span className="small">From official secure servers</span>
             </div>

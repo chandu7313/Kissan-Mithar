@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/config/env_config.dart';
 import '../../../core/network/network_client.dart';
 import '../../../core/services/cloudinary_service.dart';
 import '../models/consultation_model.dart';

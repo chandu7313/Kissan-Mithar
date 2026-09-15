@@ -3,10 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/config/env_config.dart';
 import '../../../core/network/network_client.dart';
 import '../../../core/services/cloudinary_service.dart';
-import '../../../core/services/offline_sync_service.dart';
 
 class OrchardDraftState {
   final int currentStep; // 0: Photos, 1: Location, 2: Land Details
