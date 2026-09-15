@@ -121,7 +121,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           </div>
 
           <div className="hero-features">
-            <span><ShieldCheck size={16} className="text-green" /> Under 15MB lightweight app</span>
+            <span><ShieldCheck size={16} className="text-green" /> lightweight app</span>
             <span><ShieldCheck size={16} className="text-green" /> Works on 2G/3G without lag</span>
             <span><ShieldCheck size={16} className="text-green" /> 100% Free Advisory</span>
           </div>
@@ -141,7 +141,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           </div>
         </div>
 
-          <div className="hero-image-wrapper">
+        <div className="hero-image-wrapper">
           <img
             src="/assets/hero_section_image.png"
             alt="Kissan Mithar Farm"
@@ -479,7 +479,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <div className="cta-buttons">
               <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-light" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Download size={20} className="text-green" style={{ marginRight: '8px' }} />
-                Download Free APK (15 MB)
+                Download Free APK
               </a>
               <button className="btn-dark">
                 <Play size={20} />
