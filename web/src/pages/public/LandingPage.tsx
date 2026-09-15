@@ -489,7 +489,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
           </div>
           <div className="cta-qr">
             <div className="qr-box">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" alt="Download QR Code" className="qr-placeholder" style={{ border: 'none', background: 'transparent' }} />
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fdrive.google.com%2Fuc%3Fexport%3Ddownload%26id%3D1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" alt="Download QR Code" className="qr-placeholder" style={{ border: 'none', background: 'transparent' }} />
               <span>Scan to install App</span>
               <span className="small">From official secure servers</span>
             </div>
