@@ -41,7 +41,7 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: 360),
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
               child: Column(
@@ -86,7 +86,7 @@ class _LanguageSelectScreenState extends ConsumerState<LanguageSelectScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 0.95,
+                    childAspectRatio: 1.15,
                     children: AppLanguage.values.map((lang) {
                       final isSelected = lang == _selectedLanguage;
 

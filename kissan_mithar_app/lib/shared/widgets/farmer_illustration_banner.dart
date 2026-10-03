@@ -9,7 +9,7 @@ class FarmerIllustrationBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 210,
+      height: 160,
       decoration: BoxDecoration(
         color: const Color(0xFFFBF4E8),
         borderRadius: BorderRadius.circular(20),

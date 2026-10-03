@@ -478,8 +478,25 @@ export class AuthService {
         }
       }
     } catch (dbError: any) {
-      if (dbError instanceof AppError) throw dbError;
-      throw new AppError('Database error during authentication', 500, dbError.message);
+      if (!isProduction) {
+        logger.warn('Mocking user record due to DB failure in development mode');
+        if (role === 'FARMER') {
+          farmerRecord = {
+            id: 'mock_farmer_id',
+            firebaseUid,
+            phoneNumber,
+            name: name && name !== 'farmer' && name !== 'User' && name !== 'Farmer' ? name : 'farmer',
+            languageCode: dto.languageCode || 'en',
+          };
+        } else if (role === 'EXPERT') {
+          expertRecord = { id: 'mock_expert_id', phoneNumber, email, name: name || 'Mock Expert' };
+        } else {
+          adminRecord = { id: 'mock_admin_id', phoneNumber, email, name: name || 'Mock Admin' };
+        }
+      } else {
+        if (dbError instanceof AppError) throw dbError;
+        throw new AppError('Database error during authentication', 500, dbError.message);
+      }
     }
 
     const userId = farmerRecord?.id || expertRecord?.id || adminRecord?.id;

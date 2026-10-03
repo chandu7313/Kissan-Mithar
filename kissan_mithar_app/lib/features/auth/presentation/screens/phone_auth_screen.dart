@@ -81,7 +81,7 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
+            constraints: const BoxConstraints(maxWidth: 360),
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
               child: Column(
