@@ -59,7 +59,7 @@ class AppRoutes {
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/',
+  initialLocation: '/home',
   routes: <RouteBase>[
     // 1. Initial Flow (Splash, Language, & Notification Permission)
     GoRoute(
@@ -123,6 +123,20 @@ final GoRouter appRouter = GoRouter(
           name: AppRoutes.activity,
           builder: (BuildContext context, GoRouterState state) {
             return const MyActivityScreen();
+          },
+        ),
+        GoRoute(
+          path: '/shop',
+          name: 'shop',
+          builder: (BuildContext context, GoRouterState state) {
+            return Scaffold(appBar: AppBar(title: const Text('Shop (Coming Soon)')), body: const Center(child: Text('Buy Inputs and Machinery Here')));
+          },
+        ),
+        GoRoute(
+          path: '/learn',
+          name: 'learn',
+          builder: (BuildContext context, GoRouterState state) {
+            return Scaffold(appBar: AppBar(title: const Text('Learn (Coming Soon)')), body: const Center(child: Text('Educational Content & Videos Here')));
           },
         ),
         GoRoute(

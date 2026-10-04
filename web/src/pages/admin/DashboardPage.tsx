@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ClipboardList,
+  Users,
+  Briefcase,
+  Tractor,
+  ShoppingCart,
   PhoneCall,
-  MapPin,
   Clock,
-  FileCheck,
-  Zap,
-  Star,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import { AnalyticsApi } from '../../api/analytics.api.js';
 import { AnalyticsSummary } from '../../types/index.js';
@@ -44,15 +45,7 @@ export const DashboardPage: React.FC<Props> = ({
         <p style={{ color: '#ef4444', marginBottom: '1rem' }}>{error}</p>
         <button
           onClick={fetchAnalytics}
-          style={{
-            padding: '0.5rem 1.5rem',
-            borderRadius: '0.5rem',
-            border: 'none',
-            background: 'var(--primary-600)',
-            color: 'white',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-          }}
+          className="btn-primary"
         >
           Retry
         </button>
@@ -61,157 +54,146 @@ export const DashboardPage: React.FC<Props> = ({
   }
 
   if (!analytics) {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Analytics Hub...</div>;
+    return <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading Dashboard...</div>;
   }
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Welcome Banner */}
-      <div
-        className="desktop-banner"
-        style={{
-          background: 'linear-gradient(135deg, var(--primary-800) 0%, var(--primary-900) 100%)',
-          color: 'white',
-          borderRadius: '1rem',
-          padding: '2rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          boxShadow: 'var(--shadow-md)',
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-            Horticultural Operations & Feasibility Overview
-          </h1>
-          <p style={{ color: '#bbf7d0', fontSize: '0.9375rem', maxWidth: '600px' }}>
-            Monitor land survey requests, review farmer GPS soil surveys, generate stamped feasibility PDF reports, and provide expert audio/video consultations.
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button
-            onClick={onNavigateToRequests}
-            className="btn-gold"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
-          >
-            <ClipboardList size={16} />
-            <span>Review Surveys ({analytics.pendingReviews})</span>
-          </button>
-          <button
-            onClick={onNavigateToConsultations}
-            className="btn-secondary"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}
-          >
-            <PhoneCall size={15} />
-            <span>Consultations</span>
-          </button>
+      
+      <div>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1.25rem' }}>
+          Admin Dashboard
+        </h1>
+        
+        {/* KPI Cards Grid - Matching Reference Design */}
+        <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gap: '1rem',
+          }}
+        >
+          <StatCard
+            title="Total Surveys"
+            value={analytics.totalRequests}
+            icon={<div style={{ padding: '6px', background: '#f0fdf4', borderRadius: '8px', color: '#16a34a' }}><Users size={20} /></div>}
+          />
+          <StatCard
+            title="Pending Review"
+            value={analytics.pendingReviews}
+            icon={<div style={{ padding: '6px', background: '#fffbeb', borderRadius: '8px', color: '#d97706' }}><Clock size={20} /></div>}
+          />
+          <StatCard
+            title="Completed"
+            value={analytics.reportsCompleted}
+            icon={<div style={{ padding: '6px', background: '#f0fdf4', borderRadius: '8px', color: '#16a34a' }}><CheckCircle2 size={20} /></div>}
+          />
+          <StatCard
+            title="Avg Days"
+            value={analytics.avgTurnaroundDays}
+            icon={<div style={{ padding: '6px', background: '#eff6ff', borderRadius: '8px', color: '#2563eb' }}><Clock size={20} /></div>}
+          />
+          <StatCard
+            title="Satisfaction"
+            value={`${analytics.farmerSatisfaction}/5`}
+            icon={<div style={{ padding: '6px', background: '#fef2f2', borderRadius: '8px', color: '#dc2626' }}><CheckCircle2 size={20} /></div>}
+          />
+          <StatCard
+            title="Consultations"
+            value="Active"
+            icon={<div style={{ padding: '6px', background: '#eff6ff', borderRadius: '8px', color: '#2563eb' }}><PhoneCall size={20} /></div>}
+          />
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1.25rem',
-        }}
-      >
-        <StatCard
-          title="Total Survey Requests"
-          value={analytics.totalRequests}
-          icon={<ClipboardList size={20} color="var(--primary-600)" />}
-          trend="+18% this month"
-          trendPositive={true}
-        />
-        <StatCard
-          title="Pending Expert Review"
-          value={analytics.pendingReviews}
-          icon={<Clock size={20} color="#d97706" />}
-          subtitle="Action required"
-        />
-        <StatCard
-          title="Reports Delivered"
-          value={analytics.reportsCompleted}
-          icon={<FileCheck size={20} color="#2563eb" />}
-          trend="+24% delivery"
-          trendPositive={true}
-        />
-        <StatCard
-          title="Avg Turnaround Time"
-          value={`${analytics.avgTurnaroundDays} Days`}
-          icon={<Zap size={20} color="#7c3aed" />}
-          subtitle="Target < 2.0 days"
-        />
-        <StatCard
-          title="Farmer Satisfaction"
-          value={`${analytics.farmerSatisfaction} / 5.0`}
-          icon={<Star size={20} fill="#eab308" color="#eab308" />}
-          trend="99.2% positive"
-          trendPositive={true}
-        />
-      </div>
-
-      {/* Bottom Section: Pipeline and Crops */}
-      <div className="responsive-grid">
-        {/* Status Distribution */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Orchard Request Pipeline by Status</h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-            {Object.entries(analytics.statusBreakdown).map(([status, count]) => {
-              const total = analytics.totalRequests;
-              const pct = Math.round((count / total) * 100);
-              return (
-                <div key={status} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+      {/* Main Content Area - Charts & Breakdowns matching reference */}
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
+        
+        {/* Line Chart Mockup (Crop Demand) */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-main)' }}>Service Trends</h3>
+          
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {analytics.cropDemand.map((item) => (
+                <div key={item.crop} style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
-                    <span style={{ fontWeight: 600 }}>{status.replace('_', ' ')}</span>
-                    <span style={{ color: 'var(--text-muted)' }}>{count} ({pct}%)</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{item.crop}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{item.percentage}%</span>
                   </div>
-                  <div style={{ height: '8px', backgroundColor: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ height: '8px', backgroundColor: 'var(--km-gray-100)', borderRadius: '4px', overflow: 'hidden' }}>
                     <div
                       style={{
                         height: '100%',
-                        width: `${pct}%`,
-                        backgroundColor:
-                          status === 'PLAN_READY' ? 'var(--primary-600)' :
-                            status === 'UNDER_REVIEW' ? '#0284c7' :
-                              status === 'SUBMITTED' ? 'var(--accent-gold)' : '#94a3b8',
+                        width: `${item.percentage}%`,
+                        backgroundColor: 'var(--km-green-500)',
                         borderRadius: '4px',
-                        transition: 'width 0.3s ease',
                       }}
                     />
                   </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Top Demanded Crops */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>Top Recommended Horticultural Crops</h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-            {analytics.cropDemand.map((item) => (
-              <div key={item.crop} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
-                  <span style={{ fontWeight: 600 }}>{item.crop}</span>
-                  <span style={{ color: 'var(--text-muted)' }}>{item.percentage}% of reports</span>
-                </div>
-                <div style={{ height: '8px', backgroundColor: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      width: `${item.percentage}%`,
-                      backgroundColor: 'var(--primary-700)',
-                      borderRadius: '4px',
-                    }}
-                  />
-                </div>
+        {/* Donut Chart Mockup (Status Breakdown) */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-main)' }}>Service Requests</h3>
+          
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}>
+            {/* CSS Donut Chart */}
+            <div style={{
+              width: '180px',
+              height: '180px',
+              borderRadius: '50%',
+              background: 'conic-gradient(var(--km-green-500) 0% 60%, var(--km-gold) 60% 85%, var(--km-info) 85% 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative'
+            }}>
+              <div style={{
+                width: '130px',
+                height: '130px',
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)' }}>{analytics.totalRequests}</span>
               </div>
-            ))}
+            </div>
+
+            {/* Legend */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8125rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--km-green-500)' }}></div>
+                  <span style={{ color: 'var(--text-muted)' }}>Completed</span>
+                </div>
+                <span style={{ fontWeight: 600 }}>{analytics.statusBreakdown['PLAN_READY'] || 0}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8125rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--km-gold)' }}></div>
+                  <span style={{ color: 'var(--text-muted)' }}>Pending</span>
+                </div>
+                <span style={{ fontWeight: 600 }}>{analytics.statusBreakdown['SUBMITTED'] || 0}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8125rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--km-info)' }}></div>
+                  <span style={{ color: 'var(--text-muted)' }}>Under Review</span>
+                </div>
+                <span style={{ fontWeight: 600 }}>{analytics.statusBreakdown['UNDER_REVIEW'] || 0}</span>
+              </div>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );

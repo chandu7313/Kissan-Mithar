@@ -1,9 +1,11 @@
 import React from 'react';
 import './LandingPage.css';
 import {
-  Menu, X, Globe, Phone, MapPin, CloudRain, ShieldCheck,
-  Leaf, Star, Download, Play, Quote
+  Menu, X, Globe, MapPin, ShieldCheck,
+  Star, Download, Play, ArrowRight
 } from 'lucide-react';
+
+import { ASSETS } from '../../assets';
 
 interface LandingPageProps {
   onAdminLogin: () => void;
@@ -30,36 +32,83 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
     }
   }, []);
 
+  const services = [
+    {
+      title: 'Orchard Planning',
+      desc: 'Plan and establish all types of orchards',
+      image: ASSETS.SERVICES.ORCHARD_PLANNING,
+    },
+    {
+      title: 'Expert Consultancy',
+      desc: 'Talk directly with agriculture experts',
+      image: ASSETS.SERVICES.EXPERT_CONSULTANCY,
+    },
+    {
+      title: 'Fertilizer Guide',
+      desc: 'Get crop-specific fertilizer recommendations',
+      image: ASSETS.SERVICES.FERTILIZERS,
+    },
+    {
+      title: 'Disease Help',
+      desc: 'Identify crop problems and get treatment guidance',
+      image: ASSETS.SERVICES.DISEASE_HELP,
+    },
+    {
+      title: 'Weather',
+      desc: 'Live weather and farming alerts',
+      image: ASSETS.SERVICES.WEATHER,
+    },
+    {
+      title: 'Farm Labour',
+      desc: 'Find skilled labour for your farm work',
+      image: ASSETS.SERVICES.LABOUR,
+    },
+    {
+      title: 'Farm Machinery',
+      desc: 'Find tractors, harvesters, drones and more',
+      image: ASSETS.SERVICES.MACHINERY,
+    },
+    {
+      title: 'Crop Connect',
+      desc: 'Connect with buyers and industries',
+      image: ASSETS.SERVICES.CROP_CONNECT,
+    },
+    {
+      title: 'AI Farming Assistant',
+      desc: 'Ask any farming question in your language',
+      image: ASSETS.SERVICES.AI_ASSISTANT,
+    }
+  ];
+
   return (
     <div className="landing-container">
       {/* Navbar */}
       <nav className="landing-navbar">
         <div className="navbar-content">
-          <div className="logo-container">
-            <img src="/kissan_mithar_logo.PNG" alt="Kissan Mithar Logo" className="logo-image" />
+          <a href="/" className="logo-container">
+            <img src="/kissan_mithar_logo_v2.png" alt="Kissan Mithar Logo" className="logo-image" />
             <div className="logo-text-wrapper">
               <span className="logo-name-top">KISSAN</span>
               <span className="logo-name-bottom">MITHAR</span>
               <span className="logo-slogan">• SOW • GROW •</span>
             </div>
-          </div>
+          </a>
 
           {/* Desktop Nav */}
           <div className="desktop-nav">
+            <a href="/">Home</a>
             <a href="#services">Services</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#impact">Proven Impact</a>
-            <a href="#stories">Farmer Stories</a>
-            <a href="#about">About Us</a>
+            <a href="#about">About</a>
+            <a href="#farmers">For Farmers</a>
+            <a href="#experts">Experts</a>
+            <a href="#partners">Partners</a>
+            <a href="#contact">Contact</a>
           </div>
 
           <div className="navbar-actions">
-
-
-            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary get-app-btn" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              Get Free App
+            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary get-app-btn">
+              Download App
             </a>
-
             <button className="btn-secondary admin-login-btn" onClick={onAdminLogin}>
               Admin Login
             </button>
@@ -77,11 +126,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
         {/* Mobile Nav */}
         {mobileMenuOpen && (
           <div className="mobile-nav">
+            <a href="/" onClick={() => setMobileMenuOpen(false)}>Home</a>
             <a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
-            <a href="#impact" onClick={() => setMobileMenuOpen(false)}>Proven Impact</a>
-            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary full-width" style={{ marginTop: '1rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              Get Free App
+            <a href="#about" onClick={() => setMobileMenuOpen(false)}>About</a>
+            <a href="#farmers" onClick={() => setMobileMenuOpen(false)}>For Farmers</a>
+            <a href="#experts" onClick={() => setMobileMenuOpen(false)}>Experts</a>
+            <a href="#partners" onClick={() => setMobileMenuOpen(false)}>Partners</a>
+            <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+
+            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary full-width" style={{ marginTop: '1rem', textDecoration: 'none' }}>
+              Download App
             </a>
             <button className="btn-secondary full-width" onClick={onAdminLogin} style={{ marginTop: '0.5rem' }}>
               Admin / Expert Login
@@ -91,262 +145,384 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       </nav>
 
       {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <div className="hero-badge">
-            <ShieldCheck size={16} />
-            <span>DIRECT FARMER GUIDANCE & AGRI-ADVISORY</span>
-          </div>
+      <section className="hero-section" style={{
+        backgroundImage: `url('/assets/hero-image.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: '75% center', // Shifted left
+        backgroundRepeat: 'no-repeat',
+        position: 'relative',
+        minHeight: '70vh',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 5%',
+        paddingTop: '60px',
+      }}>
+        {/* Soft White Shadow Overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          width: '70%',
+          background: 'linear-gradient(to right, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.4) 30%, rgba(255,255,255,0) 100%)',
+          pointerEvents: 'none',
+          zIndex: 1
+        }} />
 
-          <h1 className="hero-title">
-            Grow Smarter,<br />
-            <span className="text-green">Harvest Better.</span>
-          </h1>
+        <div style={{
+          position: 'absolute',
+          top: '30px',
+          right: '5%',
+          background: 'rgba(255, 255, 255, 0.9)',
+          borderRadius: '30px',
+          display: 'flex',
+          overflow: 'hidden',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+        }}>
+          <button style={{ padding: '8px 16px', border: 'none', background: 'transparent', fontWeight: 'bold', cursor: 'pointer' }}>EN</button>
+          <button style={{ padding: '8px 16px', border: 'none', background: 'transparent', cursor: 'pointer' }}>తెలుగు</button>
+          <button style={{ padding: '8px 16px', border: 'none', background: 'transparent', cursor: 'pointer' }}>हिंदी</button>
+        </div>
 
-          <p className="hero-subtitle">
-            Personalised orchard planning, direct agricultural scientist calls, and
-            hyperlocal weather alerts — delivered in your mother tongue without
-            complicated jargon.
-          </p>
+        <div style={{
+          position: 'relative',
+          display: 'flex',
+          justifyContent: 'flex-start', // Align text to left, card will be absolute
+          alignItems: 'center',
+          width: '100%',
+          maxWidth: '1280px',
+          margin: '0 auto',
+          paddingBottom: '20px',
+          minHeight: '500px' // Give it enough height to place the card at the bottom
+        }}>
+          {/* Left Text Content */}
+          <div style={{
+            textAlign: 'left',
+            maxWidth: '590px',
+            zIndex: 5,
+            padding: '2rem 0'
+          }}>
+            <h1 style={{
+              fontSize: '4rem',
+              fontWeight: 900,
+              lineHeight: 1.1,
+              color: '#0f172a',
+              marginBottom: '1.25rem',
+              fontFamily: 'Outfit, sans-serif',
+              letterSpacing: '0.03em'
+            }}>
+              Everything Your<br />
+              Farm Needs.<br />
+              One Trusted Platform.
+            </h1>
+            <p style={{
+              fontSize: '1.125rem',
+              color: '#1e293b',
+              lineHeight: 1.6,
+              marginBottom: '2.5rem',
+              fontWeight: 500,
+              maxWidth: '520px'
+            }}>
+              Expert advice, weather, machinery, labour, crop guidance and market connections — all in one place.
+            </p>
 
-          <div className="hero-buttons">
-            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary hero-btn" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Download size={20} style={{ marginRight: '8px' }} />
-              Download KisanMithar App
-            </a>
-            <button className="btn-outline hero-btn">
-              <Phone size={20} />
-              Book Free Expert Call
-            </button>
-          </div>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2.5rem' }}>
+              <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" style={{
+                display: 'inline-flex', alignItems: 'center', background: '#166534', color: 'white', padding: '14px 28px', borderRadius: '12px', fontWeight: 600, textDecoration: 'none', fontSize: '1rem'
+              }}>
+                <Play size={20} style={{ marginRight: '8px', fill: 'white' }} />
+                Download App
+              </a>
+              <a href="#services" style={{
+                display: 'inline-flex', alignItems: 'center', background: 'white', color: '#0f172a', padding: '14px 28px', borderRadius: '12px', fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', fontSize: '1rem'
+              }}>
+                Explore Services
+              </a>
+            </div>
 
-          <div className="hero-features">
-            <span><ShieldCheck size={16} className="text-green" /> lightweight app</span>
-            <span><ShieldCheck size={16} className="text-green" /> Works on 2G/3G without lag</span>
-            <span><ShieldCheck size={16} className="text-green" /> 100% Free Advisory</span>
-          </div>
-
-          <div className="hero-rating">
-
-            <div className="rating-text">
-              <div className="stars">
-                <Star size={16} fill="#FFB800" color="#FFB800" />
-                <Star size={16} fill="#FFB800" color="#FFB800" />
-                <Star size={16} fill="#FFB800" color="#FFB800" />
-                <Star size={16} fill="#FFB800" color="#FFB800" />
-                <Star size={16} fill="#FFB800" color="#FFB800" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img src="https://ui-avatars.com/api/?name=Farmer&background=166534&color=fff&size=32" alt="F" style={{ borderRadius: '50%', border: '2px solid white', marginLeft: 0 }} />
+                <img src="https://ui-avatars.com/api/?name=User&background=ea580c&color=fff&size=32" alt="U" style={{ borderRadius: '50%', border: '2px solid white', marginLeft: '-12px' }} />
+                <img src="https://ui-avatars.com/api/?name=Agri&background=2563eb&color=fff&size=32" alt="A" style={{ borderRadius: '50%', border: '2px solid white', marginLeft: '-12px' }} />
+                <img src="https://ui-avatars.com/api/?name=Plus&background=64748b&color=fff&size=32" alt="P" style={{ borderRadius: '50%', border: '2px solid white', marginLeft: '-12px' }} />
               </div>
-              <span><strong>4.0</strong> Rating on Google Play Store from over <strong>100+ happy farmers</strong></span>
+              <span style={{ fontSize: '1.05rem', fontWeight: 700, color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>50,000+ Farmers Trust Us</span>
+            </div>
+          </div>
+
+          {/* Right AI Bot Card */}
+          <div style={{
+            position: 'absolute',
+            bottom: '80px',
+            right: '-80px',
+            background: 'white',
+            padding: '1.5rem',
+            borderRadius: '20px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            width: '360px', // Narrower to save space
+            zIndex: 10
+          }}>
+            {/* The AI Bot Image poking out */}
+            <img src="/assets/ai-bot.png" alt="AI Bot" className="ai-bot-animated" style={{
+              position: 'absolute',
+              top: '-100px',
+              right: '15px',
+              width: '130px',
+              height: 'auto',
+              zIndex: 11,
+              filter: 'drop-shadow(0px 15px 25px rgba(0,0,0,0.2))'
+            }} />
+
+            <h4 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0f172a', marginBottom: '1rem', fontFamily: 'Outfit, sans-serif' }}>Ask AI Farming Assistant</h4>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '0.875rem 1.25rem'
+            }}>
+              <p style={{ fontSize: '0.9375rem', color: '#94a3b8', margin: 0, flex: 1, paddingRight: '1rem' }}>
+                Ask about your crop, disease, fertilizer, weather or any farming problem...
+              </p>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#166534', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                <ArrowRight size={20} />
+              </div>
             </div>
           </div>
         </div>
-
-        <div className="hero-image-wrapper">
-          <img
-            src="/assets/hero_section_image.png"
-            alt="Kissan Mithar Farm"
-            className="hero-image"
-          />
-        </div>
       </section>
 
-      {/* What We Actually Do Section */}
-      <section className="what-we-do-section">
-        <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '2.5rem' }}>What we actually do</h2>
-
-        <div className="wwd-card">
-          <div className="wwd-image">
-            <img src="/assets/orchard1.jpeg" alt="Mango Orchard Layout Plan by Kissan Mithar" />
+      {/* Stats Bar */}
+      <section className="stats-bar">
+        <div className="stats-bar-inner">
+          <div className="stat-item">
+            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/farmer-male.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-text">
+              <div className="stat-number">50K+</div>
+              <div className="stat-label">Farmers</div>
+            </div>
           </div>
-          <div className="wwd-content">
-            <h3>Orchard Planning</h3>
-            <p>
-              You tell us your acreage, soil type, and water source. We send back a complete
-              planting blueprint — tree spacing, intercrop schedule, drip-line layout, nutrient
-              calendar — matched to your specific land.
-            </p>
-            <ul className="wwd-features">
-              <li>Spacing and row layout for your exact plot shape</li>
-              <li>Intercropping calendar so nothing sits idle</li>
-              <li>Soil nutrient plan based on your test report</li>
-            </ul>
+          <div className="stat-item">
+            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/scientist-male.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-text">
+              <div className="stat-number">500+</div>
+              <div className="stat-label">Experts</div>
+            </div>
           </div>
-        </div>
-
-        <div className="wwd-card reverse">
-          <div className="wwd-image">
-            <img src="/assets/orchard5.jpeg" alt="Banana Farm Layout Plan by Kissan Mithar" />
+          <div className="stat-item">
+            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/labour-day.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-text">
+              <div className="stat-number">2K+</div>
+              <div className="stat-label">Labour</div>
+            </div>
           </div>
-          <div className="wwd-content">
-            <h3>Expert Agri Consultation</h3>
-            <p>
-              Talk directly with certified agricultural scientists in your own language.
-              Get real-time advice on pest control, irrigation, crop diseases, and harvest timing
-              — no middlemen, no jargon.
-            </p>
-            <ul className="wwd-features">
-              <li>1-on-1 audio & video calls with agri-scientists</li>
-              <li>Available in Hindi, Telugu, Kannada & Punjabi</li>
-              <li>Follow-up reports sent to your phone</li>
-            </ul>
+          <div className="stat-item">
+            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/tractor.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-text">
+              <div className="stat-number">800+</div>
+              <div className="stat-label">Machinery</div>
+            </div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/money-bag.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-text">
+              <div className="stat-number">1K+</div>
+              <div className="stat-label">Buyers</div>
+            </div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-icon"><MapPin size={24} color="#166534" /></div>
+            <div className="stat-text">
+              <div className="stat-number">25+</div>
+              <div className="stat-label">Districts</div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Services Section */}
       <section id="services" className="services-section">
-        <div className="section-header">
-          <span className="section-badge">WHAT WE PROVIDE</span>
-          <h2 className="section-title">Our Farmer Services</h2>
-          <p className="section-subtitle">
-            Engineered specifically for regional farmers with step-by-step guidance and zero
-            complicated terminology.
-          </p>
+        <div className="services-top-row">
+          <div className="section-header left-align">
+            <h2 className="section-title">Our Services</h2>
+            <p className="section-subtitle">
+              Complete support for your farming journey
+            </p>
+          </div>
+          <a href="#" className="view-all-link">
+            View All Services <ArrowRight size={16} />
+          </a>
         </div>
 
         <div className="services-grid">
-          {/* Card 1 */}
-          <div className="service-card">
-            <div className="icon-wrapper green-bg">
-              <MapPin size={24} className="text-green" />
+          {services.map((service, idx) => (
+            <div key={idx} className="service-card">
+              <div className="service-card-image">
+                <img src={service.image} alt={service.title} />
+              </div>
+              <div className="service-card-body">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <h3>{service.title}</h3>
+                    <p>{service.desc}</p>
+                  </div>
+                  <div className="service-card-arrow">
+                    <ArrowRight size={18} />
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3>Orchard Planning</h3>
-            <p>Customized fruit and nut crop schedules, plantation spacing blueprints, and precise irrigation designs matched directly to your acre size and soil composition.</p>
-            <ul className="service-list">
-              <li><ShieldCheck size={14} className="text-orange" /> Detailed spacing layout calculations</li>
-              <li><ShieldCheck size={14} className="text-orange" /> Intercropping schedule planner</li>
-              <li><ShieldCheck size={14} className="text-orange" /> Soil nutrient balancing guide</li>
-            </ul>
-            <a href="#" className="service-link">Explore Orchard Plans &rarr;</a>
-          </div>
+          ))}
+        </div>
+      </section>
 
-          {/* Card 2 */}
-          <div className="service-card">
-            <div className="icon-wrapper orange-bg">
-              <Phone size={24} className="text-orange" />
-            </div>
-            <h3>Expert Call Request</h3>
-            <p>Connect directly with certified agricultural scientists within 15 minutes. Describe problems in a voice note in your regional dialect without typing.</p>
-            <ul className="service-list">
-              <li><ShieldCheck size={14} className="text-orange" /> Average call back under 15 minutes</li>
-              <li><ShieldCheck size={14} className="text-orange" /> Voice-diagnostic for pest issues</li>
-              <li><ShieldCheck size={14} className="text-orange" /> Spoken answers in regional languages</li>
-            </ul>
-            <a href="#" className="service-link">Book Expert Call &rarr;</a>
-          </div>
+      {/* Seed to Sale Journey */}
+      <section className="journey-section">
 
-          {/* Card 3 */}
-          <div className="service-card">
-            <div className="icon-wrapper blue-bg">
-              <CloudRain size={24} className="text-blue" />
-            </div>
-            <h3>Live Hyperlocal Weather</h3>
-            <p>Hyper-accurate weather tied to your specific village pin code. Instant warnings for sudden rainfall, hailstorms, frost, and high humidity windows.</p>
-            <ul className="service-list">
-              <li><ShieldCheck size={14} className="text-blue" /> Village-level 7-day precipitation</li>
-              <li><ShieldCheck size={14} className="text-blue" /> Ideal spray & sowing windows</li>
-              <li><ShieldCheck size={14} className="text-blue" /> SMS / voice alerts for storm alerts</li>
-            </ul>
-            <a href="#" className="service-link">View Village Weather &rarr;</a>
-          </div>
+        <div className="journey-image-container" style={{
+          textAlign: 'center',
+          marginTop: '3rem',
+          width: '100vw',
+          marginLeft: 'calc(-50vw + 50%)'
+        }}>
+          <img
+            src={ASSETS.WORKFLOW_IMAGE}
+            alt="Agricultural Workflow from Plan to Sell"
+            style={{
+              width: '100%',
+              height: 'auto',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)'
+            }}
+          />
         </div>
       </section>
 
       {/* How it Works Section */}
       <section id="how-it-works" className="how-it-works-section">
         <div className="section-header">
-          <span className="section-badge">SIMPLE PROCESS</span>
-          <h2 className="section-title">How Kissan Mithar Works</h2>
+          <h2 className="section-title">How It Works</h2>
           <p className="section-subtitle">
-            Four quick steps to boost your farm and yield and cut seasonal crop risks.
+            Get the help you need in just a few simple steps
           </p>
         </div>
 
         <div className="timeline-container">
-          <div className="timeline-line"></div>
-
           <div className="timeline-step">
             <div className="step-number">1</div>
             <div className="step-icon">
-              <MapPin size={24} className="text-orange" />
+              <img src="https://img.icons8.com/color/96/000000/smartphone.png" alt="Download" style={{ width: 32 }} />
             </div>
-            <h4>Enter Land Details</h4>
-            <p>Tell us your location, acres, and water sources in a quick 1-minute voice prompt. Not a single form!</p>
+            <h4>Download App</h4>
+            <p>Install Kissan Mithar app</p>
           </div>
 
           <div className="timeline-step">
             <div className="step-number">2</div>
             <div className="step-icon">
-              <Leaf size={24} className="text-green" />
+              <img src="https://img.icons8.com/color/96/000000/field.png" alt="Farm" style={{ width: 32 }} />
             </div>
-            <h4>Select Your Crop</h4>
-            <p>Pick your preferred fruits, cereals or get high-yield recommendations tailored to market demand.</p>
+            <h4>Set Up Your Farm</h4>
+            <p>Add your land & crops</p>
           </div>
 
           <div className="timeline-step">
             <div className="step-number">3</div>
             <div className="step-icon">
-              <ShieldCheck size={24} className="text-orange" />
+              <img src="https://img.icons8.com/color/96/000000/farmer-male.png" alt="Service" style={{ width: 32 }} />
             </div>
-            <h4>Get Custom Blueprint</h4>
-            <p>Receive day-by-day guidance from sowing to harvest sent straight to your phone with audio alerts.</p>
+            <h4>Choose a Service</h4>
+            <p>Get advice, labour, machinery or connect buyers</p>
           </div>
 
           <div className="timeline-step">
             <div className="step-number">4</div>
             <div className="step-icon">
-              <Phone size={24} className="text-orange" />
+              <img src="https://img.icons8.com/color/96/000000/sprout.png" alt="Grow" style={{ width: 32 }} />
             </div>
-            <h4>Talk to Agri-Experts</h4>
-            <p>Direct audio & video advisory whenever you spot leaf discoloration, pests, or irrigation challenges.</p>
+            <h4>Get Results</h4>
+            <p>Grow better, earn more</p>
           </div>
         </div>
       </section>
 
-      {/* Orchard Gallery Section */}
-      <section id="our-work" className="gallery-section">
-        <div className="section-header">
-          <span className="section-badge">OUR WORK</span>
-          <h2 className="section-title">Successful Orchard Planning</h2>
-          <p className="section-subtitle">Take a look at some of the thriving orchards our experts have helped plan and cultivate across India.</p>
-        </div>
+      {/* App Promo Section */}
+      <section className="app-promo-section" style={{
+        backgroundImage: `url('/assets/hero-image.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '4rem 5%',
+        overflow: 'hidden',
+        minHeight: '80vh',
+        width: '100vw',
+        marginLeft: 'calc(-50vw + 50%)'
+      }}>
+        {/* Soft White Shadow Overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          bottom: 0,
+          width: '60%',
+          background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%)',
+          pointerEvents: 'none',
+          zIndex: 1
+        }} />
 
-        <div className="gallery-grid">
-          {[1, 2, 3, 4, 5, 6].map((num) => (
-            <div key={num} className="gallery-item">
-              <img src={`/assets/orchard${num}.jpeg`} alt={`Kissan Mithar Orchard Project ${num}`} loading="lazy" />
+        {/* Content Container */}
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', width: '100%', maxWidth: '1280px', margin: '0 auto', alignItems: 'center' }}>
+          
+          {/* Left Text */}
+          <div style={{ flex: 1, paddingRight: '2rem' }}>
+            <h2 style={{ fontSize: '3.5rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, marginBottom: '1rem', fontFamily: 'Outfit, sans-serif' }}>
+              Your Farm Assistant.<br />In Your Pocket.
+            </h2>
+            <p style={{ fontSize: '1.25rem', color: '#334155', marginBottom: '2.5rem', fontWeight: 500 }}>
+              Download the Kissan Mithar mobile app
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '3rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                <img src={ASSETS.SERVICES.EXPERT_CONSULTANCY} style={{ width: 28 }} alt="icon" /> Expert Advice
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                <img src={ASSETS.SERVICES.WEATHER} style={{ width: 28 }} alt="icon" /> Weather Alerts
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                <img src={ASSETS.SERVICES.ORCHARD_PLANNING} style={{ width: 28 }} alt="icon" /> Crop Guidance
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                <img src={ASSETS.SERVICES.MACHINERY} style={{ width: 28 }} alt="icon" /> Labour & Machinery
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                <img src={ASSETS.SERVICES.CROP_CONNECT} style={{ width: 28 }} alt="icon" /> Crop Connect
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontWeight: 600, color: '#1e293b' }}>
+                <img src={ASSETS.SERVICES.AI_ASSISTANT} style={{ width: 28 }} alt="icon" /> AI Assistant
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Impact Stats */}
-      <section id="impact" className="impact-section">
-        <div className="section-header">
-          <span className="section-badge">PROVEN IMPACT</span>
-          <h2 className="section-title">Growing Trust Across Indian Farmlands</h2>
-        </div>
-
-        <div className="stats-grid">
-          <div className="stat-card">
-            <h3>100+</h3>
-            <h4>Happy Farmers</h4>
-            <p>Active users across the country</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+              <a href="#" style={{ display: 'block' }}>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style={{ height: '60px' }} />
+              </a>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'white', padding: '0.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fplay.google.com" alt="QR" style={{ width: '60px', height: '60px', borderRadius: '8px' }} />
+                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#64748b', paddingRight: '0.5rem' }}>Scan to Download</span>
+              </div>
+            </div>
           </div>
-          <div className="stat-card">
-            <h3>4+ States</h3>
-            <h4>Across India</h4>
-            <p>Covering major agricultural zones</p>
-          </div>
-          <div className="stat-card">
-            <h3>35%</h3>
-            <h4>Average Yield Increase</h4>
-            <p>Reported in the 1st year</p>
-          </div>
-          <div className="stat-card">
-            <h3>4.0 <Star size={20} fill="#FFB800" color="#FFB800" style={{ display: 'inline', verticalAlign: 'text-bottom' }} /></h3>
-            <h4>Play Store Rating</h4>
-            <p>From 100+ verified farmer reviews</p>
+          
+          {/* Right Phone Image */}
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', position: 'relative' }}>
+            <img src={ASSETS.MOBILE_APP} alt="Mobile App" style={{ maxWidth: '400px', width: '100%', height: 'auto', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.2))' }} />
           </div>
         </div>
       </section>
@@ -354,16 +530,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       {/* Testimonials */}
       <section id="stories" className="stories-section">
         <div className="section-header left-align">
-          <span className="section-badge">REAL STORIES</span>
           <div className="header-row">
-            <h2 className="section-title">Voices from the Field</h2>
-            <span className="audio-badge">Over 100+ voice recordings submitted <Play size={14} fill="currentColor" /></span>
+            <h2 className="section-title">What Farmers Say</h2>
+            <a href="#" className="view-all-link" style={{ border: 'none' }}>View More &rarr;</a>
           </div>
-          <p className="section-subtitle">Real experiences shared by growers using Kissan Mithar every week.</p>
+          <p className="section-subtitle" style={{ margin: 0, textAlign: 'left' }}>Real farmers. Real stories.</p>
         </div>
 
         <div className="stories-grid">
           <div className="story-card">
+            <p className="story-quote">"మొబైల్ యాప్‌లో ఆర్కిడ్ ప్లానింగ్ ద్వారా నా మామిడి తోటలో రెండు అడుగుల స్థలం ఎలా ఉపయోగించుకోవాలో తెలిసింది."</p>
             <div className="stars">
               <Star size={16} fill="#FFB800" color="#FFB800" />
               <Star size={16} fill="#FFB800" color="#FFB800" />
@@ -371,17 +547,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
               <Star size={16} fill="#FFB800" color="#FFB800" />
               <Star size={16} fill="#FFB800" color="#FFB800" />
             </div>
-            <p className="story-quote">"Kissan Mithar's orchard guidance helped me set up 3 acres of guava with 40% less water usage. The advice on drip lines was completely spot on."</p>
             <div className="story-author">
-              <div className="author-avatar green">RP</div>
+              <div className="author-avatar"><img src="https://ui-avatars.com/api/?name=Ramesh&background=166534&color=fff" style={{ borderRadius: '50%' }} alt="Ramesh" /></div>
               <div className="author-info">
-                <strong>Ramesh Patil</strong>
-                <span>Nashik, Maharashtra • Guava & Grapes</span>
+                <strong>Ramesh</strong>
+                <span>Mango Farmer, Nalgonda</span>
               </div>
             </div>
           </div>
 
           <div className="story-card">
+            <p className="story-quote">"Expert guidance helped me save my crop from disease."</p>
             <div className="stars">
               <Star size={16} fill="#FFB800" color="#FFB800" />
               <Star size={16} fill="#FFB800" color="#FFB800" />
@@ -389,17 +565,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
               <Star size={16} fill="#FFB800" color="#FFB800" />
               <Star size={16} fill="#FFB800" color="#FFB800" />
             </div>
-            <p className="story-quote">"Speaking to agri scientists in Punjabi gave me immense confidence during pest attacks. Saved my tomato crop from severe fruit fly damage!"</p>
             <div className="story-author">
-              <div className="author-avatar orange">GS</div>
+              <div className="author-avatar"><img src="https://ui-avatars.com/api/?name=Suresh&background=ea580c&color=fff" style={{ borderRadius: '50%' }} alt="Suresh" /></div>
               <div className="author-info">
-                <strong>Gurpreet Singh</strong>
-                <span>Ludhiana, Punjab • Tomato & Wheat</span>
+                <strong>Suresh</strong>
+                <span>Cotton Farmer, Gadwal</span>
               </div>
             </div>
           </div>
 
           <div className="story-card">
+            <p className="story-quote">"Found harvester on time at reasonable price."</p>
             <div className="stars">
               <Star size={16} fill="#FFB800" color="#FFB800" />
               <Star size={16} fill="#FFB800" color="#FFB800" />
@@ -407,63 +583,50 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
               <Star size={16} fill="#FFB800" color="#FFB800" />
               <Star size={16} fill="#FFB800" color="#FFB800" />
             </div>
-            <p className="story-quote">"Clear soil analysis and step-by-step drip guidance gave me a record chili harvest this year. Zero technical English, everything in simple Telugu."</p>
             <div className="story-author">
-              <div className="author-avatar blue">SK</div>
+              <div className="author-avatar"><img src="https://ui-avatars.com/api/?name=Mahesh&background=2563eb&color=fff" style={{ borderRadius: '50%' }} alt="Mahesh" /></div>
               <div className="author-info">
-                <strong>Suresh Kumar</strong>
-                <span>Guntur, Andhra Pradesh • Red Chili & Cotton</span>
+                <strong>Mahesh</strong>
+                <span>Paddy Farmer, Narayanpet</span>
               </div>
             </div>
           </div>
         </div>
       </section>
-      {/* About Us & Location Section */}
-      <section className="landing-section bg-white" id="about">
-        <div className="section-content">
-          <div className="section-header text-center">
-            <h2 className="section-title">About Kissan Mithar</h2>
-            <p className="section-subtitle">Founded with a vision to empower every farmer with technology and expert guidance.</p>
+
+      {/* Partners Section */}
+      <section id="partners" className="partners-section">
+        <h3>Our Partners</h3>
+        <p>Working together for a stronger agriculture ecosystem</p>
+
+        <div className="partners-grid">
+          <div className="partner-item">
+            <div className="partner-icon">🏛️</div>
+            <span>Government</span>
           </div>
-
-          <div className="about-grid">
-            {/* Founder Info */}
-            <div className="about-card">
-              <div className="founder-profile">
-                <div className="founder-avatar">
-                  <img src="/assets/ceo&founder.png" alt="Ranjith - CEO & Founder" />
-                </div>
-                <div>
-                  <h3 className="founder-name">Ranjith</h3>
-                  <p className="founder-title">CEO & Founder, Kissan Mithar</p>
-                </div>
-              </div>
-              <p className="founder-quote">
-                "Growing up closely with agricultural communities, I saw firsthand the challenges farmers face with unpredictable weather, soil degradation, and a lack of timely expert advice. I founded Kissan Mithar to bridge this gap, ensuring that every farmer, regardless of their location, has access to world-class agronomy support right in their pocket."
-              </p>
-            </div>
-
-            {/* Location & Map */}
-            <div className="about-card">
-              <div className="location-header">
-                <MapPin className="text-green" size={24} />
-                <div>
-                  <h3 className="location-title">Our Headquarters</h3>
-                  <p className="location-subtitle">Hyderabad, Telangana, India</p>
-                </div>
-              </div>
-              <div className="map-container">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12182.30520634488!2d78.36830595222033!3d17.4475459384784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb93dc8c5d69df%3A0x19688beb557fa0ee!2sHITEC%20City%2C%20Hyderabad%2C%20Telangana%20500081!5e0!3m2!1sen!2sin!4v1709210214251!5m2!1sen!2sin"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, borderRadius: '8px' }}
-                  allowFullScreen={false}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade">
-                </iframe>
-              </div>
-            </div>
+          <div className="partner-item">
+            <div className="partner-icon">👥</div>
+            <span>FPOs</span>
+          </div>
+          <div className="partner-item">
+            <div className="partner-icon">🎓</div>
+            <span>Agricultural<br />Universities</span>
+          </div>
+          <div className="partner-item">
+            <div className="partner-icon">🏢</div>
+            <span>Agri<br />Companies</span>
+          </div>
+          <div className="partner-item">
+            <div className="partner-icon">🤝</div>
+            <span>NGOs</span>
+          </div>
+          <div className="partner-item">
+            <div className="partner-icon">🏭</div>
+            <span>Factories</span>
+          </div>
+          <div className="partner-item">
+            <div className="partner-icon">🚢</div>
+            <span>Exporters</span>
           </div>
         </div>
       </section>
@@ -472,27 +635,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       <section className="cta-section">
         <div className="cta-container">
           <div className="cta-content">
-            <span className="cta-badge">START TODAY</span>
-            <h2>Ready for Better Harvests &<br />Smarter Farming?</h2>
-            <p>Join over 500+ farmers growing smarter with personalized blueprints today. Works smoothly on all basic Android smartphones.</p>
-
-            <div className="cta-buttons">
-              <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-light" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Download size={20} className="text-green" style={{ marginRight: '8px' }} />
-                Download Free APK
-              </a>
-              <button className="btn-dark">
-                <Play size={20} />
-                GET IT ON Google Play
-              </button>
-            </div>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 700 }}>Let's Build a Stronger Farming Future Together</h2>
+            <p style={{ margin: 0, color: 'rgba(255,255,255,0.8)' }}>Join thousands of farmers who are growing better with Kissan Mithar.</p>
           </div>
-          <div className="cta-qr">
-            <div className="qr-box">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fdrive.google.com%2Fuc%3Fexport%3Ddownload%26id%3D1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" alt="Download QR Code" className="qr-placeholder" style={{ border: 'none', background: 'transparent' }} />
-              <span>Scan to install App</span>
-              <span className="small">From official secure servers</span>
-            </div>
+          <div className="cta-buttons">
+            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-light">
+              Download App
+            </a>
+            <a href="#contact" className="btn-dark" style={{ textDecoration: 'none' }}>
+              Contact Us
+            </a>
           </div>
         </div>
       </section>
@@ -502,7 +654,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
         <div className="footer-content">
           <div className="footer-col brand-col">
             <div className="logo-container white">
-              <img src="/kissan_mithar_logo.PNG" alt="Kissan Mithar Logo" className="logo-image" />
+              <img src="/kissan_mithar_logo_v2.png" alt="Kissan Mithar Logo" className="logo-image" />
               <div className="logo-text-wrapper">
                 <span className="logo-name-top">KISSAN</span>
                 <span className="logo-name-bottom">MITHAR</span>
@@ -513,9 +665,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <p className="contact-details">
               Registered Office: Hyderabad • +91 9392699963
             </p>
-
           </div>
-          x
+
           <div className="footer-col">
             <h4>FARMER SERVICES</h4>
             <a href="#">Orchard Planning</a>
@@ -542,14 +693,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             <a href="#">Terms of Service</a>
           </div>
         </div>
+
         <div className="footer-bottom">
           <div className="language-dropdown-dark">
             <Globe size={16} />
-            <span>Shift: English </span>
+            <span>EN </span>
+            <span style={{ fontFamily: 'sans-serif' }}>తెలుగు </span>
+            <span style={{ fontFamily: 'sans-serif' }}>हिंदी</span>
           </div>
-          <p>&copy; 2026 Kissan Mithar Agrotech Pvt. Ltd. All rights reserved. Made with pride for Indian farmers.</p>
+          <p>&copy; 2026 Kissan Mithar Agrotech Pvt. Ltd. All rights reserved.</p>
         </div>
       </footer>
     </div>
   );
 };
+
+export default LandingPage;

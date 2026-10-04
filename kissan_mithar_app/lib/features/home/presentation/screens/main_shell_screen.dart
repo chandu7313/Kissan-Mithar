@@ -17,29 +17,21 @@ class MainShellScreen extends ConsumerWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/home')) {
-      return 0;
-    }
-    if (location.startsWith('/activity')) {
-      return 1;
-    }
-    if (location.startsWith('/profile')) {
-      return 2;
-    }
+    if (location.startsWith('/home')) return 0;
+    if (location.startsWith('/activity')) return 1;
+    if (location.startsWith('/shop')) return 2;
+    if (location.startsWith('/learn')) return 3;
+    if (location.startsWith('/profile')) return 4;
     return 0;
   }
 
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
-      case 0:
-        context.go('/home');
-        break;
-      case 1:
-        context.go('/activity');
-        break;
-      case 2:
-        context.go('/profile');
-        break;
+      case 0: context.go('/home'); break;
+      case 1: context.go('/activity'); break;
+      case 2: context.go('/shop'); break;
+      case 3: context.go('/learn'); break;
+      case 4: context.go('/profile'); break;
     }
   }
 
@@ -75,7 +67,7 @@ class MainShellScreen extends ConsumerWidget {
             top: false,
             child: Container(
               height: 68,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -85,26 +77,44 @@ class MainShellScreen extends ConsumerWidget {
                     isSelected: selectedIndex == 0,
                     icon: Icons.home_rounded,
                     activeIcon: Icons.home_rounded,
-                    label: l10n.home,
+                    label: l10n.home, // Replace with l10n.home if available, keeping it safe
                     onTap: () => _onItemTapped(0, context),
                   ),
                   _buildNavItem(
                     context: context,
                     index: 1,
                     isSelected: selectedIndex == 1,
-                    icon: Icons.list_alt_rounded,
-                    activeIcon: Icons.list_alt_rounded,
-                    label: l10n.myActivity,
+                    icon: Icons.grass_rounded,
+                    activeIcon: Icons.grass_rounded,
+                    label: "My Farm",
                     onTap: () => _onItemTapped(1, context),
                   ),
                   _buildNavItem(
                     context: context,
                     index: 2,
                     isSelected: selectedIndex == 2,
+                    icon: Icons.shopping_cart_outlined,
+                    activeIcon: Icons.shopping_cart_rounded,
+                    label: "Shop",
+                    onTap: () => _onItemTapped(2, context),
+                  ),
+                  _buildNavItem(
+                    context: context,
+                    index: 3,
+                    isSelected: selectedIndex == 3,
+                    icon: Icons.menu_book_rounded,
+                    activeIcon: Icons.menu_book_rounded,
+                    label: "Learn",
+                    onTap: () => _onItemTapped(3, context),
+                  ),
+                  _buildNavItem(
+                    context: context,
+                    index: 4,
+                    isSelected: selectedIndex == 4,
                     icon: Icons.person_outline_rounded,
                     activeIcon: Icons.person_rounded,
                     label: l10n.profile,
-                    onTap: () => _onItemTapped(2, context),
+                    onTap: () => _onItemTapped(4, context),
                   ),
                 ],
               ),
