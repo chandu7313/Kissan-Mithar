@@ -23,5 +23,5 @@ export const ASSETS = {
   },
 
   // App Promo
-  MOBILE_APP: '/assets/mobile-app.png',
+  MOBILE_APP: '/assets/Kissan Mithar Agriculture App Mockup.png',
 };

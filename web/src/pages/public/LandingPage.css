@@ -61,6 +61,7 @@
 .logo-text-wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   line-height: 1;
 }
 
@@ -342,45 +343,51 @@
 
 .stats-bar-inner {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1.5rem 2.5rem;
   background: #ffffff;
-  border: 1px solid #e8ece8;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .stat-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0 1rem;
+  gap: 1rem;
 }
 
 .stat-item .stat-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f0fdf4;
+  background: #f4fbf6;
   color: #166534;
+}
+
+.stat-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
 }
 
 .stat-item .stat-number {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 800;
   color: #0f172a;
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .stat-item .stat-label {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: #64748b;
   font-weight: 500;
 }
@@ -429,115 +436,292 @@
 /* ===================================================
    SERVICES GRID — Visual Cards with images
    =================================================== */
-.services-section {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 4rem 2rem;
+.bento-section-wrapper {
+  background: #fafcfa;
+  padding: 5rem 2rem;
 }
 
-.services-top-row {
+.bento-header-grid {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 2.5rem;
+  align-items: center;
+  margin-bottom: 3rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.services-top-row .section-header {
-  text-align: left;
-  margin-bottom: 0;
+.bento-header-text {
+  max-width: 600px;
 }
 
-.view-all-link {
+.services-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: #f0fdf4;
   color: #166534;
-  font-weight: 600;
-  font-size: 0.9375rem;
-  text-decoration: none;
+  border-radius: 2rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.bento-header-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.bento-header-desc {
+  font-size: 1.125rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.bento-header-image {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.farmer-image-placeholder {
+  width: 100%;
+  max-width: 500px;
+  height: 250px;
+  background: #f1f5f9;
+  border-radius: 24px;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  white-space: nowrap;
-  border: 1px solid #dcfce7;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: all 0.2s;
+  justify-content: center;
+  color: #94a3b8;
+  font-weight: 500;
+  border: 2px dashed #cbd5e1;
 }
 
-.view-all-link:hover {
-  background: #f0fdf4;
-}
-
-.services-grid {
+/* Bento Grid */
+.bento-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.service-card {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e8ece8;
+.bento-card {
+  background: white;
+  border-radius: 24px;
+  padding: 0.75rem;
+  display: flex;
+  gap: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-.service-card:hover {
+.bento-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
-  border-color: #bbf7d0;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
-.service-card-image {
-  width: 100%;
-  height: 120px;
-  overflow: hidden;
+/* Span classes */
+.bento-span-4 { grid-column: span 4; }
+.bento-span-3 { grid-column: span 3; }
+.bento-span-6 { grid-column: span 6; }
+
+/* Image container */
+.bento-image-wrapper {
+  flex-shrink: 0;
+  position: relative;
 }
 
-.service-card-image img {
+.bento-span-4 .bento-image-wrapper {
+  width: 160px;
+  height: auto;
+  align-self: stretch;
+}
+
+.bento-span-3 .bento-image-wrapper {
+  width: 110px;
+  height: auto;
+  align-self: stretch;
+}
+
+.bento-image-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  border-radius: 16px;
 }
 
-.service-card:hover .service-card-image img {
-  transform: scale(1.05);
-}
-
-.service-card-body {
-  padding: 1rem;
-}
-
-.service-card-body h3 {
-  font-size: 1rem;
+.popular-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: white;
+  color: #166534;
+  font-size: 0.7rem;
   font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.service-card-body p {
-  font-size: 0.8125rem;
-  color: #64748b;
-  line-height: 1.4;
-  margin-bottom: 0.5rem;
+/* Card content */
+.bento-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.5rem 0.5rem 0.5rem 0;
 }
 
-.service-card-arrow {
-  display: inline-flex;
+.bento-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #f4fbf6;
+  color: #166534;
+  display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.bento-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.bento-title {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.bento-desc {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.bento-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.bento-tag {
+  background: #f4fbf6;
+  color: #166534;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+}
+
+.bento-arrow {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #f0fdf4;
-  color: #166534;
-  transition: all 0.2s;
+  background: #f8fafc;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.service-card:hover .service-card-arrow {
+.bento-card:hover .bento-arrow {
   background: #166534;
   color: white;
+  transform: translateX(2px) translateY(-2px);
+}
+
+/* Commitment Card */
+.commitment-card {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 2.5rem;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+.commitment-content {
+  flex: 1;
+  z-index: 2;
+}
+
+.commitment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #166534;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.commitment-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.25;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.commitment-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.commitment-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.commitment-stat-icon {
+  color: #166534;
+}
+
+.commitment-stat-text strong {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.commitment-stat-text span {
+  font-size: 0.8125rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.commitment-image {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  z-index: 1;
 }
 
 /* ===================================================
@@ -722,6 +906,24 @@
   gap: 2rem;
   position: relative;
   flex-wrap: wrap;
+  padding-top: 2rem;
+}
+
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  top: 2rem;
+  left: 10%;
+  right: 10%;
+  border-top: 2px dashed #166534;
+  opacity: 0.2;
+  z-index: 1;
+}
+
+@media (max-width: 992px) {
+  .timeline-container::before {
+    display: none;
+  }
 }
 
 .timeline-line {
@@ -730,50 +932,69 @@
 
 .timeline-step {
   flex: 1;
+  min-width: 220px;
   max-width: 260px;
   text-align: center;
-  padding: 2rem 1.5rem;
+  padding: 3rem 1.5rem 2rem;
   background: white;
-  border-radius: 16px;
-  border: 1px solid #e8ece8;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-radius: 20px;
+  border: 1px solid rgba(22, 101, 52, 0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.timeline-step:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(22, 101, 52, 0.1);
 }
 
 .step-number {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: #166534;
+  background: linear-gradient(135deg, #166534, #15803d);
   color: white;
-  font-weight: 700;
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
+  font-weight: 800;
+  font-size: 1.1rem;
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
+  border: 4px solid #fafcfa;
 }
 
 .step-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  background: #f0fdf4;
-  margin: 0 auto 1rem;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  margin: 0 auto 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.timeline-step:hover .step-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .timeline-step h4 {
-  font-size: 1.0625rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 800;
   color: #0f172a;
   margin-bottom: 0.5rem;
 }
 
 .timeline-step p {
-  font-size: 0.875rem;
-  color: #64748b;
+  font-size: 0.9rem;
+  color: #475569;
   line-height: 1.6;
 }
 
@@ -1589,3 +1810,4 @@
     align-items: center;
   }
 }
+.cursor-pointer { cursor: pointer; }

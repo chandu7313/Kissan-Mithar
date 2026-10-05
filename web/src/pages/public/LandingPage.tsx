@@ -2,18 +2,21 @@ import React from 'react';
 import './LandingPage.css';
 import {
   Menu, X, Globe, MapPin, ShieldCheck,
-  Star, Download, Play, ArrowRight
+  Star, Download, Play, ArrowRight,
+  Users, Award, Tractor, Handshake,
+  Sprout, Briefcase, Package, CloudSun, Link, Bot, Leaf
 } from 'lucide-react';
 
 import { ASSETS } from '../../assets';
+import { PublicNavbar } from '../../components/layout/PublicNavbar';
 
 interface LandingPageProps {
   onAdminLogin: () => void;
+  onNavigateService?: (slug: string) => void;
+  onNavigateSection?: (sectionId: string) => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-
+export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin, onNavigateService, onNavigateSection }) => {
   React.useEffect(() => {
     const path = window.location.pathname;
     let targetId = '';
@@ -34,115 +37,86 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
 
   const services = [
     {
-      title: 'Orchard Planning',
-      desc: 'Plan and establish all types of orchards',
+      slug: 'crop-planning',
+      title: 'Orchard & Crop Planning',
+      desc: 'Plan and establish all types of crops and orchards with location-specific recommendations.',
       image: ASSETS.SERVICES.ORCHARD_PLANNING,
+      icon: <Leaf size={24} />,
+      tags: ['Soil Analysis', 'Crop Selection', 'Yield Planning'],
+      popular: true,
+      span: 4
     },
     {
+      slug: 'expert-consultancy',
       title: 'Expert Consultancy',
-      desc: 'Talk directly with agriculture experts',
+      desc: 'Get advice directly from agriculture experts via call or chat.',
       image: ASSETS.SERVICES.EXPERT_CONSULTANCY,
+      icon: <Briefcase size={24} />,
+      tags: ['Crop Advisory', 'Video/Call', 'On-field Visit'],
+      span: 4
     },
     {
+      slug: 'fertilizer-guide',
       title: 'Fertilizer Guide',
-      desc: 'Get crop-specific fertilizer recommendations',
+      desc: 'Get crop-specific fertilizer recommendations for better growth and higher yield.',
       image: ASSETS.SERVICES.FERTILIZERS,
+      icon: <Package size={24} />,
+      tags: ['Balanced Nutrition', 'Dosage Guide', 'Cost Saving'],
+      span: 4
     },
     {
+      slug: 'disease-help',
       title: 'Disease Help',
-      desc: 'Identify crop problems and get treatment guidance',
+      desc: 'Identify crop problems and get treatment guidance.',
       image: ASSETS.SERVICES.DISEASE_HELP,
+      icon: <ShieldCheck size={24} />,
+      span: 3
     },
     {
+      slug: 'weather',
       title: 'Weather',
-      desc: 'Live weather and farming alerts',
+      desc: 'Live weather updates and farming alerts for your location.',
       image: ASSETS.SERVICES.WEATHER,
+      icon: <CloudSun size={24} />,
+      span: 3
     },
     {
+      slug: 'farm-labour',
       title: 'Farm Labour',
-      desc: 'Find skilled labour for your farm work',
+      desc: 'Find skilled labour for your farm work.',
       image: ASSETS.SERVICES.LABOUR,
+      icon: <Users size={24} />,
+      span: 3
     },
     {
+      slug: 'farm-machinery',
       title: 'Farm Machinery',
-      desc: 'Find tractors, harvesters, drones and more',
+      desc: 'Find tractors, harvesters, drones and more on rent or purchase.',
       image: ASSETS.SERVICES.MACHINERY,
+      icon: <Tractor size={24} />,
+      span: 3
     },
     {
+      slug: 'crop-connect',
       title: 'Crop Connect',
-      desc: 'Connect with buyers and industries',
+      desc: 'Connect with buyers, traders and industries for better prices.',
       image: ASSETS.SERVICES.CROP_CONNECT,
+      icon: <Link size={24} />,
+      span: 3
     },
     {
+      slug: 'ai-farming-assistant',
       title: 'AI Farming Assistant',
-      desc: 'Ask any farming question in your language',
+      desc: 'Ask any farming question in your language.',
       image: ASSETS.SERVICES.AI_ASSISTANT,
+      icon: <Bot size={24} />,
+      span: 3
     }
   ];
 
   return (
     <div className="landing-container">
-      {/* Navbar */}
-      <nav className="landing-navbar">
-        <div className="navbar-content">
-          <a href="/" className="logo-container">
-            <img src="/kissan_mithar_logo_v2.png" alt="Kissan Mithar Logo" className="logo-image" />
-            <div className="logo-text-wrapper">
-              <span className="logo-name-top">KISSAN</span>
-              <span className="logo-name-bottom">MITHAR</span>
-              <span className="logo-slogan">• SOW • GROW •</span>
-            </div>
-          </a>
-
-          {/* Desktop Nav */}
-          <div className="desktop-nav">
-            <a href="/">Home</a>
-            <a href="#services">Services</a>
-            <a href="#about">About</a>
-            <a href="#farmers">For Farmers</a>
-            <a href="#experts">Experts</a>
-            <a href="#partners">Partners</a>
-            <a href="#contact">Contact</a>
-          </div>
-
-          <div className="navbar-actions">
-            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary get-app-btn">
-              Download App
-            </a>
-            <button className="btn-secondary admin-login-btn" onClick={onAdminLogin}>
-              Admin Login
-            </button>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            className="mobile-menu-btn"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X /> : <Menu />}
-          </button>
-        </div>
-
-        {/* Mobile Nav */}
-        {mobileMenuOpen && (
-          <div className="mobile-nav">
-            <a href="/" onClick={() => setMobileMenuOpen(false)}>Home</a>
-            <a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a>
-            <a href="#about" onClick={() => setMobileMenuOpen(false)}>About</a>
-            <a href="#farmers" onClick={() => setMobileMenuOpen(false)}>For Farmers</a>
-            <a href="#experts" onClick={() => setMobileMenuOpen(false)}>Experts</a>
-            <a href="#partners" onClick={() => setMobileMenuOpen(false)}>Partners</a>
-            <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
-
-            <a href="https://drive.google.com/uc?export=download&id=1LhJ4mMGZG01RkQp0EtcE-4f2xOJh6gKe" target="_blank" rel="noopener noreferrer" className="btn-primary full-width" style={{ marginTop: '1rem', textDecoration: 'none' }}>
-              Download App
-            </a>
-            <button className="btn-secondary full-width" onClick={onAdminLogin} style={{ marginTop: '0.5rem' }}>
-              Admin / Expert Login
-            </button>
-          </div>
-        )}
-      </nav>
+      <PublicNavbar onAdminLogin={onAdminLogin} transparent={true} onNavigateSection={onNavigateSection} />
 
       {/* Hero Section */}
       <section className="hero-section" style={{
@@ -203,27 +177,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
             padding: '2rem 0'
           }}>
             <h1 style={{
-              fontSize: '4rem',
+              fontSize: '4.5rem',
               fontWeight: 900,
               lineHeight: 1.1,
               color: '#0f172a',
               marginBottom: '1.25rem',
               fontFamily: 'Outfit, sans-serif',
-              letterSpacing: '0.03em'
+              letterSpacing: '-0.02em'
             }}>
               Everything Your<br />
               Farm Needs.<br />
-              One Trusted Platform.
+              <span style={{ color: '#166534' }}>One Trusted Platform.</span>
             </h1>
             <p style={{
-              fontSize: '1.125rem',
-              color: '#1e293b',
+              fontSize: '1.25rem',
+              color: '#334155',
               lineHeight: 1.6,
               marginBottom: '2.5rem',
               fontWeight: 500,
-              maxWidth: '520px'
+              maxWidth: '560px'
             }}>
-              Expert advice, weather, machinery, labour, crop guidance and market connections — all in one place.
+              Expert advice, weather updates, machinery, labour, crop guidance and market connections — all seamlessly accessible in one place.
             </p>
 
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2.5rem' }}>
@@ -300,42 +274,42 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       <section className="stats-bar">
         <div className="stats-bar-inner">
           <div className="stat-item">
-            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/farmer-male.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-icon"><Users size={24} /></div>
             <div className="stat-text">
               <div className="stat-number">50K+</div>
               <div className="stat-label">Farmers</div>
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/scientist-male.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-icon"><Award size={24} /></div>
             <div className="stat-text">
               <div className="stat-number">500+</div>
               <div className="stat-label">Experts</div>
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/labour-day.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-icon"><Handshake size={24} /></div>
             <div className="stat-text">
               <div className="stat-number">2K+</div>
               <div className="stat-label">Labour</div>
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/tractor.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-icon"><Tractor size={24} /></div>
             <div className="stat-text">
               <div className="stat-number">800+</div>
               <div className="stat-label">Machinery</div>
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon"><img src="https://img.icons8.com/color/48/000000/money-bag.png" alt="icon" style={{ width: 24 }} /></div>
+            <div className="stat-icon"><ShieldCheck size={24} /></div>
             <div className="stat-text">
               <div className="stat-number">1K+</div>
               <div className="stat-label">Buyers</div>
             </div>
           </div>
           <div className="stat-item">
-            <div className="stat-icon"><MapPin size={24} color="#166534" /></div>
+            <div className="stat-icon"><MapPin size={24} /></div>
             <div className="stat-text">
               <div className="stat-number">25+</div>
               <div className="stat-label">Districts</div>
@@ -345,43 +319,95 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="services-section">
-        <div className="services-top-row">
-          <div className="section-header left-align">
-            <h2 className="section-title">Our Services</h2>
-            <p className="section-subtitle">
-              Complete support for your farming journey
+      <section id="services" className="bento-section-wrapper">
+        <div className="bento-header-grid">
+          <div className="bento-header-text">
+            <div className="services-badge">
+              <Leaf size={16} fill="#166534" /> OUR SERVICES
+            </div>
+            <h2 className="bento-header-title">Complete Support for<br />Your Farming Journey</h2>
+            <p className="bento-header-desc">
+              From soil to sale, Kissan Mithar provides expert guidance,<br />resources and real-time support at every stage.
             </p>
           </div>
-          <a href="#" className="view-all-link">
-            View All Services <ArrowRight size={16} />
-          </a>
+
         </div>
 
-        <div className="services-grid">
+        <div className="bento-grid">
           {services.map((service, idx) => (
-            <div key={idx} className="service-card">
-              <div className="service-card-image">
+            <div 
+              key={idx} 
+              className={`bento-card bento-span-${service.span} ${onNavigateService && service.slug ? 'cursor-pointer hover-lift' : ''}`}
+              onClick={() => onNavigateService && service.slug && onNavigateService(service.slug)}
+            >
+              <div className="bento-image-wrapper">
+                {service.popular && (
+                  <div className="popular-badge"><Star size={12} fill="#166534" /> Popular</div>
+                )}
                 <img src={service.image} alt={service.title} />
               </div>
-              <div className="service-card-body">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <h3>{service.title}</h3>
-                    <p>{service.desc}</p>
+              <div className="bento-content">
+                <div>
+                  <div className="bento-top-row">
+                    <div className="bento-icon-wrapper">
+                      {service.icon}
+                    </div>
+                    <div className="bento-arrow">
+                      <ArrowRight size={16} />
+                    </div>
                   </div>
-                  <div className="service-card-arrow">
-                    <ArrowRight size={18} />
+                  <h3 className="bento-title">{service.title}</h3>
+                  <p className="bento-desc">{service.desc}</p>
+                </div>
+                {service.tags && (
+                  <div className="bento-tags">
+                    {service.tags.map((tag, tIdx) => (
+                      <span key={tIdx} className="bento-tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Our Commitment Card */}
+          <div className="commitment-card bento-span-6">
+            <div className="commitment-content">
+              <div className="commitment-badge"><Leaf size={12} fill="#166534" /> OUR COMMITMENT</div>
+              <h3 className="commitment-title">Better Tools. Better Advice.<br />A Brighter Farming Future.</h3>
+              <div className="commitment-stats">
+                <div className="commitment-stat">
+                  <div className="commitment-stat-icon"><Users size={28} /></div>
+                  <div className="commitment-stat-text">
+                    <strong>50K+</strong>
+                    <span>Farmers</span>
+                  </div>
+                </div>
+                <div className="commitment-stat">
+                  <div className="commitment-stat-icon"><Award size={28} /></div>
+                  <div className="commitment-stat-text">
+                    <strong>500+</strong>
+                    <span>Experts</span>
+                  </div>
+                </div>
+                <div className="commitment-stat">
+                  <div className="commitment-stat-icon"><MapPin size={28} /></div>
+                  <div className="commitment-stat-text">
+                    <strong>25+</strong>
+                    <span>Districts</span>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
+            <div className="commitment-image">
+              <Sprout size={120} color="#166534" strokeWidth={1} style={{ opacity: 0.1, transform: 'translate(20px, 20px)' }} />
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Seed to Sale Journey */}
-      <section className="journey-section">
+      <section id="about" className="journey-section">
 
         <div className="journey-image-container" style={{
           textAlign: 'center',
@@ -403,7 +429,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
       </section>
 
       {/* How it Works Section */}
-      <section id="how-it-works" className="how-it-works-section">
+      <section id="experts" className="how-it-works-section">
         <div className="section-header">
           <h2 className="section-title">How It Works</h2>
           <p className="section-subtitle">
@@ -450,37 +476,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
         </div>
       </section>
 
-      {/* App Promo Section */}
-      <section className="app-promo-section" style={{
-        backgroundImage: `url('/assets/hero-image.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '4rem 5%',
-        overflow: 'hidden',
-        minHeight: '80vh',
-        width: '100vw',
-        marginLeft: 'calc(-50vw + 50%)'
-      }}>
-        {/* Soft White Shadow Overlay */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          bottom: 0,
-          width: '60%',
-          background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%)',
-          pointerEvents: 'none',
-          zIndex: 1
-        }} />
 
-        {/* Content Container */}
-        <div style={{ position: 'relative', zIndex: 2, display: 'flex', width: '100%', maxWidth: '1280px', margin: '0 auto', alignItems: 'center' }}>
-          
+
+      {/* App Promo Section */}
+      <section id="farmers" className="app-promo-section" style={{ background: '#ffffff', padding: '6rem 5%' }}>
+        <div style={{ display: 'flex', width: '100%', maxWidth: '1280px', margin: '0 auto', alignItems: 'center', gap: '4rem' }}>
+
           {/* Left Text */}
-          <div style={{ flex: 1, paddingRight: '2rem' }}>
+          <div style={{ flex: 1, zIndex: 2 }}>
             <h2 style={{ fontSize: '3.5rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, marginBottom: '1rem', fontFamily: 'Outfit, sans-serif' }}>
               Your Farm Assistant.<br />In Your Pocket.
             </h2>
@@ -519,16 +522,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
               </div>
             </div>
           </div>
-          
+
           {/* Right Phone Image */}
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', position: 'relative' }}>
-            <img src={ASSETS.MOBILE_APP} alt="Mobile App" style={{ maxWidth: '400px', width: '100%', height: 'auto', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.2))' }} />
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <img src={ASSETS.MOBILE_APP} alt="Mobile App" style={{
+              width: '100%',
+              maxWidth: '450px',
+              height: 'auto',
+              filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.08))'
+            }} />
           </div>
         </div>
       </section>
 
+
       {/* Testimonials */}
-      <section id="stories" className="stories-section">
+      <section id="partners" className="stories-section">
         <div className="section-header left-align">
           <div className="header-row">
             <h2 className="section-title">What Farmers Say</h2>
@@ -594,42 +603,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
         </div>
       </section>
 
-      {/* Partners Section */}
-      <section id="partners" className="partners-section">
-        <h3>Our Partners</h3>
-        <p>Working together for a stronger agriculture ecosystem</p>
 
-        <div className="partners-grid">
-          <div className="partner-item">
-            <div className="partner-icon">🏛️</div>
-            <span>Government</span>
-          </div>
-          <div className="partner-item">
-            <div className="partner-icon">👥</div>
-            <span>FPOs</span>
-          </div>
-          <div className="partner-item">
-            <div className="partner-icon">🎓</div>
-            <span>Agricultural<br />Universities</span>
-          </div>
-          <div className="partner-item">
-            <div className="partner-icon">🏢</div>
-            <span>Agri<br />Companies</span>
-          </div>
-          <div className="partner-item">
-            <div className="partner-icon">🤝</div>
-            <span>NGOs</span>
-          </div>
-          <div className="partner-item">
-            <div className="partner-icon">🏭</div>
-            <span>Factories</span>
-          </div>
-          <div className="partner-item">
-            <div className="partner-icon">🚢</div>
-            <span>Exporters</span>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="cta-section">
@@ -662,9 +636,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin }) => {
               </div>
             </div>
             <p>Empowering millions of Indian farmers with accurate, soil-verified data tailored for maximum harvest. Farm smarter, farm with Mithar.</p>
-            <p className="contact-details">
-              Registered Office: Hyderabad • +91 9392699963
-            </p>
+            <div className="contact-details" style={{ marginTop: '1rem', lineHeight: '1.6' }}>
+              <strong>Kissan Mithar Agrotech Pvt. Ltd.</strong><br />
+              Founder & CEO: Ranjith<br />
+              Location: Gadwal, Telangana<br />
+              Mobile: +91 9392699963
+            </div>
           </div>
 
           <div className="footer-col">
