@@ -9,7 +9,10 @@ import '../widgets/agriculture_alert_card.dart';
 import '../widgets/daily_forecast_list.dart';
 import '../widgets/hourly_forecast_strip.dart';
 import '../widgets/rainfall_chart_card.dart';
+import '../../../../shared/location/providers/location_provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/services/step_voice_guide_service.dart';
 
 class WeatherScreen extends ConsumerWidget {
   final VoidCallback? onHomeTap;
@@ -23,6 +26,12 @@ class WeatherScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(sharedLocationProvider, (previous, next) {
+      if (previous?.fullAddress != next.fullAddress) {
+        ref.read(weatherProvider.notifier).fetchLiveWeather();
+      }
+    });
+
     final weatherState = ref.watch(weatherProvider);
     final weather = weatherState.data;
     final timeFormat = DateFormat('h:mm a, d MMM');
@@ -50,11 +59,11 @@ class WeatherScreen extends ConsumerWidget {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor:
-                          AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                          AlwaysStoppedAnimation<Color>(AppColors.secondary),
                     ),
                   )
                 : const Icon(Icons.refresh_rounded,
-                    color: AppColors.primaryGreen, size: 26),
+                    color: AppColors.secondary, size: 26),
             onPressed: weatherState.isLoading
                 ? null
                 : () => ref.read(weatherProvider.notifier).fetchLiveWeather(),
@@ -63,7 +72,7 @@ class WeatherScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: RefreshIndicator(
-          color: AppColors.primaryGreen,
+          color: AppColors.secondary,
           onRefresh: () async {
             await ref.read(weatherProvider.notifier).fetchLiveWeather();
           },
@@ -112,6 +121,10 @@ class WeatherScreen extends ConsumerWidget {
 
                   // 8. Sun & Daylight Schedule
                   _buildSunScheduleCard(weather, l10n),
+                  const SizedBox(height: 24),
+
+                  // 9. Listen to Weather
+                  _buildListenToWeatherCard(weather, l10n),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -156,12 +169,12 @@ class WeatherScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryGreen.withAlpha(25),
+                  color: AppColors.secondary.withAlpha(25),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.location_on_rounded,
-                  color: AppColors.primaryGreen,
+                  color: AppColors.secondary,
                   size: 22,
                 ),
               ),
@@ -192,29 +205,29 @@ class WeatherScreen extends ConsumerWidget {
               ),
               InkWell(
                 onTap: () {
-                  ref.read(weatherProvider.notifier).fetchLiveWeather();
+                  context.push('/weather/location');
                 },
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8F5E9),
+                    color: const Color(0xFFE3F2FD),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFF81C784)),
+                    border: Border.all(color: const Color(0xFF90CAF9)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.gps_fixed_rounded,
-                          size: 13, color: AppColors.primaryGreen),
+                      const Icon(Icons.edit_location_alt_rounded,
+                          size: 13, color: AppColors.secondary),
                       const SizedBox(width: 4),
-                      Text(
-                        l10n.gpsSync,
-                        style: const TextStyle(
+                      const Text(
+                        'Change',
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.primaryGreen,
+                          color: AppColors.secondary,
                         ),
                       ),
                     ],
@@ -285,14 +298,14 @@ class WeatherScreen extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF2E7D32),
-            Color(0xFF1B5E20),
+            Color(0xFF1C75BC), // AppColors.secondary
+            Color(0xFF0F5B9A), // Darker blue
           ],
         ),
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2E7D32).withAlpha(60),
+            color: const Color(0xFF1C75BC).withAlpha(60),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -651,5 +664,64 @@ class WeatherScreen extends ConsumerWidget {
     if (uv < 6) return l10n.uvModerate;
     if (uv < 8) return l10n.uvHigh;
     return l10n.uvVeryHigh;
+  }
+
+  Widget _buildListenToWeatherCard(WeatherData weather, AppLocalizations l10n) {
+    return InkWell(
+      onTap: () {
+        final tts = StepVoiceGuideService();
+        final text = "Today in ${weather.locationName.split(',')[0]}, the temperature may reach ${weather.maxTemp.round()} degrees. There is a ${weather.rainChance} percent chance of rain today.";
+        tts.speak(text);
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE3F2FD), // subtle blue background
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFBBDEFB), width: 1.0),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
+                color: AppColors.secondary,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.volume_up_rounded,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Listen to Today\'s Weather',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.secondary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Hear a short audio summary of current conditions and rain forecast.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.secondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

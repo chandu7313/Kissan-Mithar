@@ -116,7 +116,7 @@ class RainfallChartCard extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     color: totalRainMm > 10.0
                         ? const Color(0xFFC62828)
-                        : AppColors.primaryGreen,
+                        : AppColors.secondary,
                   ),
                 ),
               ),
@@ -234,8 +234,8 @@ class RainfallChartCard extends StatelessWidget {
                                   const Color(0xFF29B6F6),
                                 ]
                               : [
-                                  AppColors.primaryGreen.withAlpha(200),
-                                  const Color(0xFF81C784),
+                                  AppColors.secondary.withAlpha(200),
+                                  const Color(0xFF64B5F6),
                                 ],
                         ),
                         backDrawRodData: BackgroundBarChartRodData(
@@ -257,15 +257,15 @@ class RainfallChartCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F8E9),
+              color: AppColors.peachAccent.withAlpha(120),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFC5E1A5)),
+              border: Border.all(color: const Color(0xFFE8C7BD)),
             ),
             child: Row(
               children: [
                 const Icon(
                   Icons.eco_rounded,
-                  color: AppColors.primaryGreen,
+                  color: AppColors.peachIcon,
                   size: 18,
                 ),
                 const SizedBox(width: 8),

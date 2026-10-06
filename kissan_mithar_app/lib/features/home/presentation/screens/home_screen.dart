@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_language.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/providers/auth_provider.dart';
-import '../../../notifications/models/notification_model.dart';
 import '../../../notifications/providers/notifications_provider.dart';
 import '../../../profile/providers/profile_provider.dart';
 import '../../../weather/providers/weather_provider.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -93,7 +92,7 @@ class HomeScreen extends ConsumerWidget {
         : (auth.userName ?? 'Farmer');
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9F7), // Light slightly greenish neutral background
+      backgroundColor: AppColors.background, // Light slightly greenish neutral background
       body: SafeArea(
         child: RefreshIndicator(
           color: const Color(0xFF1B6327),
@@ -214,7 +213,7 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: 20),
 
                     // 5. AI Farming Assistant Card
-                    _buildAIAssistantCard(),
+                    _buildAIAssistantCard(context),
 
                     const SizedBox(height: 24),
 
@@ -346,7 +345,7 @@ class HomeScreen extends ConsumerWidget {
                 // Ask AI Button inside Hero
                 InkWell(
                   onTap: () {
-                    // TODO: Navigate to AI Assistant
+                    context.push('/ai-assistant');
                   },
                   borderRadius: BorderRadius.circular(30),
                   child: Container(
@@ -394,12 +393,12 @@ class HomeScreen extends ConsumerWidget {
     final services = [
       {'image': 'assets/images/orchard_planning.png', 'title': 'Orchard Planning', 'route': '/orchard/land-size'},
       {'image': 'assets/images/expert_consultancy.png', 'title': 'Expert Consultancy', 'route': '/consultation'},
-      {'image': 'assets/images/Fertilizers-guide.png', 'title': 'Fertilizer Guide', 'route': '/activity'},
-      {'image': 'assets/images/Disease-help.png', 'title': 'Disease Help', 'route': '/activity'},
+      {'image': 'assets/images/Fertilizers-guide.png', 'title': 'Fertilizer Guide', 'route': '/fertilizer-guide'},
+      {'image': 'assets/images/Disease-help.png', 'title': 'Disease Help', 'route': '/disease-help'},
       {'image': 'assets/images/weather.png', 'title': 'Weather', 'route': '/weather'},
-      {'image': 'assets/images/labours.png', 'title': 'Farm Labour', 'route': '/activity'},
-      {'image': 'assets/images/Machineries.png', 'title': 'Farm Machinery', 'route': '/activity'},
-      {'image': 'assets/images/crop_buying_selling.png', 'title': 'Crop buying selling', 'route': '/shop'},
+      {'image': 'assets/images/labours.png', 'title': 'Farm Labour', 'route': '/farm-labour'},
+      {'image': 'assets/images/Machineries.png', 'title': 'Farm Machinery', 'route': '/farm-machinery'},
+      {'image': 'assets/images/crop_buying_selling.png', 'title': 'Crop Buying & Selling', 'route': '/crop-buying-selling'},
     ];
 
     return GridView.builder(
@@ -562,13 +561,17 @@ class HomeScreen extends ConsumerWidget {
   }
 
   // --- AI Farming Assistant Card ---
-  Widget _buildAIAssistantCard() {
-    return Container(
+  Widget _buildAIAssistantCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context.push('/ai-assistant');
+      },
+      child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8F5E9),
+        color: const Color(0xFFE3F2FD),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFC8E6C9)),
+        border: Border.all(color: const Color(0xFFBBDEFB)),
       ),
       child: Row(
         children: [
@@ -584,7 +587,7 @@ class HomeScreen extends ConsumerWidget {
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.smart_toy, color: Color(0xFF1B6327), size: 36),
+              child: const Icon(Icons.smart_toy, color: AppColors.secondary, size: 36),
             ),
           ),
           const SizedBox(width: 16),
@@ -615,14 +618,14 @@ class HomeScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: const BoxDecoration(
-              color: Color(0xFF1B6327),
+              color: AppColors.secondary,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.mic, color: Colors.white, size: 28),
           ),
         ],
       ),
-    );
+    ));
   }
 
   // --- Recommendations List ---
@@ -655,10 +658,10 @@ class HomeScreen extends ConsumerWidget {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F8E9),
+                    color: AppColors.peachAccent.withAlpha(120),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(item['icon'] as IconData, color: const Color(0xFF558B2F), size: 32),
+                  child: Icon(item['icon'] as IconData, color: AppColors.peachIcon, size: 32),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

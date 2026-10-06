@@ -40,7 +40,7 @@ class HourlyForecastStrip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.primaryGreen,
+                  color: AppColors.secondary,
                 ),
               ),
             ],
@@ -63,12 +63,12 @@ class HourlyForecastStrip extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                 decoration: BoxDecoration(
                   color: isCurrent
-                      ? const Color(0xFFE8F5E9)
+                      ? const Color(0xFFE3F2FD)
                       : AppColors.surface,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: isCurrent
-                        ? AppColors.primaryGreen
+                        ? AppColors.secondary
                         : const Color(0xFFC7CEC7),
                     width: isCurrent ? 2.0 : 1.0,
                   ),
@@ -91,7 +91,7 @@ class HourlyForecastStrip extends StatelessWidget {
                         fontWeight:
                             isCurrent ? FontWeight.w800 : FontWeight.w600,
                         color: isCurrent
-                            ? AppColors.primaryGreen
+                            ? AppColors.secondary
                             : AppColors.textSecondary,
                       ),
                     ),
@@ -102,7 +102,7 @@ class HourlyForecastStrip extends StatelessWidget {
                       color: item.rainChance > 50
                           ? const Color(0xFF0288D1)
                           : (isCurrent
-                              ? AppColors.primaryGreen
+                              ? AppColors.secondary
                               : const Color(0xFFF57F17)),
                       size: 26,
                     ),

@@ -19,9 +19,8 @@ class MainShellScreen extends ConsumerWidget {
     final String location = GoRouterState.of(context).uri.path;
     if (location.startsWith('/home')) return 0;
     if (location.startsWith('/activity')) return 1;
-    if (location.startsWith('/shop')) return 2;
-    if (location.startsWith('/learn')) return 3;
-    if (location.startsWith('/profile')) return 4;
+    if (location.startsWith('/videos')) return 2;
+    if (location.startsWith('/profile')) return 3;
     return 0;
   }
 
@@ -29,9 +28,8 @@ class MainShellScreen extends ConsumerWidget {
     switch (index) {
       case 0: context.go('/home'); break;
       case 1: context.go('/activity'); break;
-      case 2: context.go('/shop'); break;
-      case 3: context.go('/learn'); break;
-      case 4: context.go('/profile'); break;
+      case 2: context.go('/videos'); break;
+      case 3: context.go('/profile'); break;
     }
   }
 
@@ -93,28 +91,19 @@ class MainShellScreen extends ConsumerWidget {
                     context: context,
                     index: 2,
                     isSelected: selectedIndex == 2,
-                    icon: Icons.shopping_cart_outlined,
-                    activeIcon: Icons.shopping_cart_rounded,
-                    label: "Shop",
+                    icon: Icons.play_circle_outline_rounded,
+                    activeIcon: Icons.play_circle_filled_rounded,
+                    label: "Videos",
                     onTap: () => _onItemTapped(2, context),
                   ),
                   _buildNavItem(
                     context: context,
                     index: 3,
                     isSelected: selectedIndex == 3,
-                    icon: Icons.menu_book_rounded,
-                    activeIcon: Icons.menu_book_rounded,
-                    label: "Learn",
-                    onTap: () => _onItemTapped(3, context),
-                  ),
-                  _buildNavItem(
-                    context: context,
-                    index: 4,
-                    isSelected: selectedIndex == 4,
                     icon: Icons.person_outline_rounded,
                     activeIcon: Icons.person_rounded,
                     label: l10n.profile,
-                    onTap: () => _onItemTapped(4, context),
+                    onTap: () => _onItemTapped(3, context),
                   ),
                 ],
               ),

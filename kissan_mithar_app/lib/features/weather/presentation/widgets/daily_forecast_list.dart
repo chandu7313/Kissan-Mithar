@@ -10,6 +10,97 @@ class DailyForecastList extends StatelessWidget {
     required this.dailyList,
   });
 
+  void _showDayDetails(BuildContext context, DailyForecast item) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        final isHighRain = item.rainChance >= 70;
+        final isSafeSpraying = item.rainChance < 40;
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${item.dayName}, ${item.date}',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Icon(
+                      item.icon,
+                      color: isHighRain ? const Color(0xFF0288D1) : const Color(0xFFF57F17),
+                      size: 32,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  item.condition,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('High / Low Temp:', style: TextStyle(color: Colors.grey)),
+                    Text('${item.maxTemp.round()}° / ${item.minTemp.round()}°', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const Divider(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Rain Probability:', style: TextStyle(color: Colors.grey)),
+                    Text('${item.rainChance}%', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const Divider(height: 24),
+                if (item.rainfallMm > 0) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Expected Rainfall:', style: TextStyle(color: Colors.grey)),
+                      Text('${item.rainfallMm} mm', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const Divider(height: 24),
+                ],
+                const Text('Farming Advisory:', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(
+                      isSafeSpraying ? Icons.check_circle_outline_rounded : Icons.info_outline_rounded,
+                      color: isSafeSpraying ? AppColors.secondary : const Color(0xFFE65100),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        item.sprayAdvisory,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isSafeSpraying ? AppColors.secondary : const Color(0xFFE65100),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (dailyList.isEmpty) return const SizedBox.shrink();
@@ -19,208 +110,108 @@ class DailyForecastList extends StatelessWidget {
       children: [
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  '7-Day Agricultural Forecast',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                    letterSpacing: -0.3,
-                  ),
-                ),
-              ),
-              SizedBox(width: 8),
-              Text(
-                'Spray Suitability',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
+          child: Text(
+            '15-Day Forecast',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+              letterSpacing: -0.3,
+            ),
           ),
         ),
         const SizedBox(height: 12),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: dailyList.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            final item = dailyList[index];
-            final isHighRain = item.rainChance >= 70;
-            final isSafeSpraying = item.rainChance < 40;
+        SizedBox(
+          height: 170, // Height for the horizontal cards
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: dailyList.length,
+            separatorBuilder: (context, index) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final item = dailyList[index];
+              final isHighRain = item.rainChance >= 70;
 
-            return Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: index == 0
-                      ? AppColors.primaryGreen.withAlpha(120)
-                      : const Color(0xFFC7CEC7),
-                  width: index == 0 ? 1.5 : 1.0,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(5),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+              return GestureDetector(
+                onTap: () => _showDayDetails(context, item),
+                child: Container(
+                  width: 130, // Fixed width for each card
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: index == 0
+                          ? AppColors.secondary.withAlpha(120)
+                          : const Color(0xFFC7CEC7),
+                      width: index == 0 ? 1.5 : 1.0,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(5),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Day & Date Column
-                      SizedBox(
-                        width: 90,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.dayName,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: index == 0
-                                    ? FontWeight.w800
-                                    : FontWeight.w700,
-                                color: index == 0
-                                    ? AppColors.primaryGreen
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              item.date,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
+                      Text(
+                        item.dayName,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: index == 0 ? FontWeight.w800 : FontWeight.w700,
+                          color: index == 0 ? AppColors.secondary : AppColors.textPrimary,
                         ),
                       ),
-
-                      // Icon & Condition
+                      Text(
+                        item.date,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const Spacer(),
                       Icon(
                         item.icon,
-                        color: isHighRain
-                            ? const Color(0xFF0288D1)
-                            : const Color(0xFFF57F17),
-                        size: 24,
+                        color: isHighRain ? const Color(0xFF0288D1) : const Color(0xFFF57F17),
+                        size: 36,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.condition,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            if (item.rainfallMm > 0)
-                              Text(
-                                '${item.rainfallMm.toStringAsFixed(1)} mm rain (${item.rainChance}%)',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: isHighRain
-                                      ? const Color(0xFF0288D1)
-                                      : AppColors.textSecondary,
-                                ),
-                              ),
-                          ],
+                      const SizedBox(height: 4),
+                      Text(
+                        '${item.maxTemp.round()}° / ${item.minTemp.round()}°',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-
-                      // Min - Max Temp Bar
+                      const Spacer(),
                       Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            '${item.minTemp.round()}°',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textSecondary,
-                            ),
+                          Icon(
+                            Icons.water_drop,
+                            size: 14,
+                            color: isHighRain ? const Color(0xFF0288D1) : Colors.grey,
                           ),
-                          Container(
-                            width: 38,
-                            height: 6,
-                            margin: const EdgeInsets.symmetric(horizontal: 6),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF81C784),
-                                  Color(0xFFFFB74D),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
+                          const SizedBox(width: 4),
                           Text(
-                            '${item.maxTemp.round()}°',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
+                            '${item.rainChance}%',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: isHighRain ? const Color(0xFF0288D1) : Colors.grey,
                             ),
                           ),
                         ],
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 10),
-                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
-                  const SizedBox(height: 8),
-
-                  // Spraying & Agri Advisory Chip
-                  Row(
-                    children: [
-                      Icon(
-                        isSafeSpraying
-                            ? Icons.check_circle_outline_rounded
-                            : Icons.info_outline_rounded,
-                        size: 14,
-                        color: isSafeSpraying
-                            ? AppColors.primaryGreen
-                            : const Color(0xFFE65100),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          item.sprayAdvisory,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isSafeSpraying
-                                ? AppColors.primaryGreen
-                                : const Color(0xFFBF360C),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
       ],
     );

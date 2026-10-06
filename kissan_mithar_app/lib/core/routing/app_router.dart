@@ -20,9 +20,39 @@ import '../../features/orchard_planning/presentation/screens/plan_tracker_screen
 import '../../features/orchard_planning/presentation/screens/success_screen.dart';
 import '../../features/profile/presentation/screens/downloads_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/videos/presentation/screens/videos_screen.dart';
+import '../../features/ai_assistant/presentation/screens/ai_assistant_screen.dart';
 import '../../features/expert_portal/presentation/screens/expert_dashboard_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/weather/presentation/screens/weather_screen.dart';
+import '../../features/disease_help/presentation/screens/disease_photos_screen.dart';
+import '../../features/disease_help/presentation/screens/disease_voice_screen.dart';
+import '../../features/farm_labour/presentation/screens/labour_home_screen.dart';
+import '../../features/farm_labour/presentation/screens/labour_location_screen.dart';
+import '../../features/farm_labour/presentation/screens/labour_list_screen.dart';
+import '../../features/farm_labour/presentation/screens/labour_details_screen.dart';
+import '../../features/farm_labour/presentation/screens/labour_registration_screen.dart';
+import '../../features/farm_labour/presentation/screens/my_labour_group_screen.dart';
+import '../../features/farm_machinery/presentation/screens/farmer/farm_machinery_home_screen.dart';
+import '../../features/farm_machinery/presentation/screens/farmer/machinery_list_screen.dart';
+import '../../features/farm_machinery/presentation/screens/farmer/machinery_details_screen.dart';
+import '../../features/farm_machinery/presentation/screens/provider/provider_registration_screen.dart';
+import '../../features/farm_machinery/presentation/screens/provider/add_machine_screen.dart';
+import '../../features/farm_machinery/presentation/screens/provider/provider_dashboard_screen.dart';
+import '../../shared/location/screens/location_selector_screen.dart';
+
+import '../../features/fertilizer_guide/presentation/screens/fertilizer_photos_screen.dart';
+import '../../features/fertilizer_guide/presentation/screens/fertilizer_location_screen.dart';
+import '../../features/fertilizer_guide/presentation/screens/fertilizer_voice_screen.dart';
+
+import '../../features/crop_buying_selling/presentation/screens/crop_buying_selling_home_screen.dart';
+import '../../features/crop_buying_selling/presentation/screens/farmer/list_crop_screen.dart';
+import '../../features/crop_buying_selling/presentation/screens/farmer/find_buyers_screen.dart';
+import '../../features/crop_buying_selling/presentation/screens/farmer/buyer_details_screen.dart';
+import '../../features/crop_buying_selling/presentation/screens/buyer/find_crops_screen.dart';
+import '../../features/crop_buying_selling/presentation/screens/buyer/post_requirement_screen.dart';
+import '../../features/crop_buying_selling/presentation/screens/buyer/crop_details_screen.dart';
+
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -55,6 +85,10 @@ class AppRoutes {
   static const String orchardTracker = 'orchardTracker';
   static const String weather = 'weather';
   static const String activity = 'activity';
+
+  static const String fertilizerPhotos = 'fertilizerPhotos';
+  static const String fertilizerLocation = 'fertilizerLocation';
+  static const String fertilizerVoice = 'fertilizerVoice';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -126,17 +160,17 @@ final GoRouter appRouter = GoRouter(
           },
         ),
         GoRoute(
-          path: '/shop',
-          name: 'shop',
+          path: '/videos',
+          name: 'videos',
           builder: (BuildContext context, GoRouterState state) {
-            return Scaffold(appBar: AppBar(title: const Text('Shop (Coming Soon)')), body: const Center(child: Text('Buy Inputs and Machinery Here')));
+            return const VideosScreen();
           },
         ),
         GoRoute(
-          path: '/learn',
-          name: 'learn',
+          path: '/ai-assistant',
+          name: 'ai_assistant',
           builder: (BuildContext context, GoRouterState state) {
-            return Scaffold(appBar: AppBar(title: const Text('Learn (Coming Soon)')), body: const Center(child: Text('Educational Content & Videos Here')));
+            return const AIAssistantScreen();
           },
         ),
         GoRoute(
@@ -245,6 +279,13 @@ final GoRouter appRouter = GoRouter(
           },
         ),
         GoRoute(
+          path: '/weather/location',
+          name: 'weatherLocation',
+          builder: (BuildContext context, GoRouterState state) {
+            return const LocationSelectorScreen(nextRoute: '/weather');
+          },
+        ),
+        GoRoute(
           path: '/profile/downloads',
           name: AppRoutes.profileDownloads,
           builder: (BuildContext context, GoRouterState state) {
@@ -284,6 +325,150 @@ final GoRouter appRouter = GoRouter(
             return LegalScreen(initialTabIndex: tab == 'terms' ? 1 : 0);
           },
         ),
+
+        GoRoute(
+          path: '/fertilizer-guide',
+          name: AppRoutes.fertilizerPhotos,
+          builder: (context, state) => const FertilizerPhotosScreen(),
+        ),
+        GoRoute(
+          path: '/fertilizer-guide/location',
+          name: AppRoutes.fertilizerLocation,
+          builder: (context, state) => const FertilizerLocationScreen(),
+        ),
+        GoRoute(
+          path: '/fertilizer-guide/voice',
+          name: AppRoutes.fertilizerVoice,
+          builder: (context, state) => const FertilizerVoiceScreen(),
+        ),
+        GoRoute(
+          path: '/disease-help',
+          name: 'diseasePhotos',
+          builder: (context, state) => const DiseasePhotosScreen(),
+        ),
+        GoRoute(
+          path: '/disease-help/voice',
+          name: 'diseaseVoice',
+          builder: (context, state) => const DiseaseVoiceScreen(),
+        ),
+        GoRoute(
+          path: '/farm-labour',
+          name: 'farmLabourHome',
+          builder: (context, state) => const LabourHomeScreen(),
+        ),
+        GoRoute(
+          path: '/farm-labour/location',
+          name: 'farmLabourLocation',
+          builder: (context, state) => const LabourLocationScreen(),
+        ),
+        GoRoute(
+          path: '/farm-labour/list',
+          name: 'farmLabourList',
+          builder: (context, state) => const LabourListScreen(),
+        ),
+        GoRoute(
+          path: '/farm-labour/details/:id',
+          name: 'farmLabourDetails',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return LabourDetailsScreen(id: id);
+          },
+        ),
+        GoRoute(
+          path: '/farm-labour/register/info',
+          name: 'farmLabourRegister',
+          builder: (context, state) => const LabourRegistrationScreen(),
+        ),
+        GoRoute(
+          path: '/farm-labour/my-group',
+          name: 'farmLabourMyGroup',
+          builder: (context, state) => const MyLabourGroupScreen(),
+        ),
+        GoRoute(
+          path: '/farm-machinery',
+          name: 'farmMachineryHome',
+          builder: (context, state) => const FarmMachineryHomeScreen(),
+        ),
+        GoRoute(
+          path: '/farm-machinery/location',
+          name: 'farmMachineryLocation',
+          builder: (context, state) {
+            final next = state.uri.queryParameters['next'] ?? '/farm-machinery/list';
+            return LocationSelectorScreen(nextRoute: next);
+          },
+        ),
+        GoRoute(
+          path: '/farm-machinery/list',
+          name: 'farmMachineryList',
+          builder: (context, state) => const MachineryListScreen(),
+        ),
+        GoRoute(
+          path: '/farm-machinery/details/:id',
+          name: 'farmMachineryDetails',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return MachineryDetailsScreen(id: id);
+          },
+        ),
+        GoRoute(
+          path: '/farm-machinery/provider/register',
+          name: 'farmMachineryProviderRegister',
+          builder: (context, state) => const ProviderRegistrationScreen(),
+        ),
+        GoRoute(
+          path: '/farm-machinery/provider/dashboard',
+          name: 'farmMachineryProviderDashboard',
+          builder: (context, state) => const ProviderDashboardScreen(),
+        ),
+        GoRoute(
+          path: '/farm-machinery/provider/add-machine',
+          name: 'farmMachineryProviderAddMachine',
+          builder: (context, state) => const AddMachineScreen(),
+        ),
+
+        // Crop Buying & Selling Routes
+        GoRoute(
+          path: '/crop-buying-selling',
+          name: 'cropBuyingSellingHome',
+          builder: (context, state) => const CropBuyingSellingHomeScreen(),
+        ),
+        GoRoute(
+          path: '/crop-buying-selling/list-crop',
+          name: 'listCrop',
+          builder: (context, state) => const ListCropScreen(),
+        ),
+        GoRoute(
+          path: '/crop-buying-selling/find-buyers',
+          name: 'findBuyers',
+          builder: (context, state) => const FindBuyersScreen(),
+        ),
+        GoRoute(
+          path: '/crop-buying-selling/buyer-details/:id',
+          name: 'buyerDetails',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return BuyerDetailsScreen(reqId: id);
+          },
+        ),
+        GoRoute(
+          path: '/crop-buying-selling/find-crops',
+          name: 'findCrops',
+          builder: (context, state) => const FindCropsScreen(),
+        ),
+        GoRoute(
+          path: '/crop-buying-selling/post-requirement',
+          name: 'postRequirement',
+          builder: (context, state) => const PostRequirementScreen(),
+        ),
+        GoRoute(
+          path: '/crop-buying-selling/crop-details/:id',
+          name: 'cropDetails',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return CropDetailsScreen(listingId: id);
+          },
+        ),
+
       ],
     ),
   ],

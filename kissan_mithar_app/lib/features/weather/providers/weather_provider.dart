@@ -350,6 +350,14 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
       DailyForecast(dayName: 'Monday', date: 'Mon', minTemp: baseTemp - 5, maxTemp: baseTemp + 7, condition: 'Sunny & Clear', rainChance: 10, rainfallMm: 0.0, sprayAdvisory: 'Ideal for all orchard tasks', icon: Icons.wb_sunny_rounded),
       DailyForecast(dayName: 'Tuesday', date: 'Tue', minTemp: baseTemp - 4, maxTemp: baseTemp + 8, condition: 'Sunny', rainChance: 10, rainfallMm: 0.0, sprayAdvisory: 'Irrigate during cool hours', icon: Icons.wb_sunny_rounded),
       DailyForecast(dayName: 'Wednesday', date: 'Wed', minTemp: baseTemp - 3, maxTemp: baseTemp + 6, condition: 'Overcast', rainChance: 35, rainfallMm: 1.5, sprayAdvisory: 'Suitable for spraying', icon: Icons.cloud_outlined),
+      DailyForecast(dayName: 'Thursday', date: 'Thu', minTemp: baseTemp - 3, maxTemp: baseTemp + 5, condition: 'Partly Cloudy', rainChance: 25, rainfallMm: 0.0, sprayAdvisory: 'Safe window', icon: Icons.wb_cloudy_rounded),
+      DailyForecast(dayName: 'Friday', date: 'Fri', minTemp: baseTemp - 4, maxTemp: baseTemp + 4, condition: 'Sunny', rainChance: 15, rainfallMm: 0.0, sprayAdvisory: 'Ideal for all tasks', icon: Icons.wb_sunny_rounded),
+      DailyForecast(dayName: 'Saturday', date: 'Sat', minTemp: baseTemp - 2, maxTemp: baseTemp + 6, condition: 'Cloudy', rainChance: 40, rainfallMm: 2.0, sprayAdvisory: 'Monitor rain', icon: Icons.cloud_outlined),
+      DailyForecast(dayName: 'Sunday', date: 'Sun', minTemp: baseTemp - 3, maxTemp: baseTemp + 7, condition: 'Light Rain', rainChance: 65, rainfallMm: 6.5, sprayAdvisory: 'Avoid afternoon spraying', icon: Icons.grain_rounded),
+      DailyForecast(dayName: 'Monday', date: 'Mon', minTemp: baseTemp - 4, maxTemp: baseTemp + 5, condition: 'Partly Cloudy', rainChance: 30, rainfallMm: 0.0, sprayAdvisory: 'Safe morning window', icon: Icons.wb_cloudy_rounded),
+      DailyForecast(dayName: 'Tuesday', date: 'Tue', minTemp: baseTemp - 5, maxTemp: baseTemp + 8, condition: 'Sunny', rainChance: 10, rainfallMm: 0.0, sprayAdvisory: 'Good for fertigation', icon: Icons.wb_sunny_rounded),
+      DailyForecast(dayName: 'Wednesday', date: 'Wed', minTemp: baseTemp - 4, maxTemp: baseTemp + 9, condition: 'Hot & Clear', rainChance: 5, rainfallMm: 0.0, sprayAdvisory: 'Irrigate in early morning', icon: Icons.wb_sunny_rounded),
+      DailyForecast(dayName: 'Thursday', date: 'Thu', minTemp: baseTemp - 3, maxTemp: baseTemp + 8, condition: 'Sunny', rainChance: 15, rainfallMm: 0.0, sprayAdvisory: 'Ideal for all tasks', icon: Icons.wb_sunny_rounded),
     ];
   }
 
