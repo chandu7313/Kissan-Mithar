@@ -4,7 +4,7 @@ import {
   Menu, X, Globe, MapPin, ShieldCheck,
   Star, Download, Play, ArrowRight,
   Users, Award, Tractor, Handshake,
-  Sprout, Briefcase, Package, CloudSun, Link, Bot, Leaf
+  Sprout, Briefcase, Package, CloudSun, Link, Bot, Leaf, ShoppingCart
 } from 'lucide-react';
 
 import { ASSETS } from '../../assets';
@@ -98,10 +98,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin, onNaviga
     },
     {
       slug: 'crop-connect',
-      title: 'Crop Connect',
-      desc: 'Connect with buyers, traders and industries for better prices.',
+      title: 'Agri Bazaar',
+      desc: 'Agricultural Products Sourcing & Supply — by Kissan Mithar.',
       image: ASSETS.SERVICES.CROP_CONNECT,
-      icon: <Link size={24} />,
+      icon: <ShoppingCart size={24} />,
       span: 3
     },
     {

@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -16,7 +17,14 @@ export const createApp = (): Express => {
   }
 
   // 1. Security & HTTP Middleware
-  app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    })
+  );
+
+  // Serve uploaded media files statically (voice notes, reports)
+  app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
   // CORS: locked to explicit origins in production
   const allowedOrigins = env.CORS_ORIGINS === '*'

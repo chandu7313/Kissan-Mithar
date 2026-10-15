@@ -426,7 +426,7 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) => const AddMachineScreen(),
         ),
 
-        // Crop Buying & Selling Routes
+        // Agri Bazaar Routes (Managed Sourcing & Supply)
         GoRoute(
           path: '/crop-buying-selling',
           name: 'cropBuyingSellingHome',

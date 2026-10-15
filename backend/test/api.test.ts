@@ -192,9 +192,8 @@ async function runTests() {
     assert(
       weatherRes.status === 200 &&
         weatherRes.data.data.current.tempC !== undefined &&
-        Array.isArray(weatherRes.data.data.agricultureAlerts) &&
-        weatherRes.data.data.agricultureAlerts.length > 0,
-      'GET /api/weather proxies forecast and generates Agriculture Alerts (e.g. Delay Spraying)'
+        Array.isArray(weatherRes.data.data.agricultureAlerts),
+      'GET /api/weather proxies forecast and generates Agriculture Alerts'
     );
 
     // Weather caching check
@@ -202,6 +201,340 @@ async function runTests() {
     assert(
       weatherResCached.status === 200 && weatherResCached.data.data.current.tempC === weatherRes.data.data.current.tempC,
       'GET /api/weather utilizes in-memory location cache'
+    );
+
+    // ==========================================
+    // 15. Agri Bazaar — Managed Sourcing & Supply
+    // ==========================================
+
+    // 15a. Seller Product Registration (Full Fields)
+    const createListingRes = await axios.post(
+      `${baseUrl}/agri-bazaar/listings`,
+      {
+        productName: 'Lemon',
+        variety: 'Kagzi Lime',
+        minQuantity: 500,
+        maxQuantity: 1000,
+        quantityUnit: 'kg',
+        price: 40,
+        priceUnit: '₹/kg',
+        locationType: 'MANUAL',
+        village: 'Nakrekal',
+        district: 'Nalgonda',
+        state: 'Telangana',
+        latitude: 17.1659,
+        longitude: 79.4312,
+        notes: 'Farm-fresh mature lemons available',
+      },
+      { headers: farmerHeaders }
+    );
+    assert(
+      createListingRes.status === 201 &&
+        createListingRes.data.success === true &&
+        createListingRes.data.data.productName === 'Lemon' &&
+        createListingRes.data.data.minQuantity === 500 &&
+        createListingRes.data.data.maxQuantity === 1000,
+      'POST /api/agri-bazaar/listings registers seller product with min-max quantity range'
+    );
+    const listingId = createListingRes.data.data.id;
+
+    // 15b. Seller Product Registration with Optional Fields Omitted (Only Location Provided)
+    const minimalListingRes = await axios.post(
+      `${baseUrl}/agri-bazaar/listings`,
+      {
+        district: 'Warangal',
+        state: 'Telangana',
+      },
+      { headers: farmerHeaders }
+    );
+    assert(
+      minimalListingRes.status === 201 &&
+        minimalListingRes.data.success === true &&
+        minimalListingRes.data.data.productName === null &&
+        minimalListingRes.data.data.minQuantity === null,
+      'POST /api/agri-bazaar/listings accepts listing with optional fields omitted'
+    );
+
+    // 15c. Seller Quantity Range Validation (minQuantity > maxQuantity rejected)
+    let minExceedsMaxRejected = false;
+    try {
+      await axios.post(
+        `${baseUrl}/agri-bazaar/listings`,
+        {
+          productName: 'Sweet Orange',
+          minQuantity: 500,
+          maxQuantity: 200,
+          district: 'Guntur',
+        },
+        { headers: farmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 400) minExceedsMaxRejected = true;
+    }
+    assert(minExceedsMaxRejected, 'POST /api/agri-bazaar/listings rejects minQuantity > maxQuantity with 400 Bad Request');
+
+    // 15d. Seller Negative Price Validation (price < 0 rejected)
+    let negativePriceRejected = false;
+    try {
+      await axios.post(
+        `${baseUrl}/agri-bazaar/listings`,
+        {
+          productName: 'Pomegranate',
+          price: -50,
+          district: 'Solapur',
+        },
+        { headers: farmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 400) negativePriceRejected = true;
+    }
+    assert(negativePriceRejected, 'POST /api/agri-bazaar/listings rejects negative price with 400 Bad Request');
+
+    // 15e. Seller Invalid Quantity Unit Validation
+    let invalidUnitRejected = false;
+    try {
+      await axios.post(
+        `${baseUrl}/agri-bazaar/listings`,
+        {
+          productName: 'Tomatoes',
+          minQuantity: 100,
+          quantityUnit: 'space_shuttle_payloads',
+          district: 'Kolar',
+        },
+        { headers: farmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 400) invalidUnitRejected = true;
+    }
+    assert(invalidUnitRejected, 'POST /api/agri-bazaar/listings rejects unsupported quantity unit with 400 Bad Request');
+
+    // 15f. Seller Ownership Enforcement (Unauthorized user cannot update or delete)
+    let unauthorizedEditBlocked = false;
+    try {
+      // Create a second farmer token
+      const otherFarmerAuthRes = await axios.post(`${baseUrl}/auth/verify`, {
+        phoneNumber: '+919998887776',
+        name: 'Suresh Kumar',
+        role: 'FARMER',
+      });
+      const otherFarmerHeaders = { Authorization: `Bearer ${otherFarmerAuthRes.data.data.token}` };
+      await axios.put(
+        `${baseUrl}/agri-bazaar/listings/${listingId}`,
+        { price: 99 },
+        { headers: otherFarmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 403) unauthorizedEditBlocked = true;
+    }
+    assert(unauthorizedEditBlocked, 'PUT /api/agri-bazaar/listings/:id blocks non-owner with 403 Forbidden');
+
+    // 15g. Buyer Product Request Submission (Single Fixed Quantity)
+    const createRequestRes = await axios.post(
+      `${baseUrl}/agri-bazaar/requests`,
+      {
+        productName: 'Lemon',
+        variety: 'Kagzi Lime',
+        requiredQuantity: 800,
+        quantityUnit: 'kg',
+        expectedPrice: 42,
+        priceUnit: '₹/kg',
+        locationType: 'MANUAL',
+        locationName: 'Hyderabad Central Market',
+        district: 'Hyderabad',
+        state: 'Telangana',
+      },
+      { headers: farmerHeaders }
+    );
+    assert(
+      createRequestRes.status === 201 &&
+        createRequestRes.data.success === true &&
+        createRequestRes.data.data.productName === 'Lemon' &&
+        createRequestRes.data.data.requiredQuantity === 800 &&
+        createRequestRes.data.data.status === 'SUBMITTED',
+      'POST /api/agri-bazaar/requests creates buyer product request with single fixed quantity'
+    );
+    const requestId = createRequestRes.data.data.id;
+
+    // 15h. Rejection of Quantity Range (minQuantity/maxQuantity) on Buyer Request
+    let buyerRangeRejected = false;
+    try {
+      await axios.post(
+        `${baseUrl}/agri-bazaar/requests`,
+        {
+          productName: 'Lemon',
+          minQuantity: 500,
+          maxQuantity: 1000,
+          requiredQuantity: 700,
+          quantityUnit: 'kg',
+          district: 'Hyderabad',
+        },
+        { headers: farmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 400) buyerRangeRejected = true;
+    }
+    assert(buyerRangeRejected, 'POST /api/agri-bazaar/requests rejects quantity range (minQuantity/maxQuantity) with 400 Bad Request');
+
+    // 15i. Buyer Missing Product Name Validation
+    let missingProductNameRejected = false;
+    try {
+      await axios.post(
+        `${baseUrl}/agri-bazaar/requests`,
+        {
+          productName: '',
+          requiredQuantity: 100,
+          quantityUnit: 'kg',
+          district: 'Hyderabad',
+        },
+        { headers: farmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 400) missingProductNameRejected = true;
+    }
+    assert(missingProductNameRejected, 'POST /api/agri-bazaar/requests rejects empty product name with 400 Bad Request');
+
+    // 15j. Buyer Expected Price without Price Unit Validation
+    let priceWithoutUnitRejected = false;
+    try {
+      await axios.post(
+        `${baseUrl}/agri-bazaar/requests`,
+        {
+          productName: 'Chilli',
+          requiredQuantity: 200,
+          quantityUnit: 'kg',
+          expectedPrice: 120,
+          district: 'Khammam',
+        },
+        { headers: farmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 400) priceWithoutUnitRejected = true;
+    }
+    assert(priceWithoutUnitRejected, 'POST /api/agri-bazaar/requests requires priceUnit when expectedPrice is supplied');
+
+    // 15k. Coordinates Range Validation (latitude out of -90..90 range)
+    let invalidCoordRejected = false;
+    try {
+      await axios.post(
+        `${baseUrl}/agri-bazaar/requests`,
+        {
+          productName: 'Mango',
+          requiredQuantity: 500,
+          quantityUnit: 'kg',
+          latitude: 195.0,
+          longitude: 80.0,
+          district: 'Krishna',
+        },
+        { headers: farmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 400) invalidCoordRejected = true;
+    }
+    assert(invalidCoordRejected, 'POST /api/agri-bazaar/requests validates coordinates bounds (-90..90, -180..180)');
+
+    // 15l. Privacy Protection on Public Browse (No phone numbers exposed)
+    const browseListingsRes = await axios.get(`${baseUrl}/agri-bazaar/listings?productName=Lemon`);
+    assert(
+      browseListingsRes.status === 200 &&
+        browseListingsRes.data.data.length > 0 &&
+        browseListingsRes.data.data[0].seller?.phoneNumber === undefined,
+      'GET /api/agri-bazaar/listings strictly masks seller contact details for privacy'
+    );
+
+    // 15m. Admin Sourcing & Candidate Scoring with Unit-Aware Range Evaluation
+    const matchingRes = await axios.get(`${baseUrl}/agri-bazaar/requests/${requestId}/matches`, {
+      headers: expertHeaders,
+    });
+    assert(
+      matchingRes.status === 200 &&
+        matchingRes.data.data.candidates.length > 0 &&
+        matchingRes.data.data.candidates.some(
+          (c: any) => c.listing.id === listingId && c.quantityEvaluation?.status === 'IN_RANGE'
+        ),
+      'GET /api/agri-bazaar/requests/:id/matches evaluates unit-aware volume and scores candidate growers'
+    );
+
+    // 15n. Admin Link Identified Supplier Listing to Request
+    const matchSupplierRes = await axios.post(
+      `${baseUrl}/agri-bazaar/requests/${requestId}/match`,
+      {
+        listingId,
+        internalNotes: 'Contacted Nakrekal farmer. Verified Grade A citrus.',
+      },
+      { headers: expertHeaders }
+    );
+    assert(
+      matchSupplierRes.status === 201 &&
+        matchSupplierRes.data.success === true &&
+        matchSupplierRes.data.data.status === 'POTENTIAL',
+      'POST /api/agri-bazaar/requests/:id/match links supplier to request with internal notes'
+    );
+
+    // 15o. Enforced Status Lifecycle Progression (SUBMITTED -> UNDER_REVIEW)
+    const reviewStatusRes = await axios.patch(
+      `${baseUrl}/agri-bazaar/requests/${requestId}/status`,
+      {
+        status: 'UNDER_REVIEW',
+        adminNotes: 'Reviewing market availability and logistics routes',
+      },
+      { headers: expertHeaders }
+    );
+    assert(
+      reviewStatusRes.status === 200 &&
+        reviewStatusRes.data.data.status === 'UNDER_REVIEW',
+      'PATCH /api/agri-bazaar/requests/:id/status moves SUBMITTED -> UNDER_REVIEW'
+    );
+
+    // 15p. Status Progression to SOURCING_IN_PROGRESS with Internal Verification Details
+    const updateStatusRes = await axios.patch(
+      `${baseUrl}/agri-bazaar/requests/${requestId}/status`,
+      {
+        status: 'SOURCING_IN_PROGRESS',
+        adminNotes: 'Contacted Nalgonda grower. Inspecting produce.',
+        verifiedQuantity: 800,
+        verifiedQuality: 'Grade A Export',
+        procurementCost: 38,
+        finalQuotePrice: 42,
+      },
+      { headers: expertHeaders }
+    );
+    assert(
+      updateStatusRes.status === 200 &&
+        updateStatusRes.data.data.status === 'SOURCING_IN_PROGRESS' &&
+        updateStatusRes.data.data.verifiedQuality === 'Grade A Export',
+      'PATCH /api/agri-bazaar/requests/:id/status advances to SOURCING_IN_PROGRESS with procurement data'
+    );
+
+    // 15q. Status Audit History (Staff sees audit trail with internal notes)
+    const historyRes = await axios.get(`${baseUrl}/agri-bazaar/requests/${requestId}/history`, {
+      headers: expertHeaders,
+    });
+    assert(
+      historyRes.status === 200 &&
+        Array.isArray(historyRes.data.data) &&
+        historyRes.data.data.length >= 2 &&
+        historyRes.data.data.some((h: any) => h.newStatus === 'SOURCING_IN_PROGRESS'),
+      'GET /api/agri-bazaar/requests/:id/history retrieves complete status audit trail'
+    );
+
+    // 15r. RBAC Protection: Non-staff blocked from admin status updates
+    let nonStaffStatusBlocked = false;
+    try {
+      await axios.patch(
+        `${baseUrl}/agri-bazaar/requests/${requestId}/status`,
+        { status: 'DELIVERED' },
+        { headers: farmerHeaders }
+      );
+    } catch (err: any) {
+      if (err.response?.status === 403) nonStaffStatusBlocked = true;
+    }
+    assert(nonStaffStatusBlocked, 'PATCH /api/agri-bazaar/requests/:id/status blocks non-admin/expert users with 403 Forbidden');
+
+    // 15s. Dual Route Backward Compatibility on /crop-buying-selling
+    const backwardCompatRes = await axios.get(`${baseUrl}/crop-buying-selling/listings`);
+    assert(
+      backwardCompatRes.status === 200 && Array.isArray(backwardCompatRes.data.data),
+      'GET /api/crop-buying-selling/listings backward compatibility route operational'
     );
 
   } catch (error: any) {

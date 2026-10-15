@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../shared/widgets/large_button.dart';
 import '../../../../shared/widgets/media_picker_card.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../providers/fertilizer_guide_provider.dart';
 
-class FertilizerPhotosScreen extends StatefulWidget {
+class FertilizerPhotosScreen extends ConsumerStatefulWidget {
   const FertilizerPhotosScreen({super.key});
 
   @override
-  State<FertilizerPhotosScreen> createState() => _FertilizerPhotosScreenState();
+  ConsumerState<FertilizerPhotosScreen> createState() => _FertilizerPhotosScreenState();
 }
 
-class _FertilizerPhotosScreenState extends State<FertilizerPhotosScreen> {
-  List<String> _mediaPaths = [];
+class _FertilizerPhotosScreenState extends ConsumerState<FertilizerPhotosScreen> {
+  late List<String> _mediaPaths;
+
+  @override
+  void initState() {
+    super.initState();
+    _mediaPaths = List<String>.from(ref.read(fertilizerGuideProvider).photos);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +67,22 @@ class _FertilizerPhotosScreenState extends State<FertilizerPhotosScreen> {
                 },
               ),
               
-              const Spacer(),
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Image.asset(
+                      'assets/images/plant-photo-taking.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.eco_rounded,
+                        size: 100,
+                        color: Color(0xFF1B6327),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               
               LargeButton(
                 label: 'Next',
@@ -68,6 +91,7 @@ class _FertilizerPhotosScreenState extends State<FertilizerPhotosScreen> {
                     const SnackBar(content: Text('Please add at least one photo first.')),
                   );
                 } : () {
+                  ref.read(fertilizerGuideProvider.notifier).setPhotos(_mediaPaths);
                   context.push('/fertilizer-guide/location');
                 },
               ),

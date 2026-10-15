@@ -396,9 +396,9 @@ class HomeScreen extends ConsumerWidget {
       {'image': 'assets/images/Fertilizers-guide.png', 'title': 'Fertilizer Guide', 'route': '/fertilizer-guide'},
       {'image': 'assets/images/Disease-help.png', 'title': 'Disease Help', 'route': '/disease-help'},
       {'image': 'assets/images/weather.png', 'title': 'Weather', 'route': '/weather'},
-      {'image': 'assets/images/labours.png', 'title': 'Farm Labour', 'route': '/farm-labour'},
+      {'image': 'assets/images/labours.png', 'title': 'Farm Labour', 'route': '/farm-labour/location'},
       {'image': 'assets/images/Machineries.png', 'title': 'Farm Machinery', 'route': '/farm-machinery'},
-      {'image': 'assets/images/crop_buying_selling.png', 'title': 'Crop Buying & Selling', 'route': '/crop-buying-selling'},
+      {'image': 'assets/images/crop_buying_selling.png', 'title': 'Agri Bazaar', 'route': '/crop-buying-selling'},
     ];
 
     return GridView.builder(

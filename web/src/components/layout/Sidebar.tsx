@@ -39,10 +39,9 @@ export const Sidebar: React.FC<Props> = ({
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'requests', label: 'Farmers', icon: Users, badge: pendingCount },
     { id: 'experts', label: 'Experts', icon: Briefcase },
+    { id: 'agri-bazaar', label: 'Agri Bazaar', icon: ShoppingCart },
     { id: 'labour', label: 'Labour', icon: Users },
     { id: 'machinery', label: 'Machinery', icon: Tractor },
-    { id: 'buyers', label: 'Buyers', icon: ShoppingCart },
-    { id: 'crop-listings', label: 'Crop Listings', icon: Sprout },
     { id: 'consultations', label: 'Consultations', icon: PhoneCall },
     { id: 'payments', label: 'Payments', icon: CreditCard },
     { id: 'reports', label: 'Reports', icon: FileText },
@@ -97,7 +96,7 @@ export const Sidebar: React.FC<Props> = ({
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id === 'dashboard' || item.id === 'requests' || item.id === 'consultations' || item.id === 'experts' ? item.id : activeTab)}
+              onClick={() => setActiveTab(item.id === 'dashboard' || item.id === 'requests' || item.id === 'consultations' || item.id === 'experts' || item.id === 'agri-bazaar' ? item.id : activeTab)}
               style={{
                 display: 'flex',
                 alignItems: 'center',

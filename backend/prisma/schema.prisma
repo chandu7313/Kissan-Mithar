@@ -58,11 +58,16 @@ model Farmer {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  orchardRequests OrchardRequest[]
-  consultations   Consultation[]
-  notifications   Notification[]
-  devices         Device[]
-  drafts          OfflineDraft[]
+  orchardRequests    OrchardRequest[]
+  consultations      Consultation[]
+  notifications      Notification[]
+  devices            Device[]
+  drafts             OfflineDraft[]
+  fertilizerRequests FertilizerRequest[]
+  diseaseRequests    DiseaseRequest[]
+  labourRequests     LabourRequest[]
+  agriProductListings AgriProductListing[]
+  agriProductRequests AgriProductRequest[]
 
   @@map("farmers")
 }
@@ -82,9 +87,12 @@ model Expert {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  assignedOrchardRequests OrchardRequest[]
-  consultations           Consultation[]
-  advisories              CropAdvisory[]
+  assignedOrchardRequests    OrchardRequest[]
+  consultations              Consultation[]
+  advisories                 CropAdvisory[]
+  assignedFertilizerRequests FertilizerRequest[]
+  assignedDiseaseRequests    DiseaseRequest[]
+  assignedLabourRequests     LabourRequest[]
 
   @@map("experts")
 }
@@ -306,3 +314,341 @@ model OfflineDraft {
   @@index([flowType])
   @@map("offline_drafts")
 }
+
+enum FertilizerRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  EXPERT_ASSIGNED
+  PLAN_READY
+  COMPLETED
+  CANCELLED
+}
+
+model FertilizerRequest {
+  id                  String                  @id @default(uuid())
+  farmerId            String
+  expertId            String?
+  status              FertilizerRequestStatus @default(SUBMITTED)
+  cropType            String?
+  cropAge             String?
+  landAcres           Float?
+  soilType            String?
+  problemCategory     String?
+  issueDescription    String?
+  voiceNoteUrl        String?
+  voiceText           String?
+  photos              Json                    // string[] of image URLs or photo metadata
+  gps                 Json                    // { latitude, longitude, accuracy, address, village, district, state }
+  previousFertilizers String?
+  irrigationType      String?
+  notes               String?
+  submittedAt         DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  farmer Farmer          @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert Expert?         @relation(fields: [expertId], references: [id], onDelete: SetNull)
+  plan   FertilizerPlan?
+
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+  @@index([cropType])
+  @@map("fertilizer_requests")
+}
+
+model FertilizerPlan {
+  id                  String   @id @default(uuid())
+  fertilizerRequestId String   @unique
+  diagnosis           String
+  summary             String
+  schedule            Json     // [{ stage: string, timing: string, fertilizers: [{ name: string, dosage: string, method: string }] }]
+  organicAlternatives String?
+  soilTreatment       String?
+  precautions         String?
+  estimatedBudget     Float?
+  pdfUrl              String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  fertilizerRequest FertilizerRequest @relation(fields: [fertilizerRequestId], references: [id], onDelete: Cascade)
+
+  @@map("fertilizer_plans")
+}
+
+enum DiseaseRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  EXPERT_ASSIGNED
+  DIAGNOSED
+  COMPLETED
+  CANCELLED
+}
+
+model DiseaseRequest {
+  id                 String               @id @default(uuid())
+  farmerId           String
+  expertId           String?
+  status             DiseaseRequestStatus @default(SUBMITTED)
+  cropType           String?              // e.g. "Chilli", "Tomato", "Cotton", "Paddy"
+  cropAge            String?              // e.g. "Vegetative", "Flowering", "Fruiting"
+  affectedPart       String?              // e.g. "Leaves", "Stem", "Fruit", "Whole Plant"
+  symptomDescription String?              // Voice transcription or typed symptom description
+  voiceNoteUrl       String?              // Audio recording URL if uploaded
+  voiceText          String?              // Transcribed audio text
+  photos             Json                 // string[] of photo URLs
+  gps                Json?                // { latitude, longitude, address, village, district, state }
+  spreadRate         String?              // e.g. "Spreading fast (2 days)", "Moderate", "Isolated"
+  previousPesticides String?              // Treatments already applied
+  notes              String?
+  submittedAt        DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  farmer    Farmer                @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert    Expert?               @relation(fields: [expertId], references: [id], onDelete: SetNull)
+  treatment DiseaseTreatmentPlan?
+
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+  @@index([cropType])
+  @@map("disease_requests")
+}
+
+model DiseaseTreatmentPlan {
+  id                   String   @id @default(uuid())
+  diseaseRequestId     String   @unique
+  diseaseName          String   // e.g. "Bacterial Leaf Blight", "Chilli Thrips & Mites (Murda Complex)"
+  causalOrganism       String?  // "Fungus" | "Bacteria" | "Virus" | "Pest" | "Physiological"
+  severity             String   @default("MEDIUM") // "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
+  diagnosisSummary     String   // Detailed expert diagnosis
+  immediateAction      String   // Immediate emergency step (e.g. stop water, prune)
+  chemicalTreatment    Json     // [{ chemicalName: string, commercialBrand: string, dosage: string, applicationMethod: string, waitingPeriodDays?: number }]
+  organicTreatment     String?  // Biological & botanical alternatives (e.g. Neem oil, Trichoderma viride)
+  preventativeMeasures String?  // Sanitation, crop hygiene, resistant varieties
+  followUpDays         Int?     @default(7)
+  estimatedCost        Float?
+  pdfUrl               String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  diseaseRequest DiseaseRequest @relation(fields: [diseaseRequestId], references: [id], onDelete: Cascade)
+
+  @@map("disease_treatment_plans")
+}
+
+enum LabourRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  LABOURERS_ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum LabourTaskType {
+  PLOUGHING
+  SOWING
+  TRANSPLANTING
+  WEEDING
+  SPRAYING
+  HARVESTING
+  IRRIGATION
+  PRUNING
+  LOADING_UNLOADING
+  FENCING
+  OTHER
+}
+
+model LabourRequest {
+  id                 String              @id @default(uuid())
+  farmerId           String
+  expertId           String?
+  status             LabourRequestStatus @default(SUBMITTED)
+  taskType           LabourTaskType      @default(OTHER)
+  taskDescription    String?             // Detailed description of work needed
+  cropType           String?             // e.g. "Cotton", "Paddy", "Mango"
+  landAcres          Float?              // How much land area
+  labourersRequired  Int                 @default(1)
+  preferredStartDate DateTime?           // When the farmer wants work to begin
+  preferredEndDate   DateTime?           // Expected end date
+  durationDays       Int?                // Estimated number of working days
+  dailyWage          Float?              // Offered daily wage per labourer (INR)
+  totalBudget        Float?              // Total budget for the task (INR)
+  mealsProvided      Boolean             @default(false) // Whether farmer provides meals
+  transportProvided  Boolean             @default(false) // Whether farmer arranges transport
+  gps                Json?               // { latitude, longitude, accuracy, address, village, district, state }
+  voiceNoteUrl       String?             // Audio recording for farmers who prefer speaking
+  voiceText          String?             // Transcribed voice note text
+  photos             Json?               // string[] of farm site photos
+  specialRequirements String?            // E.g. "Need tractor operator", "Women workers preferred"
+  notes              String?
+  urgency            String              @default("NORMAL") // "LOW" | "NORMAL" | "URGENT" | "CRITICAL"
+  submittedAt        DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  farmer      Farmer              @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert      Expert?             @relation(fields: [expertId], references: [id], onDelete: SetNull)
+  allocations LabourAllocation[]
+
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+  @@index([taskType])
+  @@index([urgency])
+  @@map("labour_requests")
+}
+
+model LabourAllocation {
+  id               String   @id @default(uuid())
+  labourRequestId  String
+  labourerName     String
+  labourerPhone    String?
+  skillset         String?  // e.g. "Tractor driving", "Spraying", "Harvesting"
+  dailyWage        Float?   // Actual wage agreed for this labourer
+  startDate        DateTime?
+  endDate          DateTime?
+  daysWorked       Int?
+  totalPaid        Float?
+  isConfirmed      Boolean  @default(false)
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  labourRequest LabourRequest @relation(fields: [labourRequestId], references: [id], onDelete: Cascade)
+
+  @@index([labourRequestId])
+  @@map("labour_allocations")
+}
+
+// ==========================================
+// AGRI BAZAAR — MANAGED SOURCING & SUPPLY
+// ==========================================
+
+enum AgriBazaarRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  SOURCING_IN_PROGRESS
+  SUPPLIER_IDENTIFIED
+  VERIFICATION_IN_PROGRESS
+  PROCUREMENT_IN_PROGRESS
+  DELIVERY_IN_PROGRESS
+  DELIVERED
+  CANCELLED
+}
+
+enum AgriBazaarListingStatus {
+  ACTIVE
+  IN_NEGOTIATION
+  PROCURED
+  INACTIVE
+}
+
+model AgriProductListing {
+  id              String                  @id @default(uuid())
+  sellerId        String
+  productName     String?                 // Optional text input
+  variety         String?                 // Optional text input
+  minQuantity     Float?                  // Optional min quantity range
+  maxQuantity     Float?                  // Optional max quantity range
+  quantityUnit    String?                 // kg, quintal, tonne, box, piece, etc.
+  price           Float?                  // Optional numeric value
+  priceUnit       String?                 // per kg, per quintal, per tonne, per box, per piece
+  locationType    String                  @default("MANUAL") // "CURRENT" | "MANUAL"
+  locationName    String?                 // Display address string
+  village         String?
+  mandal          String?
+  district        String?
+  state           String?
+  pincode         String?
+  latitude        Float?
+  longitude       Float?
+  photos          Json?                   // string[] of photo URLs
+  status          AgriBazaarListingStatus @default(ACTIVE)
+  notes           String?
+  adminNotes      String?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  seller          Farmer                  @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  matches         AgriProductRequestMatch[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([productName])
+  @@map("agri_product_listings")
+}
+
+model AgriProductRequest {
+  id               String                  @id @default(uuid())
+  buyerId          String
+  productName      String                  // Required text input
+  variety          String?                 // Optional text input
+  requiredQuantity Float                   // Required fixed single numeric value
+  quantityUnit     String                  // Required: kg, quintal, tonne, box, piece
+  expectedPrice    Float?                  // Optional numeric value
+  priceUnit        String?                 // per kg, per quintal, per tonne, per box, per piece
+  locationType     String                  @default("MANUAL") // "CURRENT" | "MANUAL"
+  locationName     String?                 // Delivery location string
+  village          String?
+  mandal           String?
+  district         String?
+  state            String?
+  pincode          String?
+  latitude         Float?
+  longitude        Float?
+  photos           Json?                   // string[] of photo URLs
+  status           AgriBazaarRequestStatus @default(SUBMITTED)
+  adminNotes       String?                 // Internal notes by KM team
+  verifiedQuantity Float?                  // Verified by admin during sourcing
+  verifiedQuality  String?                 // Verified quality grade/notes
+  procurementCost  Float?                  // Price negotiated with supplier
+  finalQuotePrice  Float?                  // Price quoted to buyer
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  buyer            Farmer                  @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  matches          AgriProductRequestMatch[]
+  history          AgriProductRequestHistory[]
+
+  @@index([buyerId])
+  @@index([status])
+  @@index([productName])
+  @@map("agri_product_requests")
+}
+
+model AgriProductRequestMatch {
+  id            String             @id @default(uuid())
+  requestId     String
+  listingId     String
+  matchedBy     String?            // Admin / staff who created the match
+  status        String             @default("POTENTIAL") // "POTENTIAL" | "CONTACTED" | "VERIFIED" | "SELECTED" | "REJECTED"
+  internalNotes String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  request       AgriProductRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  listing       AgriProductListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([listingId])
+  @@map("agri_product_request_matches")
+}
+
+model AgriProductRequestHistory {
+  id             String                   @id @default(uuid())
+  requestId      String
+  previousStatus AgriBazaarRequestStatus?
+  newStatus      AgriBazaarRequestStatus
+  changedBy      String?                  // Staff user ID or 'SYSTEM' / 'BUYER'
+  internalNotes  String?                  // Optional staff internal note
+  createdAt      DateTime                 @default(now())
+
+  request        AgriProductRequest       @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([createdAt])
+  @@map("agri_product_request_history")
+}
+
+

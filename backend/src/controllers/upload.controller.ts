@@ -15,4 +15,37 @@ export class UploadController {
       next(error);
     }
   }
+
+  static async uploadAudio(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { audioData, filename } = req.body;
+      if (!audioData) {
+        res.status(400).json({
+          success: false,
+          error: { message: 'audioData is required' },
+        });
+        return;
+      }
+
+      const result = await UploadService.saveAudio(audioData, filename);
+
+      const host = req.get('host') || 'localhost:4000';
+      const protocol = req.protocol || 'http';
+      const fullUrl = result.url.startsWith('http')
+        ? result.url
+        : `${protocol}://${host}${result.url}`;
+
+      res.status(200).json({
+        success: true,
+        data: {
+          url: fullUrl,
+          filename: result.filename,
+          size: result.size,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/services/voice_recording_service.dart';
 
 class VoiceRecorderCard extends StatefulWidget {
   final String? initialVoicePath;
@@ -28,6 +29,7 @@ class VoiceRecorderCard extends StatefulWidget {
 
 class VoiceRecorderCardState extends State<VoiceRecorderCard>
     with SingleTickerProviderStateMixin {
+  final VoiceRecordingService _recordingService = VoiceRecordingService();
   bool _isRecording = false;
   bool get isRecording => _isRecording;
   bool _isPlaying = false;
@@ -61,6 +63,7 @@ class VoiceRecorderCardState extends State<VoiceRecorderCard>
   void dispose() {
     _recordTimer?.cancel();
     _playbackTimer?.cancel();
+    _recordingService.dispose();
     _pulseController.dispose();
     super.dispose();
   }
@@ -71,7 +74,7 @@ class VoiceRecorderCardState extends State<VoiceRecorderCard>
     }
   }
 
-  void _startRecording() {
+  void _startRecording() async {
     setState(() {
       _isRecording = true;
       _isPlaying = false;
@@ -79,12 +82,16 @@ class VoiceRecorderCardState extends State<VoiceRecorderCard>
       _voicePath = null;
     });
 
+    await _recordingService.startRecording();
+
     _recordTimer?.cancel();
     _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_isRecording) {
-        setState(() {
-          _recordedSeconds++;
-        });
+        if (mounted) {
+          setState(() {
+            _recordedSeconds++;
+          });
+        }
         if (_recordedSeconds >= 120) {
           // Max 2 mins
           _stopRecording();
@@ -95,14 +102,19 @@ class VoiceRecorderCardState extends State<VoiceRecorderCard>
     });
   }
 
-  void _stopRecording() {
+  void _stopRecording() async {
     _recordTimer?.cancel();
-    final dummyPath =
+    final audioResult = await _recordingService.stopRecording();
+    final fallbackPath =
         '/local/recordings/consultation_note_${DateTime.now().millisecondsSinceEpoch}.m4a';
-    setState(() {
-      _isRecording = false;
-      _voicePath = dummyPath;
-    });
+    final savedPath = audioResult ?? fallbackPath;
+
+    if (mounted) {
+      setState(() {
+        _isRecording = false;
+        _voicePath = savedPath;
+      });
+    }
     widget.onVoiceChanged?.call(_voicePath);
     widget.onDurationChanged?.call(_recordedSeconds > 0 ? _recordedSeconds : 15);
   }
@@ -110,23 +122,43 @@ class VoiceRecorderCardState extends State<VoiceRecorderCard>
   void _togglePlayback() {
     if (_isPlaying) {
       _playbackTimer?.cancel();
-      setState(() => _isPlaying = false);
+      _recordingService.stopPlayback();
+      if (mounted) {
+        setState(() => _isPlaying = false);
+      }
     } else {
+      if (_voicePath == null || _voicePath!.isEmpty) return;
+
       setState(() {
         _isPlaying = true;
         _playProgressSeconds = 0;
       });
-      final total = _recordedSeconds > 0 ? _recordedSeconds : 15;
-      _playbackTimer?.cancel();
-      _playbackTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (_playProgressSeconds < total) {
-          setState(() => _playProgressSeconds++);
-        } else {
-          timer.cancel();
+
+      _recordingService.play(_voicePath!, onCompleted: () {
+        _playbackTimer?.cancel();
+        if (mounted) {
           setState(() {
             _isPlaying = false;
             _playProgressSeconds = 0;
           });
+        }
+      });
+
+      final total = _recordedSeconds > 0 ? _recordedSeconds : 15;
+      _playbackTimer?.cancel();
+      _playbackTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (_playProgressSeconds < total) {
+          if (mounted) {
+            setState(() => _playProgressSeconds++);
+          }
+        } else {
+          timer.cancel();
+          if (mounted) {
+            setState(() {
+              _isPlaying = false;
+              _playProgressSeconds = 0;
+            });
+          }
         }
       });
     }
@@ -135,6 +167,7 @@ class VoiceRecorderCardState extends State<VoiceRecorderCard>
   void _deleteRecording() {
     _playbackTimer?.cancel();
     _recordTimer?.cancel();
+    _recordingService.stopPlayback();
     setState(() {
       _isRecording = false;
       _isPlaying = false;

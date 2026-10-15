@@ -9,6 +9,8 @@ import { RequestDetailPage } from './pages/admin/RequestDetailPage.js';
 import { ReportBuilderPage } from './pages/admin/ReportBuilderPage.js';
 import { ConsultationsPage } from './pages/admin/ConsultationsPage.js';
 import { ExpertsPage } from './pages/admin/ExpertsPage.js';
+import { AgriBazaarAdminPage } from './pages/admin/AgriBazaarAdminPage.js';
+import { AgriBazaarPage } from './pages/bazaar/AgriBazaarPage.js';
 import { SocketProvider } from './context/SocketContext.js';
 import { LandingPage } from './pages/public/LandingPage.js';
 import { ServiceDetailPage } from './pages/public/ServiceDetailPage.js';
@@ -25,12 +27,13 @@ export const App: React.FC = () => {
   const getInitialView = () => {
     const path = window.location.pathname;
     if (path.startsWith('/admin') || path.startsWith('/admin-login')) return 'app';
+    if (path.startsWith('/agri-bazaar') || path === '/services/crop-connect') return 'agri-bazaar';
     if (path.startsWith('/services/')) return 'service-detail';
     return 'landing';
   };
 
-  // App routing state (Landing vs Admin Dashboard vs Service Detail)
-  const [view, setView] = useState<'landing' | 'app' | 'service-detail'>(getInitialView());
+  // App routing state (Landing vs Admin Dashboard vs Service Detail vs Agri Bazaar)
+  const [view, setView] = useState<'landing' | 'app' | 'service-detail' | 'agri-bazaar'>(getInitialView());
   const [serviceSlug, setServiceSlug] = useState<string>(
     window.location.pathname.startsWith('/services/') ? window.location.pathname.split('/services/')[1] : ''
   );
@@ -41,6 +44,10 @@ export const App: React.FC = () => {
       const validLandingPaths = ['/', '/about', '/contact', '/services'];
       if (!validLandingPaths.includes(window.location.pathname)) {
         window.history.replaceState({}, '', '/');
+      }
+    } else if (view === 'agri-bazaar') {
+      if (!window.location.pathname.startsWith('/agri-bazaar') && window.location.pathname !== '/services/crop-connect') {
+        window.history.replaceState({}, '', '/agri-bazaar');
       }
     } else if (view === 'service-detail') {
       const expectedPath = `/services/${serviceSlug}`;
@@ -79,12 +86,22 @@ export const App: React.FC = () => {
   };
 
   const navigateToService = (slug: string) => {
+    if (slug === 'crop-connect' || slug === 'agri-bazaar') {
+      setView('agri-bazaar');
+      window.history.pushState({}, '', '/agri-bazaar');
+      return;
+    }
     setServiceSlug(slug);
     setView('service-detail');
     window.history.pushState({}, '', `/services/${slug}`);
   };
 
   const navigateToSection = (sectionId: string) => {
+    if (sectionId === 'agri-bazaar') {
+      setView('agri-bazaar');
+      window.history.pushState({}, '', '/agri-bazaar');
+      return;
+    }
     setView('landing');
     const path = sectionId === 'home' ? '/' : `/${sectionId}`;
     window.history.pushState({}, '', path);
@@ -108,6 +125,20 @@ export const App: React.FC = () => {
     setReportBuilderSource(null);
     navigateToHome();
   };
+
+  if (view === 'agri-bazaar') {
+    return (
+      <AgriBazaarPage
+        session={session}
+        onNavigateHome={navigateToHome}
+        onAdminLogin={navigateToAdminLogin}
+        onNavigateAdminDesk={() => {
+          setActiveTab('agri-bazaar');
+          setView('app');
+        }}
+      />
+    );
+  }
 
   if (view === 'service-detail') {
     return <ServiceDetailPage slug={serviceSlug} onNavigateHome={navigateToHome} onNavigateService={navigateToService} onAdminLogin={navigateToAdminLogin} onNavigateSection={navigateToSection} />;
@@ -201,6 +232,10 @@ export const App: React.FC = () => {
             <ExpertsPage />
           </div>
         )}
+
+        <div style={{ display: activeTab === 'agri-bazaar' ? 'block' : 'none', height: '100%' }}>
+          <AgriBazaarAdminPage />
+        </div>
       </>
     );
   };

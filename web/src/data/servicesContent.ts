@@ -694,87 +694,87 @@ export const servicesContent: Record<string, ServiceContent> = {
   'crop-connect': {
     id: 'crop-connect',
     slug: 'crop-connect',
-    title: 'Crop Connect',
-    shortProposition: 'Connect directly with buyers and get better prices for your harvest.',
-    explanation: 'Bypass the complex traditional supply chain. List your expected harvest and connect directly with traders, food processors, and agricultural companies looking for quality produce.',
-    primaryCTA: 'Connect Your Crop',
+    title: 'Agri Bazaar',
+    shortProposition: 'Agricultural Products Sourcing & Supply — by Kissan Mithar',
+    explanation: 'Your Agricultural Needs, Sourced and Delivered. Agri Bazaar is a managed agricultural product sourcing and supply service operated by Kissan Mithar. We identify suitable growers, verify quantity and quality, coordinate fair pricing, and manage end-to-end delivery.',
+    primaryCTA: 'Request a Product',
     heroImage: ASSETS.SERVICES.CROP_CONNECT,
     
-    problemHeading: 'Growing a great crop is only half the battle. Selling it is the hard part.',
+    problemHeading: 'Sourcing bulk agricultural produce directly shouldn\'t involve middlemen risks and quality uncertainty.',
     problems: [
-      'Exploitation by multiple middlemen reducing farmer profits',
-      'Lack of visibility into current market demand',
-      'Inability to find bulk buyers for specialized crops',
-      'Post-harvest losses while waiting for a buyer'
+      'Uncertain produce quality and absence of standardized farm inspection',
+      'Exploitation by multiple intermediaries inflating procurement costs',
+      'Difficulty locating reliable growers with certified bulk volume',
+      'Logistics, transportation, and post-harvest handling headaches'
     ],
     
-    whatItIs: 'A digital bridge between farmers and verified agricultural buyers.',
-    whatItDoes: 'Allows you to list your crop details so interested buyers can contact you directly for procurement.',
-    whatIsRequired: 'Crop type, variety, expected harvest date, and estimated quantity.',
-    whatResult: 'Direct inquiries and offers from interested bulk buyers.',
+    whatItIs: 'A managed agricultural product sourcing and supply service operated by Kissan Mithar.',
+    whatItDoes: 'Kissan Mithar manages the entire sourcing lifecycle between clients and growers. We verify farm availability, inspect quality on-site, coordinate fair pricing, and handle transportation.',
+    whatIsRequired: 'Product name, required fixed quantity, and delivery destination.',
+    whatResult: 'Inspected, high-grade agricultural produce delivered directly to your facility or market.',
     
     workflowSteps: [
-      'Create a listing for your current or upcoming crop',
-      'Add details: Variety, Acreage, Expected Quantity, Harvest Date',
-      'Upload photos as the crop nears maturity',
-      'Verified buyers browse listings and send inquiries',
-      'Negotiate directly and finalize the sale'
+      'Submit your product request specifying exact quantity and delivery destination',
+      'Kissan Mithar sourcing team reviews requirements and identifies certified growers',
+      'Field agronomists conduct physical quantity and quality inspection at the farm gate',
+      'Fair procurement pricing and transportation logistics are coordinated transparently',
+      'Produce is harvested, packed, transported, and delivered with live status tracking'
     ],
     
     outputs: [
-      'Digital crop listing visible to registered buyers',
-      'Direct buyer inquiries and messaging',
-      'Market linkage without middlemen',
-      'Pre-harvest booking potential'
+      'Dedicated Kissan Mithar managed procurement coordinator',
+      'On-site quality and grade inspection verification',
+      'Transparent pricing without predatory intermediaries',
+      'Doorstep freight and logistics management'
     ],
     
     targetAudience: [
-      'Commercial farmers looking for bulk buyers',
-      'Growers of high-value or specialized crops',
-      'Farmers frustrated with local mandi prices',
-      'Food processing companies and bulk traders seeking direct sourcing'
+      'Bulk buyers, food processors, and agricultural traders needing verified supplies',
+      'Commercial growers, orchard owners, and nurseries seeking managed demand',
+      'Businesses requiring regular, dependable agricultural raw materials',
+      'Farmers looking to supply produce directly to managed supply chains'
     ],
     
-    timing: 'Create a listing 1-2 months before expected harvest to give buyers time to plan procurement.',
+    timing: 'Submit requests 1-2 weeks in advance for seasonal produce, or anytime for stored commodities.',
     
     benefits: [
-      'Increase profit margins by removing middlemen',
-      'Secure buyers before the crop is even harvested',
-      'Access larger, more professional markets and companies',
-      'Reduce post-harvest stress and storage costs'
+      'Guaranteed produce quality verified by agricultural experts on-site',
+      'End-to-end logistics and transportation managed entirely by Kissan Mithar',
+      'Zero middleman exploitation — fair value for both growers and buyers',
+      'Complete confidentiality — buyer and supplier private details are safely protected'
     ],
     
-    exampleProblem: 'Raju is growing 10 acres of export-quality bananas but local traders are offering him a very low rate.',
-    exampleAction: 'He lists his crop on Crop Connect, noting the specific variety, quality, and harvest date 4 weeks away.',
-    exampleAssistance: 'A fruit processing company from a neighboring city sees the listing and contacts him directly.',
-    exampleResult: 'Raju signs a procurement agreement at a 20% higher premium than local rates, with transport arranged by the buyer.',
+    exampleProblem: 'A customer needs one ton of fresh lemons for a processing unit, but local mandis offer inconsistent sizes with high broker commissions.',
+    exampleAction: 'The customer submits a product request on Agri Bazaar specifying 1 tonne of Kagzi lemons and delivery to Hyderabad.',
+    exampleAssistance: 'Kissan Mithar team identifies certified lemon orchards in Nalgonda, inspects the crop quality at the farm gate, and negotiates fair procurement pricing.',
+    exampleResult: 'One ton of grade-A lemons is harvested, sorted, and delivered directly to the customer facility with full tracking.',
     
-    provider: 'Kissan Mithar Market Linkage Platform',
+    provider: 'Agri Bazaar — by Kissan Mithar',
     
     requirements: [
-      'Accurate crop variety and expected yield',
-      'Estimated harvest date',
-      'Farm location for logistics planning',
-      'Honest representation of crop quality'
+      'Product name and variety required',
+      'Specific required quantity and unit',
+      'Delivery location and timeframe',
+      'Target quality specifications or grade preference'
     ],
     
     trustElements: [
-      'Buyers are verified businesses and registered traders',
-      'Farmers retain complete control over negotiation and final sale',
-      'Kissan Mithar support team assists in facilitating connections'
+      'Fully managed sourcing — Kissan Mithar inspects quality before dispatch',
+      'No direct contact required — privacy and commercial terms are safely managed',
+      'Transparent status tracking across all 9 sourcing and delivery stages'
     ],
     
     faqs: [
-      { q: 'Does Kissan Mithar buy the crop?', a: 'No, we are a platform connecting you directly with independent buyers and companies.' },
-      { q: 'When should I list my crop?', a: 'Ideally 30-45 days before harvest. Early visibility attracts better buyers.' },
-      { q: 'Who organizes transport?', a: 'Logistics are negotiated directly between the farmer and the buyer during the deal.' },
-      { q: 'Is there a fee to list my crop?', a: 'Basic listing is currently free for farmers.' }
+      { q: 'Is Agri Bazaar a direct buyer-to-seller marketplace?', a: 'No. Agri Bazaar is a managed sourcing service operated by Kissan Mithar. We inspect produce, coordinate pricing, and manage transportation directly.' },
+      { q: 'Can buyers contact growers directly?', a: 'No. To guarantee quality standards, fair pricing, and data privacy, Kissan Mithar manages all communication and logistics.' },
+      { q: 'How is produce quality verified?', a: 'Our agricultural field team visits the source farm to physically verify quantity, maturity, and quality grades prior to dispatch.' },
+      { q: 'How do suppliers register their harvest?', a: 'Growers and nurseries can register available produce, quantity ranges, and expected prices through the Agri Bazaar supplier registration form.' }
     ],
     
     relatedServices: ['expert-consultancy', 'farm-labour'],
     
-    metaTitle: 'Sell Crops Directly to Buyers - Crop Connect | Kissan Mithar',
-    metaDescription: 'List your harvest and connect directly with verified agricultural buyers, traders, and food processors to get better prices.'
+    metaTitle: 'Agri Bazaar — Agricultural Products Sourcing & Supply | Kissan Mithar',
+    metaDescription: 'Your Agricultural Needs, Sourced and Delivered. Managed procurement, quality verification, and delivery by Kissan Mithar.'
   },
 
   'ai-farming-assistant': {

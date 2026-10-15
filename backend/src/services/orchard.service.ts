@@ -264,11 +264,21 @@ export class OrchardService {
     newStatus: OrchardRequestStatus,
     expertId?: string
   ) {
+    let validExpertId: string | undefined = undefined;
+    if (expertId) {
+      try {
+        const exp = await prisma.expert.findUnique({ where: { id: expertId }, select: { id: true } });
+        if (exp) validExpertId = exp.id;
+      } catch {
+        // Ignore lookup error if offline/mock
+      }
+    }
+
     const updated = await prisma.orchardRequest.update({
       where: { id },
       data: {
         status: newStatus,
-        ...(expertId ? { expertId } : {}),
+        ...(validExpertId ? { expertId: validExpertId } : {}),
       },
       include: {
         farmer: true,

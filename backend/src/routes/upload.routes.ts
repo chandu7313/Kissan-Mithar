@@ -13,5 +13,6 @@ const signUploadSchema = z.object({
 });
 
 router.post('/sign', requireAuth, validateRequest(signUploadSchema), UploadController.sign);
+router.post('/audio', UploadController.uploadAudio);
 
 export default router;

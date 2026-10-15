@@ -11,6 +11,10 @@ import mandiRoutes from './mandi.routes.js';
 import advisoryRoutes from './advisory.routes.js';
 import analyticsRoutes from './analytics.routes.js';
 import expertRoutes from './expert.routes.js';
+import fertilizerRoutes from './fertilizer.routes.js';
+import diseaseRoutes from './disease.routes.js';
+import labourRoutes from './labour.routes.js';
+import agriBazaarRoutes from './agriBazaar.routes.js';
 
 const router = Router();
 
@@ -64,5 +68,13 @@ router.use('/mandi-prices', mandiRoutes);
 router.use('/advisories', advisoryRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/experts', expertRoutes);
+router.use('/fertilizer-requests', fertilizerRoutes);
+router.use('/fertilizer-guide', fertilizerRoutes);
+router.use('/disease-requests', diseaseRoutes);
+router.use('/disease-help', diseaseRoutes);
+router.use('/labour-requests', labourRoutes);
+router.use('/labour-help', labourRoutes);
+router.use('/agri-bazaar', agriBazaarRoutes);
+router.use('/crop-buying-selling', agriBazaarRoutes);
 
 export default router;

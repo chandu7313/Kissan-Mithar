@@ -26,4 +26,52 @@ export class UploadService {
       folder,
     };
   }
+
+  /**
+   * Saves an audio recording (data URL or base64) directly to server storage
+   */
+  static async saveAudio(
+    audioData: string,
+    filenameHint?: string
+  ): Promise<{ url: string; filename: string; size: number }> {
+    if (audioData.startsWith('http://') || audioData.startsWith('https://')) {
+      return { url: audioData, filename: filenameHint || 'audio.m4a', size: 0 };
+    }
+
+    const fs = await import('fs');
+    const path = await import('path');
+
+    let buffer: Buffer;
+    let ext = 'webm';
+
+    if (audioData.startsWith('data:')) {
+      const match = audioData.match(/^data:audio\/([a-zA-Z0-9]+);base64,(.+)$/);
+      if (match) {
+        ext = match[1] === 'mp4' ? 'm4a' : match[1];
+        buffer = Buffer.from(match[2], 'base64');
+      } else {
+        const commaIdx = audioData.indexOf(',');
+        buffer = Buffer.from(audioData.substring(commaIdx + 1), 'base64');
+      }
+    } else {
+      buffer = Buffer.from(audioData, 'base64');
+    }
+
+    const uploadDir = path.join(process.cwd(), 'uploads', 'voice');
+    await fs.promises.mkdir(uploadDir, { recursive: true });
+
+    const safeFilename = `voice_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+    const filePath = path.join(uploadDir, safeFilename);
+    await fs.promises.writeFile(filePath, buffer);
+
+    const host = `localhost:${env.PORT}`;
+    const publicUrl = `http://${host}/uploads/voice/${safeFilename}`;
+
+    return {
+      url: publicUrl,
+      filename: safeFilename,
+      size: buffer.length,
+    };
+  }
 }
+

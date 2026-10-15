@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../../shared/widgets/farmer_app_bar.dart';
 import '../../../../shared/widgets/large_button.dart';
-import '../../../../l10n/app_localizations.dart';
+import '../providers/fertilizer_guide_provider.dart';
 
-class FertilizerLocationScreen extends StatefulWidget {
+class FertilizerLocationScreen extends ConsumerStatefulWidget {
   const FertilizerLocationScreen({super.key});
 
   @override
-  State<FertilizerLocationScreen> createState() => _FertilizerLocationScreenState();
+  ConsumerState<FertilizerLocationScreen> createState() => _FertilizerLocationScreenState();
 }
 
-class _FertilizerLocationScreenState extends State<FertilizerLocationScreen> {
+class _FertilizerLocationScreenState extends ConsumerState<FertilizerLocationScreen> {
   GoogleMapController? _mapController;
-  LatLng _selectedLocation = const LatLng(16.2272, 77.8012); // Default
-  String _address = 'Gadwal, Telangana';
+  late LatLng _selectedLocation;
+  late String _address;
   bool _isLoadingLocation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final state = ref.read(fertilizerGuideProvider);
+    _selectedLocation = LatLng(state.latitude, state.longitude);
+    _address = state.address;
+  }
 
   Future<void> _getCurrentLocation() async {
     setState(() {
@@ -46,7 +55,7 @@ class _FertilizerLocationScreenState extends State<FertilizerLocationScreen> {
       
       setState(() {
         _selectedLocation = LatLng(position.latitude, position.longitude);
-        _address = 'Current Location (${position.latitude.toStringAsFixed(2)}, ${position.longitude.toStringAsFixed(2)})';
+        _address = 'Current Location (${position.latitude.toStringAsFixed(3)}, ${position.longitude.toStringAsFixed(3)})';
       });
 
       _mapController?.animateCamera(
@@ -117,7 +126,7 @@ class _FertilizerLocationScreenState extends State<FertilizerLocationScreen> {
                       child: GoogleMap(
                         initialCameraPosition: CameraPosition(
                           target: _selectedLocation,
-                          zoom: 12.0,
+                          zoom: 13.0,
                         ),
                         onMapCreated: (controller) {
                           _mapController = controller;
@@ -125,7 +134,7 @@ class _FertilizerLocationScreenState extends State<FertilizerLocationScreen> {
                         onTap: (LatLng location) {
                           setState(() {
                             _selectedLocation = location;
-                            _address = 'Selected Location (${location.latitude.toStringAsFixed(2)}, ${location.longitude.toStringAsFixed(2)})';
+                            _address = 'Selected Location (${location.latitude.toStringAsFixed(3)}, ${location.longitude.toStringAsFixed(3)})';
                           });
                         },
                         markers: {
@@ -193,6 +202,11 @@ class _FertilizerLocationScreenState extends State<FertilizerLocationScreen> {
               child: LargeButton(
                 label: 'Confirm Location',
                 onPressed: () {
+                  ref.read(fertilizerGuideProvider.notifier).setLocation(
+                    _selectedLocation.latitude,
+                    _selectedLocation.longitude,
+                    _address,
+                  );
                   context.push('/fertilizer-guide/voice');
                 },
               ),

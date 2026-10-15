@@ -74,6 +74,9 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ onAdminLogin, transp
             <a href="/" onClick={(e) => {
               if (onNavigateSection) { e.preventDefault(); onNavigateSection('home'); }
             }}>Home</a>
+            <a href="/agri-bazaar" onClick={(e) => {
+              if (onNavigateSection) { e.preventDefault(); onNavigateSection('agri-bazaar'); }
+            }}>Agri Bazaar</a>
             <a href="/services" onClick={(e) => {
               if (onNavigateSection) { e.preventDefault(); onNavigateSection('services'); }
             }}>Services</a>
@@ -121,6 +124,10 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({ onAdminLogin, transp
               setMobileMenuOpen(false);
               if (onNavigateSection) { e.preventDefault(); onNavigateSection('home'); }
             }}>Home</a>
+            <a href="/agri-bazaar" onClick={(e) => {
+              setMobileMenuOpen(false);
+              if (onNavigateSection) { e.preventDefault(); onNavigateSection('agri-bazaar'); }
+            }}>Agri Bazaar</a>
             <a href="/services" onClick={(e) => {
               setMobileMenuOpen(false);
               if (onNavigateSection) { e.preventDefault(); onNavigateSection('services'); }
