@@ -670,7 +670,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin, onNaviga
               Empowering millions of Indian farmers with accurate, soil-verified data tailored for maximum harvest. Farm smarter, farm with Mithar.
             </p>
             <div className="contact-details">
-              <strong>Kissan Mithar Agrotech Pvt. Ltd.</strong><br />
+              <strong>Kissan Mithar Private Limited.</strong><br />
               Founder & CEO: Ranjith<br />
               Headquarters: Gadwal, Telangana, India<br />
               Farmer Helpline: <a href="tel:+919392699963">+91 9392699963</a>
@@ -708,7 +708,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin, onNaviga
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2026 Kissan Mithar Agrotech Pvt. Ltd. All rights reserved.</p>
+          <p>&copy; 2026 Kissan Mithar Private Limited. All rights reserved.</p>
         </div>
       </footer>
     </div>
