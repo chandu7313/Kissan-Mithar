@@ -1,0 +1,118 @@
+/* ===================================================
+   MOBILE BOTTOM NAVIGATION BAR
+   App-like Tab Bar for Mobile Devices
+   =================================================== */
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 62px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(22, 101, 52, 0.12);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 4px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: #64748b;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    padding: 4px 0 2px;
+    transition: color 0.15s ease, transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  .nav-icon-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    transition: all 0.2s ease;
+  }
+
+  .nav-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    margin-top: 2px;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    transition: color 0.15s ease;
+  }
+
+  .mobile-nav-item.active {
+    color: #166534;
+  }
+
+  .mobile-nav-item.active .nav-label {
+    font-weight: 700;
+    color: #166534;
+  }
+
+  .mobile-nav-item.active .nav-icon-box {
+    color: #166534;
+  }
+
+  .active-dot {
+    position: absolute;
+    bottom: 2px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #166534;
+  }
+
+  .nav-badge-pill {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    box-shadow: 0 1px 3px rgba(239, 68, 68, 0.4);
+  }
+
+  .ai-icon-box {
+    color: #166534;
+  }
+
+  .app-icon-box {
+    background: #f0fdf4;
+    border-radius: 8px;
+    color: #166534;
+  }
+}

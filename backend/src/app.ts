@@ -56,7 +56,15 @@ export const createApp = (): Express => {
   }
   app.use(globalLimiter);
 
-  // 4. Mount API Routes
+  // 4. Mount API Routes & Root Probes
+  app.get('/health', (_req, res) => {
+    res.status(200).json({
+      status: 'healthy',
+      service: 'kissan-mithar-backend',
+      timestamp: new Date().toISOString(),
+    });
+  });
+
   app.use(env.API_PREFIX, routes);
 
   // Fallback 404 handler

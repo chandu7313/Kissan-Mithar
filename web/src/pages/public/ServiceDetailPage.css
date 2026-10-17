@@ -512,7 +512,7 @@
     gap: 2rem;
   }
   .sd-hero {
-    padding-top: 8rem;
+    padding-top: 6rem;
   }
   .sd-example-row {
     flex-direction: column;
@@ -532,19 +532,82 @@
 }
 
 @media (max-width: 768px) {
+  .sd-hero {
+    padding: 4.5rem 1rem 2rem;
+    min-height: auto;
+  }
+  .sd-hero-container {
+    gap: 1.5rem;
+  }
   .sd-hero-title {
-    font-size: 2.5rem;
+    font-size: 1.85rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
   }
   .sd-hero-proposition {
-    font-size: 1.25rem;
+    font-size: 1.05rem;
+    line-height: 1.4;
   }
-  .sd-section-title {
-    font-size: 1.75rem;
+  .sd-hero-explanation {
+    font-size: 0.92rem;
+    margin-bottom: 1.5rem;
+  }
+  .sd-hero-ctas {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  .sd-hero-ctas button {
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem;
   }
   .sd-section {
-    padding: 3rem 1.5rem;
+    padding: 2.5rem 1rem;
+  }
+  .sd-section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .sd-problem-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .sd-problem-card {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+  .sd-problem-card p {
+    font-size: 0.9rem;
+  }
+  .sd-what-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .sd-what-card {
+    padding: 1.25rem;
+    border-radius: 14px;
+  }
+  .sd-what-card p {
+    font-size: 0.92rem;
+  }
+  .sd-timeline-step {
+    padding: 1rem;
+    border-radius: 14px;
+    gap: 1rem;
+  }
+  .sd-timeline-number {
+    font-size: 1.5rem;
+  }
+  .sd-timeline-content p {
+    font-size: 0.9rem;
   }
   .sd-example-card {
-    padding: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 14px;
+  }
+  .sd-related-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }

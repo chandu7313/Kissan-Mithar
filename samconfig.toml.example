@@ -1,0 +1,56 @@
+# ==============================================================================
+# AWS SAM CLI Configuration Example — Kissan Mithar Backend
+# ==============================================================================
+# Copy this file to samconfig.toml and update with your real Supabase and AWS values:
+#   cp samconfig.toml.example samconfig.toml
+#
+# Deploy command:
+#   sam build
+#   sam deploy --guided  (first time)
+#   sam deploy           (subsequent deployments)
+# ==============================================================================
+
+version = 0.1
+
+[default]
+[default.global.parameters]
+stack_name = "kissan-mithar-backend"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "ap-south-1"
+image_repositories = [
+  # ECR URI created by "sam deploy --guided" or AWS console:
+  # "ApiFunction=123456789012.dkr.ecr.ap-south-1.amazonaws.com/kissan-mithar-api",
+  # "CleanupFunction=123456789012.dkr.ecr.ap-south-1.amazonaws.com/kissan-mithar-cleanup"
+]
+parameter_overrides = [
+  "Environment=\"production\"",
+  "LogLevel=\"info\"",
+  "ApiPrefix=\"/api\"",
+  "CorsOrigins=\"https://kissan-mithar.vercel.app,https://kissan-mithar-app.vercel.app,http://localhost:5173\"",
+  "DatabaseUrl=\"postgresql://postgres.YOUR_PROJECT_REF:YOUR_PASSWORD@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true\"",
+  "DirectUrl=\"postgresql://postgres.YOUR_PROJECT_REF:YOUR_PASSWORD@aws-0-ap-south-1.pooler.supabase.com:5432/postgres\"",
+  "JwtSecret=\"REPLACE_WITH_YOUR_32_CHAR_SECURE_JWT_SECRET\"",
+  "JwtExpiresIn=\"7d\"",
+  "FirebaseProjectId=\"kissan-mithar\"",
+  "FirebaseClientEmail=\"firebase-adminsdk-xxx@kissan-mithar.iam.gserviceaccount.com\"",
+  "FirebasePrivateKey=\"-----BEGIN PRIVATE KEY-----\\nYOUR_KEY\\n-----END PRIVATE KEY-----\\n\"",
+  "MockFirebaseAuth=\"false\"",
+  "CloudinaryCloudName=\"YOUR_CLOUDINARY_CLOUD_NAME\"",
+  "CloudinaryApiKey=\"YOUR_CLOUDINARY_API_KEY\"",
+  "CloudinaryApiSecret=\"YOUR_CLOUDINARY_API_SECRET\"",
+  "CloudinaryUploadPreset=\"YOUR_CLOUDINARY_UPLOAD_PRESET\"",
+  "WeatherApiKey=\"YOUR_OPENWEATHER_API_KEY\"",
+  "SmsApiKey=\"YOUR_FAST2SMS_API_KEY\"",
+  "SmsProvider=\"fast2sms\""
+]

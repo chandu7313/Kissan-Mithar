@@ -16,9 +16,8 @@ export const prisma =
     },
   });
 
-if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma;
-}
+// Preserve single PrismaClient instance on global across warm Lambda container invocations
+global.prisma = prisma;
 
 /**
  * Warm up the database connection with retry logic.

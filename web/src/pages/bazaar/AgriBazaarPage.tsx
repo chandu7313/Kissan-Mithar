@@ -34,6 +34,7 @@ import {
   AgriProductListing,
   AgriProductRequest
 } from '../../api/agriBazaar.api.js';
+import { MobileBottomNav } from '../../components/layout/MobileBottomNav.js';
 import './AgriBazaar.css';
 
 interface AgriBazaarPageProps {
@@ -1897,6 +1898,22 @@ export const AgriBazaarPage: React.FC<AgriBazaarPageProps> = ({
           </div>
         </div>
       )}
+
+      {/* Mobile App Bottom Navigation Bar */}
+      <MobileBottomNav
+        activeTab="bazaar"
+        onNavigateHome={onNavigateHome}
+        onNavigateBazaar={() => {
+          setCurrentView('home');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onNavigateSection={(sectionId) => {
+          if (sectionId === 'home') onNavigateHome();
+          else if (sectionId === 'services') {
+            window.location.href = '/#services';
+          }
+        }}
+      />
     </div>
   );
 

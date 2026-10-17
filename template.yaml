@@ -1,0 +1,294 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Kissan Mithar — Docker + AWS Lambda Serverless Backend
+  Deploys the Express + Prisma backend inside a container image to AWS Lambda
+  fronted by Amazon API Gateway HTTP API, with EventBridge scheduled hygiene tasks.
+
+# ------------------------------------------------------------------------------
+# Parameters — Configurable for staging / production environments
+# ------------------------------------------------------------------------------
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - production
+      - staging
+      - development
+    Description: Deployment environment stage name
+
+  LogLevel:
+    Type: String
+    Default: info
+    AllowedValues:
+      - fatal
+      - error
+      - warn
+      - info
+      - debug
+      - trace
+    Description: Application logging verbosity
+
+  ApiPrefix:
+    Type: String
+    Default: /api
+    Description: Base API path prefix (e.g., /api)
+
+  CorsOrigins:
+    Type: String
+    Default: 'https://kissan-mithar.vercel.app,https://kissan-mithar-app.vercel.app,http://localhost:5173,http://localhost:3000'
+    Description: Comma-separated list of allowed CORS origins for web frontend and mobile clients
+
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+    Description: PostgreSQL connection string (Supabase with PgBouncer, pooling port 6543)
+
+  DirectUrl:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: Direct PostgreSQL connection string (Supabase direct connection, port 5432)
+
+  JwtSecret:
+    Type: String
+    NoEcho: true
+    Description: Secret key used to sign and verify JWT authentication tokens
+
+  JwtExpiresIn:
+    Type: String
+    Default: 7d
+    Description: JWT token expiration duration (e.g., 7d, 24h)
+
+  FirebaseProjectId:
+    Type: String
+    Default: ''
+    Description: Firebase Project ID for Firebase Admin SDK
+
+  FirebaseClientEmail:
+    Type: String
+    Default: ''
+    Description: Firebase Client Email from Service Account
+
+  FirebasePrivateKey:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: Firebase Service Account Private Key (single-line with \n escapes)
+
+  MockFirebaseAuth:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable mock Firebase auth when service account credentials are unavailable
+
+  CloudinaryCloudName:
+    Type: String
+    Default: ''
+    Description: Cloudinary Cloud Name for media asset storage
+
+  CloudinaryApiKey:
+    Type: String
+    Default: ''
+    Description: Cloudinary API Key
+
+  CloudinaryApiSecret:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: Cloudinary API Secret
+
+  CloudinaryUploadPreset:
+    Type: String
+    Default: ''
+    Description: Cloudinary unsigned or signed upload preset
+
+  WeatherApiKey:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: OpenWeatherMap API Key for agricultural weather advisory
+
+  SmsApiKey:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: Fast2SMS API Key for farmer mobile OTP delivery
+
+  SmsProvider:
+    Type: String
+    Default: fast2sms
+    Description: SMS provider name (default: fast2sms)
+
+  WeatherApiUrl:
+    Type: String
+    Default: 'https://api.openweathermap.org/data/2.5'
+    Description: OpenWeatherMap base API URL
+
+  SupabaseUrl:
+    Type: String
+    Default: ''
+    Description: Supabase project URL
+
+  SupabaseAnonKey:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: Supabase anonymous client key
+
+# ------------------------------------------------------------------------------
+# Globals — Defaults applied across serverless functions
+# ------------------------------------------------------------------------------
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        NODE_ENV: !Ref Environment
+        LOG_LEVEL: !Ref LogLevel
+        API_PREFIX: !Ref ApiPrefix
+        CORS_ORIGINS: !Ref CorsOrigins
+        DATABASE_URL: !Ref DatabaseUrl
+        DIRECT_URL: !Ref DirectUrl
+        JWT_SECRET: !Ref JwtSecret
+        JWT_EXPIRES_IN: !Ref JwtExpiresIn
+        FIREBASE_PROJECT_ID: !Ref FirebaseProjectId
+        FIREBASE_CLIENT_EMAIL: !Ref FirebaseClientEmail
+        FIREBASE_PRIVATE_KEY: !Ref FirebasePrivateKey
+        MOCK_FIREBASE_AUTH: !Ref MockFirebaseAuth
+        CLOUDINARY_CLOUD_NAME: !Ref CloudinaryCloudName
+        CLOUDINARY_API_KEY: !Ref CloudinaryApiKey
+        CLOUDINARY_API_SECRET: !Ref CloudinaryApiSecret
+        CLOUDINARY_UPLOAD_PRESET: !Ref CloudinaryUploadPreset
+        WEATHER_API_KEY: !Ref WeatherApiKey
+        WEATHER_API_URL: !Ref WeatherApiUrl
+        SMS_API_KEY: !Ref SmsApiKey
+        SMS_PROVIDER: !Ref SmsProvider
+        SUPABASE_URL: !Ref SupabaseUrl
+        SUPABASE_ANON_KEY: !Ref SupabaseAnonKey
+
+# ------------------------------------------------------------------------------
+# Resources
+# ------------------------------------------------------------------------------
+Resources:
+
+  # 1. Amazon API Gateway HTTP API (v2) — 70% cheaper than REST API ($1/million)
+  HttpApiGateway:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: !Sub kissan-mithar-api-${Environment}
+      Description: HTTP API Gateway for Kissan Mithar backend
+      CorsConfiguration:
+        AllowOrigins:
+          - 'https://kissan-mithar.vercel.app'
+          - 'https://kissan-mithar-app.vercel.app'
+          - 'http://localhost:5173'
+          - 'http://localhost:3000'
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Authorization
+          - X-Requested-With
+          - Accept
+        AllowCredentials: true
+        MaxAge: 3600
+
+  # 2. Main API Lambda Function (Docker Container Image)
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub kissan-mithar-api-${Environment}
+      Description: Express + Prisma API Lambda function running inside Docker
+      PackageType: Image
+      ImageConfig:
+        Command:
+          - dist/lambda.handler
+      Events:
+        ProxyRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /{proxy+}
+            Method: ANY
+        RootRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /
+            Method: ANY
+    Metadata:
+      DockerTag: latest
+      DockerContext: ./backend
+      Dockerfile: Dockerfile
+
+  # Explicit CloudWatch Log Group with 14-day retention for cost control
+  ApiFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/kissan-mithar-api-${Environment}
+      RetentionInDays: 14
+
+  # 3. Scheduled Hygiene Function (Reuses the same Docker Image)
+  CleanupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub kissan-mithar-cleanup-${Environment}
+      Description: Periodic database hygiene (expired OTPs & old audit logs)
+      PackageType: Image
+      MemorySize: 256
+      Timeout: 60
+      ImageConfig:
+        Command:
+          - dist/cleanup-handler.handler
+      Events:
+        ScheduledCleanup:
+          Type: Schedule
+          Properties:
+            Schedule: rate(6 hours)
+            Name: !Sub kissan-mithar-cleanup-schedule-${Environment}
+            Description: Trigger database cleanup every 6 hours
+            Enabled: true
+    Metadata:
+      DockerTag: latest
+      DockerContext: ./backend
+      Dockerfile: Dockerfile
+
+  CleanupFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/kissan-mithar-cleanup-${Environment}
+      RetentionInDays: 14
+
+# ------------------------------------------------------------------------------
+# Outputs — Connection endpoints for frontend and operational dashboards
+# ------------------------------------------------------------------------------
+Outputs:
+  HttpApiGatewayUrl:
+    Description: Base HTTP API Gateway URL for Kissan Mithar
+    Value: !Sub https://${HttpApiGateway}.execute-api.${AWS::Region}.amazonaws.com
+
+  ApiEndpointUrl:
+    Description: Full API prefix endpoint for frontend configuration
+    Value: !Sub https://${HttpApiGateway}.execute-api.${AWS::Region}.amazonaws.com/api
+
+  HealthCheckUrl:
+    Description: Health probe URL
+    Value: !Sub https://${HttpApiGateway}.execute-api.${AWS::Region}.amazonaws.com/health
+
+  ApiFunctionArn:
+    Description: Main API Lambda Function ARN
+    Value: !GetAtt ApiFunction.Arn
+
+  CleanupFunctionArn:
+    Description: Scheduled Cleanup Lambda Function ARN
+    Value: !GetAtt CleanupFunction.Arn

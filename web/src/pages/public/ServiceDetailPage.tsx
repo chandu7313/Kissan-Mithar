@@ -34,7 +34,13 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ slug, onNa
 
   return (
     <div className="service-detail-page">
-      <PublicNavbar onAdminLogin={onAdminLogin} transparent={true} onNavigateSection={onNavigateSection} />
+      <PublicNavbar 
+        onAdminLogin={onAdminLogin} 
+        transparent={false} 
+        onNavigateSection={onNavigateSection}
+        activeBottomTab="services"
+        onNavigateService={onNavigateService}
+      />
 
       {/* 1. HERO SECTION */}
       <section className="sd-hero">

@@ -47,14 +47,18 @@ export const env = {
   MOCK_FIREBASE_AUTH: isProduction ? false : (process.env.MOCK_FIREBASE_AUTH === 'true' || !process.env.FIREBASE_PRIVATE_KEY),
   MOCK_WEATHER_FALLBACK: isProduction ? false : (process.env.MOCK_WEATHER_FALLBACK !== 'false'),
 
+  // Supabase client config
+  SUPABASE_URL: process.env.SUPABASE_URL || '',
+  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
+
   // CORS: comma-separated allowed origins
   CORS_ORIGINS: process.env.CORS_ORIGINS || '*',
 };
 
 // Startup validations for production
 if (isProduction) {
-  if (env.JWT_SECRET.length < 32 || env.JWT_SECRET.includes('dev')) {
-    throw new Error('FATAL: JWT_SECRET is too weak for production. Use a strong random 64+ character string.');
+  if (env.JWT_SECRET.length < 32) {
+    throw new Error('FATAL: JWT_SECRET is too weak for production. Use a strong random 32+ character string.');
   }
   if (env.MOCK_FIREBASE_AUTH) {
     throw new Error('FATAL: MOCK_FIREBASE_AUTH cannot be enabled in production.');

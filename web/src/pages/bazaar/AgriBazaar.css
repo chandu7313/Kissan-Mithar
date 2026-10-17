@@ -1393,6 +1393,38 @@
 }
 
 @media (max-width: 768px) {
+  .agri-bazaar-root {
+    padding-bottom: 64px;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .bz-header {
+    height: 60px;
+  }
+
+  .bz-header-container {
+    height: 60px;
+    padding: 0 14px;
+    gap: 8px;
+  }
+
+  .bz-brand-logo {
+    height: 36px;
+  }
+
+  .bz-brand-title {
+    font-size: 16px;
+  }
+
+  .bz-brand-title span.bz-accent {
+    display: none;
+  }
+
+  .bz-brand-descriptor {
+    display: none;
+  }
+
   .bz-nav-desktop {
     display: none;
   }
@@ -1405,8 +1437,32 @@
     display: none;
   }
 
+  .bz-user-menu-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .bz-hero-section {
+    padding: 24px 14px;
+  }
+
   .bz-hero-headline {
-    font-size: 34px;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .bz-hero-subtitle {
+    font-size: 13.5px;
+  }
+
+  .bz-pill-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  .bz-quick-request-card {
+    padding: 18px 14px;
+    border-radius: 16px;
   }
 
   .bz-quick-form-grid {
@@ -1427,10 +1483,24 @@
 
   .bz-footer-container {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 24px;
   }
 
   .bz-photo-upload-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bz-modal-box {
+    width: 95% !important;
+    max-width: 95% !important;
+    margin: 10px auto;
+    border-radius: 18px !important;
+    padding: 18px 14px !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .bz-product-card {
+    border-radius: 16px;
   }
 }

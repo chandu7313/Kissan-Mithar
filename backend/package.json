@@ -12,7 +12,9 @@
     "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",
     "seed": "tsx prisma/seed.ts",
-    "test": "tsx test/api.test.ts"
+    "test": "tsx test/lambda.test.ts",
+    "test:integration": "tsx test/api.test.ts",
+    "test:lambda": "tsx test/lambda.test.ts"
   },
   "keywords": [
     "kisan-mithar",
@@ -25,6 +27,7 @@
   "author": "Kissan Mithar Team",
   "license": "ISC",
   "dependencies": {
+    "@codegenie/serverless-express": "^5.0.0",
     "@prisma/client": "^5.19.1",
     "axios": "^1.7.7",
     "bcryptjs": "^3.0.3",
