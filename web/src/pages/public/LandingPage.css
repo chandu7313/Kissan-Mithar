@@ -1755,7 +1755,7 @@
   .hero-section {
     min-height: auto;
     padding: 4.75rem 1rem 1.5rem;
-    background-position: center;
+    background-position: 72% center;
     border-bottom: 1px solid #f1f5f9;
   }
 
@@ -2171,5 +2171,11 @@
     grid-template-columns: 1fr;
     gap: 2rem;
     margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    background-position: 75% center;
   }
 }
