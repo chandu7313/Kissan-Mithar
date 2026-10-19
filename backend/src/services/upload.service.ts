@@ -57,7 +57,27 @@ export class UploadService {
       buffer = Buffer.from(audioData, 'base64');
     }
 
-    const uploadDir = path.join(process.cwd(), 'uploads', 'voice');
+    // If Cloudinary is configured with real credentials, upload directly for persistent cloud storage
+    if (env.CLOUDINARY_CLOUD_NAME && env.CLOUDINARY_API_KEY && env.CLOUDINARY_API_KEY !== 'mock_cloudinary_key') {
+      try {
+        const uploadRes = await cloudinary.uploader.upload(audioData, {
+          resource_type: 'auto',
+          folder: 'kissan_mithar_voice',
+        });
+        return {
+          url: uploadRes.secure_url,
+          filename: filenameHint || uploadRes.public_id,
+          size: uploadRes.bytes || buffer.length,
+        };
+      } catch {
+        // Fall back to filesystem storage below
+      }
+    }
+
+    // In AWS Lambda, process.cwd() is /var/task (read-only); use /tmp
+    const isLambda = Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT);
+    const baseDir = isLambda ? '/tmp' : process.cwd();
+    const uploadDir = path.join(baseDir, 'uploads', 'voice');
     await fs.promises.mkdir(uploadDir, { recursive: true });
 
     const safeFilename = `voice_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;

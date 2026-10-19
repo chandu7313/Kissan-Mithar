@@ -1,0 +1,31 @@
+{
+  "version": "2.0",
+  "routeKey": "GET /api/health",
+  "rawPath": "/api/health",
+  "rawQueryString": "",
+  "headers": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "host": "api.kissanmithar.in",
+    "user-agent": "aws-sam-local"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "kissan-mithar-local",
+    "domainName": "api.kissanmithar.in",
+    "domainPrefix": "api",
+    "http": {
+      "method": "GET",
+      "path": "/api/health",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "127.0.0.1",
+      "userAgent": "aws-sam-local"
+    },
+    "requestId": "sam-local-req-001",
+    "routeKey": "GET /api/health",
+    "stage": "$default",
+    "time": "17/Oct/2026:12:00:00 +0000",
+    "timeEpoch": 1792238400000
+  },
+  "isBase64Encoded": false
+}

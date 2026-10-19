@@ -60,7 +60,7 @@ sam build
 # 5. Deploy SAM Application
 echo "🚀 Deploying to AWS CloudFormation / Lambda..."
 if [ -f "samconfig.toml" ]; then
-  sam deploy --config-file samconfig.toml --stack-name "${STACK_NAME}" --region "${REGION}"
+  sam deploy --config-file samconfig.toml --stack-name "${STACK_NAME}" --region "${REGION}" --resolve-image-repos --resolve-s3
 else
   echo "ℹ️ No samconfig.toml detected. Running guided initial deployment..."
   sam deploy --guided --stack-name "${STACK_NAME}" --region "${REGION}"

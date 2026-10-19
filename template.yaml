@@ -121,7 +121,7 @@ Parameters:
   SmsProvider:
     Type: String
     Default: fast2sms
-    Description: SMS provider name (default: fast2sms)
+    Description: 'SMS provider name (default: fast2sms)'
 
   WeatherApiUrl:
     Type: String
@@ -269,6 +269,342 @@ Resources:
       LogGroupName: !Sub /aws/lambda/kissan-mithar-cleanup-${Environment}
       RetentionInDays: 14
 
+  # 4. Market & Weather Microservice Function (Stage D Extraction)
+  MarketWeatherFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub kissan-mithar-market-weather-${Environment}
+      Description: Market prices, crop advisories, weather and analytics microservice
+      PackageType: Image
+      MemorySize: 512
+      Timeout: 20
+      ImageConfig:
+        Command:
+          - dist/handlers/market-weather.handler
+      Events:
+        WeatherRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/weather/{proxy+}
+            Method: ANY
+        WeatherBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/weather
+            Method: ANY
+        MandiRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/mandi-prices/{proxy+}
+            Method: ANY
+        MandiBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/mandi-prices
+            Method: ANY
+        AdvisoriesRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/advisories/{proxy+}
+            Method: ANY
+        AdvisoriesBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/advisories
+            Method: ANY
+        AnalyticsRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/analytics/{proxy+}
+            Method: ANY
+        AnalyticsBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/analytics
+            Method: ANY
+    Metadata:
+      DockerTag: latest
+      DockerContext: ./backend
+      Dockerfile: Dockerfile
+
+  MarketWeatherFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/kissan-mithar-market-weather-${Environment}
+      RetentionInDays: 14
+
+  # 5. AgriBazaar & Labour Management Microservice Function (Target 2 Extraction)
+  BazaarLabourFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub kissan-mithar-bazaar-labour-${Environment}
+      Description: AgriBazaar produce marketplace, buyers, and farm labour management microservice
+      PackageType: Image
+      MemorySize: 512
+      Timeout: 25
+      ImageConfig:
+        Command:
+          - dist/handlers/bazaar-labour.handler
+      Events:
+        AgriBazaarRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/agri-bazaar/{proxy+}
+            Method: ANY
+        AgriBazaarBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/agri-bazaar
+            Method: ANY
+        CropBuyingRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/crop-buying-selling/{proxy+}
+            Method: ANY
+        CropBuyingBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/crop-buying-selling
+            Method: ANY
+        LabourRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/labour-requests/{proxy+}
+            Method: ANY
+        LabourBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/labour-requests
+            Method: ANY
+        LabourHelpRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/labour-help/{proxy+}
+            Method: ANY
+        LabourHelpBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/labour-help
+            Method: ANY
+    Metadata:
+      DockerTag: latest
+      DockerContext: ./backend
+      Dockerfile: Dockerfile
+
+  BazaarLabourFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/kissan-mithar-bazaar-labour-${Environment}
+      RetentionInDays: 14
+
+  # 6. Agronomy Advisory & Consultations Microservice Function (Target 3 Extraction)
+  AgronomyAdvisoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub kissan-mithar-agronomy-advisory-${Environment}
+      Description: Consultations, orchard planning, fertilizer plans, and crop disease diagnosis microservice
+      PackageType: Image
+      MemorySize: 512
+      Timeout: 29
+      ImageConfig:
+        Command:
+          - dist/handlers/agronomy-advisory.handler
+      Events:
+        OrchardRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/orchard-requests/{proxy+}
+            Method: ANY
+        OrchardBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/orchard-requests
+            Method: ANY
+        ConsultationRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/consultations/{proxy+}
+            Method: ANY
+        ConsultationBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/consultations
+            Method: ANY
+        FertilizerRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/fertilizer-requests/{proxy+}
+            Method: ANY
+        FertilizerBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/fertilizer-requests
+            Method: ANY
+        FertilizerGuideRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/fertilizer-guide/{proxy+}
+            Method: ANY
+        FertilizerGuideBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/fertilizer-guide
+            Method: ANY
+        DiseaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/disease-requests/{proxy+}
+            Method: ANY
+        DiseaseBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/disease-requests
+            Method: ANY
+        DiseaseHelpRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/disease-help/{proxy+}
+            Method: ANY
+        DiseaseHelpBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/disease-help
+            Method: ANY
+    Metadata:
+      DockerTag: latest
+      DockerContext: ./backend
+      Dockerfile: Dockerfile
+
+  AgronomyAdvisoryFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/kissan-mithar-agronomy-advisory-${Environment}
+      RetentionInDays: 14
+
+  # 7. Core Identity, Profiles & Platform Microservice Function (Target 4 Extraction)
+  CoreIdentityFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub kissan-mithar-core-identity-${Environment}
+      Description: Authentication, farmer profiles, expert directory, FCM devices, notifications, and uploads microservice
+      PackageType: Image
+      MemorySize: 512
+      Timeout: 20
+      ImageConfig:
+        Command:
+          - dist/handlers/core-identity.handler
+      Events:
+        AuthRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/auth/{proxy+}
+            Method: ANY
+        AuthBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/auth
+            Method: ANY
+        FarmersRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/farmers/{proxy+}
+            Method: ANY
+        FarmersBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/farmers
+            Method: ANY
+        ExpertsRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/experts/{proxy+}
+            Method: ANY
+        ExpertsBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/experts
+            Method: ANY
+        DevicesRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/devices/{proxy+}
+            Method: ANY
+        DevicesBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/devices
+            Method: ANY
+        NotificationsRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/notifications/{proxy+}
+            Method: ANY
+        NotificationsBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/notifications
+            Method: ANY
+        UploadsRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/uploads/{proxy+}
+            Method: ANY
+        UploadsBaseRoute:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /api/uploads
+            Method: ANY
+    Metadata:
+      DockerTag: latest
+      DockerContext: ./backend
+      Dockerfile: Dockerfile
+
+  CoreIdentityFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/kissan-mithar-core-identity-${Environment}
+      RetentionInDays: 14
+
 # ------------------------------------------------------------------------------
 # Outputs — Connection endpoints for frontend and operational dashboards
 # ------------------------------------------------------------------------------
@@ -286,8 +622,24 @@ Outputs:
     Value: !Sub https://${HttpApiGateway}.execute-api.${AWS::Region}.amazonaws.com/health
 
   ApiFunctionArn:
-    Description: Main API Lambda Function ARN
+    Description: Monolith Fallback Lambda Function ARN (Catch-all /{proxy+})
     Value: !GetAtt ApiFunction.Arn
+
+  MarketWeatherFunctionArn:
+    Description: Market & Weather Microservice Lambda Function ARN
+    Value: !GetAtt MarketWeatherFunction.Arn
+
+  BazaarLabourFunctionArn:
+    Description: AgriBazaar & Labour Microservice Lambda Function ARN
+    Value: !GetAtt BazaarLabourFunction.Arn
+
+  AgronomyAdvisoryFunctionArn:
+    Description: Agronomy Advisory & Consultations Microservice Lambda Function ARN
+    Value: !GetAtt AgronomyAdvisoryFunction.Arn
+
+  CoreIdentityFunctionArn:
+    Description: Core Identity & Platform Microservice Lambda Function ARN
+    Value: !GetAtt CoreIdentityFunction.Arn
 
   CleanupFunctionArn:
     Description: Scheduled Cleanup Lambda Function ARN

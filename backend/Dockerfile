@@ -15,12 +15,10 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Install dependencies (respecting package-lock.json)
+# Note: prisma folder must be copied before npm ci because package.json postinstall runs "prisma generate"
 COPY package.json package-lock.json* ./
-RUN npm ci
-
-# Copy Prisma schema and generate client with Lambda Linux engine (rhel-openssl-3.0.x)
 COPY prisma ./prisma
-RUN npx prisma generate
+RUN npm ci
 
 # Copy application source code and TypeScript config
 COPY tsconfig.json ./

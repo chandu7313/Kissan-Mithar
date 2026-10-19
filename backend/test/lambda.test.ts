@@ -157,8 +157,84 @@ async function runLambdaTests() {
     const unauthRes: any = await (handler as any)(unauthorizedEvent, mockContext);
     assert(unauthRes.statusCode === 401, 'GET /api/farmers/me without token returns 401 Unauthorized', unauthRes);
 
-    // 6. Test EventBridge Cleanup Handler
-    console.log('\n6. Testing EventBridge Scheduled Cleanup Handler...');
+    // 6. Test Labour Catalog (Catalog endpoint)
+    console.log('\n6. Testing GET /api/labour-requests/catalog...');
+    const labourCatalogEvent = {
+      version: '2.0',
+      routeKey: 'GET /api/labour-requests/catalog',
+      rawPath: '/api/labour-requests/catalog',
+      rawQueryString: '',
+      headers: {
+        accept: 'application/json',
+        host: 'api.kissanmithar.in',
+      },
+      requestContext: {
+        http: {
+          method: 'GET',
+          path: '/api/labour-requests/catalog',
+          protocol: 'HTTP/1.1',
+          sourceIp: '127.0.0.1',
+          userAgent: 'test-agent',
+        },
+      },
+      isBase64Encoded: false,
+    };
+    const labourCatalogRes: any = await (handler as any)(labourCatalogEvent, mockContext);
+    assert(labourCatalogRes.statusCode === 200, 'GET /api/labour-requests/catalog returns 200 OK', labourCatalogRes);
+
+    // 7. Test Disease Catalog
+    console.log('\n7. Testing GET /api/disease-requests/catalog...');
+    const diseaseCatalogEvent = {
+      version: '2.0',
+      routeKey: 'GET /api/disease-requests/catalog',
+      rawPath: '/api/disease-requests/catalog',
+      rawQueryString: '',
+      headers: {
+        accept: 'application/json',
+        host: 'api.kissanmithar.in',
+      },
+      requestContext: {
+        http: {
+          method: 'GET',
+          path: '/api/disease-requests/catalog',
+          protocol: 'HTTP/1.1',
+          sourceIp: '127.0.0.1',
+          userAgent: 'test-agent',
+        },
+      },
+      isBase64Encoded: false,
+    };
+    const diseaseCatalogRes: any = await (handler as any)(diseaseCatalogEvent, mockContext);
+    assert(diseaseCatalogRes.statusCode === 200, 'GET /api/disease-requests/catalog returns 200 OK', diseaseCatalogRes);
+
+    // 8. Test CORS Preflight OPTIONS
+    console.log('\n8. Testing OPTIONS /api/fertilizer-requests/catalog (CORS Preflight)...');
+    const optionsEvent = {
+      version: '2.0',
+      routeKey: 'OPTIONS /api/fertilizer-requests/catalog',
+      rawPath: '/api/fertilizer-requests/catalog',
+      rawQueryString: '',
+      headers: {
+        origin: 'https://kissan-mithar.vercel.app',
+        'access-control-request-method': 'GET',
+        host: 'api.kissanmithar.in',
+      },
+      requestContext: {
+        http: {
+          method: 'OPTIONS',
+          path: '/api/fertilizer-requests/catalog',
+          protocol: 'HTTP/1.1',
+          sourceIp: '127.0.0.1',
+          userAgent: 'test-agent',
+        },
+      },
+      isBase64Encoded: false,
+    };
+    const optionsRes: any = await (handler as any)(optionsEvent, mockContext);
+    assert(optionsRes.statusCode === 204 || optionsRes.statusCode === 200, 'OPTIONS returns 200/204 CORS OK', optionsRes);
+
+    // 9. Test EventBridge Cleanup Handler
+    console.log('\n9. Testing EventBridge Scheduled Cleanup Handler...');
     const { handler: cleanupHandler } = await import('../src/cleanup-handler.js');
     const cleanupEvent = {
       'detail-type': 'Scheduled Event',

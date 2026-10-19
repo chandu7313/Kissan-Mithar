@@ -23,7 +23,18 @@ try {
 }
 
 const app = createApp();
-const serverlessExpressInstance = serverlessExpress({ app });
+const serverlessExpressInstance = serverlessExpress({
+  app,
+  binarySettings: {
+    contentTypes: [
+      'image/*',
+      'audio/*',
+      'video/*',
+      'application/pdf',
+      'application/octet-stream',
+    ],
+  },
+});
 
 // ─── Lambda Handler ────────────────────────────────────────────
 export const handler = (event: any, context: any, callback: any) => {
