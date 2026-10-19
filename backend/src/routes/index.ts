@@ -15,6 +15,7 @@ import fertilizerRoutes from './fertilizer.routes.js';
 import diseaseRoutes from './disease.routes.js';
 import labourRoutes from './labour.routes.js';
 import agriBazaarRoutes from './agriBazaar.routes.js';
+import adminRoutes from './admin.routes.js';
 
 const router = Router();
 
@@ -76,5 +77,6 @@ router.use('/labour-requests', labourRoutes);
 router.use('/labour-help', labourRoutes);
 router.use('/agri-bazaar', agriBazaarRoutes);
 router.use('/crop-buying-selling', agriBazaarRoutes);
+router.use('/admin', adminRoutes);
 
 export default router;

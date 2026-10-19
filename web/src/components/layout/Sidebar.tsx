@@ -2,18 +2,17 @@ import React from 'react';
 import {
   BarChart3,
   Users,
-  Briefcase,
-  Tractor,
-  ShoppingCart,
   Sprout,
   PhoneCall,
-  CreditCard,
+  Tractor,
+  ShoppingCart,
+  Bell,
   FileText,
-  Settings,
+  ShieldCheck,
+  Activity,
   LogOut,
   Circle,
-  Stethoscope,
-  ClipboardList
+  TreeDeciduous,
 } from 'lucide-react';
 import { UserSession } from '../../types/index.js';
 
@@ -29,24 +28,28 @@ interface Props {
 export const Sidebar: React.FC<Props> = ({
   activeTab,
   setActiveTab,
-  pendingCount = 12,
+  pendingCount,
   onOpenProfile,
   onLogout,
   session,
 }) => {
-  // Following the exact reference admin sidebar structure
+  const isAdmin = session?.role === 'ADMIN';
+
+  // 10 Unified Operational Workspaces
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'requests', label: 'Farmers', icon: Users, badge: pendingCount },
-    { id: 'experts', label: 'Experts', icon: Briefcase },
-    { id: 'agri-bazaar', label: 'Agri Bazaar', icon: ShoppingCart },
-    { id: 'labour', label: 'Labour', icon: Users },
-    { id: 'machinery', label: 'Machinery', icon: Tractor },
+    { id: 'farmers', label: 'Farmers', icon: Users },
+    { id: 'services', label: 'Services Desk', icon: Sprout, badge: pendingCount },
+    { id: 'requests', label: 'Orchard Surveys', icon: TreeDeciduous },
     { id: 'consultations', label: 'Consultations', icon: PhoneCall },
-    { id: 'payments', label: 'Payments', icon: CreditCard },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'users', label: 'Users', icon: Users },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'labour', label: 'Labour & Machinery', icon: Tractor },
+    { id: 'agri-bazaar', label: 'Agri Bazaar', icon: ShoppingCart },
+    { id: 'notifications', label: 'Push & Broadcast', icon: Bell },
+    { id: 'reports', label: 'Reports & Exports', icon: FileText },
+    ...(isAdmin ? [
+      { id: 'staff', label: 'Staff & Roles', icon: ShieldCheck },
+      { id: 'system', label: 'System & Audits', icon: Activity },
+    ] : []),
   ];
 
   return (
@@ -59,14 +62,15 @@ export const Sidebar: React.FC<Props> = ({
           display: 'flex',
           alignItems: 'center',
           gap: '0.75rem',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         }}
       >
         <img
           src="/kissan_mithar_logo.PNG"
           alt="Kissan Mithar"
           style={{
-            height: '42px',
-            width: '42px',
+            height: '40px',
+            width: '40px',
             objectFit: 'contain',
             borderRadius: '8px',
             backgroundColor: 'white',
@@ -74,61 +78,80 @@ export const Sidebar: React.FC<Props> = ({
           }}
         />
         <div>
-          <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.125rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontWeight: 800,
+              fontSize: '1.1rem',
+              letterSpacing: '-0.02em',
+              color: '#ffffff',
+            }}
+          >
             KISSAN MITHAR
           </div>
-          <div style={{ fontSize: '0.625rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.05em' }}>
-            Smart Farming, Brighter Tomorrow
+          <div
+            style={{
+              fontSize: '0.625rem',
+              color: 'rgba(255,255,255,0.7)',
+              fontWeight: 600,
+              letterSpacing: '0.05em',
+            }}
+          >
+            Administrative Control Center
           </div>
         </div>
       </div>
 
       {/* Navigation Links */}
-      <nav style={{ padding: '1rem 0.75rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1, overflowY: 'auto' }}>
+      <nav
+        style={{
+          padding: '1rem 0.75rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.25rem',
+          flex: 1,
+          overflowY: 'auto',
+        }}
+      >
         {navItems.map((item) => {
-          // Temporarily map original routes to the new visual labels to keep routing working
-          const isActive = activeTab === item.id || 
-                          (activeTab === 'requests' && item.label === 'Farmers') ||
-                          (activeTab === 'consultations' && item.label === 'Consultations');
-                          
+          const isActive = activeTab === item.id;
           const IconComp = item.icon;
-          
+
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id === 'dashboard' || item.id === 'requests' || item.id === 'consultations' || item.id === 'experts' || item.id === 'agri-bazaar' ? item.id : activeTab)}
+              onClick={() => setActiveTab(item.id)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '0.75rem 1rem',
+                padding: '0.7rem 0.875rem',
                 borderRadius: '8px',
-                backgroundColor: isActive ? 'rgba(22, 101, 52, 0.4)' : 'transparent',
+                backgroundColor: isActive ? 'rgba(22, 101, 52, 0.5)' : 'transparent',
                 color: isActive ? '#fef08a' : '#cbd5e1',
                 fontWeight: isActive ? 600 : 500,
-                fontSize: '0.9375rem',
+                fontSize: '0.875rem',
                 border: 'none',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
                 textAlign: 'left',
               }}
               onMouseEnter={(e) => {
-                if (!isActive) e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                if (!isActive) e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
               }}
               onMouseLeave={(e) => {
                 if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <IconComp size={18} color={isActive ? '#fef08a' : '#cbd5e1'} />
+                <IconComp size={18} color={isActive ? '#fef08a' : '#94a3b8'} />
                 <span className="sidebar-nav-text">{item.label}</span>
               </div>
-              {/* Reference image shows a small dot indicator for Farmers menu dropdown, but we will use the badge for now */}
               {item.badge !== undefined && item.badge > 0 && (
                 <span
                   style={{
-                    backgroundColor: isActive ? '#fef08a' : 'rgba(255,255,255,0.1)',
-                    color: isActive ? '#14532d' : 'white',
+                    backgroundColor: isActive ? '#fef08a' : 'rgba(255,255,255,0.12)',
+                    color: isActive ? '#14532d' : '#ffffff',
                     fontSize: '0.6875rem',
                     fontWeight: 700,
                     padding: '0.125rem 0.5rem',
@@ -148,17 +171,31 @@ export const Sidebar: React.FC<Props> = ({
         className="sidebar-footer"
         style={{
           padding: '1rem 1.25rem',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
           fontSize: '0.75rem',
           color: '#cbd5e1',
+          display: 'flex',
           flexDirection: 'column',
           gap: '0.75rem',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', color: '#4ade80' }}>
-            <Circle size={8} fill="#4ade80" /> System Online
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#4ade80' }}>
+            <span
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#4ade80',
+                display: 'inline-block',
+                boxShadow: '0 0 8px #4ade80',
+              }}
+            />
+            <span style={{ fontWeight: 600 }}>System Live</span>
           </div>
+          <span style={{ fontSize: '0.6875rem', color: 'rgba(255, 255, 255, 0.5)' }}>
+            v2.4.0
+          </span>
         </div>
 
         {onLogout && (
@@ -169,20 +206,24 @@ export const Sidebar: React.FC<Props> = ({
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.5rem',
-              padding: '0.6rem',
+              padding: '0.5rem',
               borderRadius: '8px',
-              backgroundColor: 'transparent',
-              color: '#f87171',
-              border: '1px solid rgba(248, 113, 113, 0.3)',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              color: '#fca5a5',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
               fontSize: '0.8125rem',
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(248, 113, 113, 0.1)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            }}
           >
-            <LogOut size={16} />
+            <LogOut size={15} />
             <span>Sign Out</span>
           </button>
         )}

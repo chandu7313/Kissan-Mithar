@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../types/index.js';
 import { FarmerService } from '../services/farmer.service.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -41,14 +41,68 @@ export class FarmerController {
 
   static async listAll(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const state = req.query.state as string;
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 100;
+      const {
+        page,
+        limit,
+        search,
+        district,
+        state,
+        primaryCrop,
+        sortBy,
+        sortOrder,
+      } = req.query as any;
 
-      const farmers = await FarmerService.listAll({ state, limit });
+      const result = await FarmerService.listAll({
+        page: page ? parseInt(page, 10) : 1,
+        limit: limit ? parseInt(limit, 10) : 20,
+        search,
+        district,
+        state,
+        primaryCrop,
+        sortBy,
+        sortOrder,
+      });
+
       res.status(200).json({
         success: true,
-        count: farmers.length,
-        data: farmers,
+        count: result.farmers.length,
+        data: result.farmers,
+        pagination: result.pagination,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const dossier = await FarmerService.getFarmerDossier(id);
+
+      res.status(200).json({
+        success: true,
+        data: dossier,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateByAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const updated = await FarmerService.updateFarmerByAdmin(
+        id,
+        req.body,
+        req.user?.userId,
+        req.user?.email,
+        req.ip
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Farmer profile updated by administrator',
+        data: updated,
       });
     } catch (error) {
       next(error);

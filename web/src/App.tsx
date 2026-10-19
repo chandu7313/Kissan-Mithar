@@ -11,6 +11,13 @@ import { ConsultationsPage } from './pages/admin/ConsultationsPage.js';
 import { ExpertsPage } from './pages/admin/ExpertsPage.js';
 import { AgriBazaarAdminPage } from './pages/admin/AgriBazaarAdminPage.js';
 import { AgriBazaarPage } from './pages/bazaar/AgriBazaarPage.js';
+import { FarmersPage } from './pages/admin/FarmersPage.js';
+import { ServicesPage } from './pages/admin/ServicesPage.js';
+import { LabourAdminPage } from './pages/admin/LabourAdminPage.js';
+import { NotificationsPage } from './pages/admin/NotificationsPage.js';
+import { ReportsPage } from './pages/admin/ReportsPage.js';
+import { StaffPage } from './pages/admin/StaffPage.js';
+import { SystemHealthPage } from './pages/admin/SystemHealthPage.js';
 import { SocketProvider } from './context/SocketContext.js';
 import { LandingPage } from './pages/public/LandingPage.js';
 import { ServiceDetailPage } from './pages/public/ServiceDetailPage.js';
@@ -200,11 +207,26 @@ export const App: React.FC = () => {
           <DashboardPage
             onNavigateToRequests={() => setActiveTab('requests')}
             onNavigateToConsultations={() => setActiveTab('consultations')}
+            onNavigateToFarmers={() => setActiveTab('farmers')}
+            onNavigateToServices={() => setActiveTab('services')}
+            onNavigateToBazaar={() => setActiveTab('agri-bazaar')}
           />
+        </div>
+
+        <div style={{ display: activeTab === 'farmers' ? 'block' : 'none', height: '100%' }}>
+          <FarmersPage />
+        </div>
+
+        <div style={{ display: activeTab === 'services' ? 'block' : 'none', height: '100%' }}>
+          <ServicesPage onNavigateToOrchards={() => setActiveTab('requests')} />
         </div>
 
         <div style={{ display: activeTab === 'consultations' ? 'block' : 'none', height: '100%' }}>
           <ConsultationsPage />
+        </div>
+
+        <div style={{ display: activeTab === 'labour' ? 'block' : 'none', height: '100%' }}>
+          <LabourAdminPage />
         </div>
 
         <div style={{ display: activeTab === 'requests' ? 'block' : 'none', height: '100%' }}>
@@ -227,9 +249,21 @@ export const App: React.FC = () => {
           )}
         </div>
 
+        <div style={{ display: activeTab === 'notifications' ? 'block' : 'none', height: '100%' }}>
+          <NotificationsPage />
+        </div>
+
+        <div style={{ display: activeTab === 'reports' ? 'block' : 'none', height: '100%' }}>
+          <ReportsPage />
+        </div>
+
+        <div style={{ display: activeTab === 'staff' || activeTab === 'experts' ? 'block' : 'none', height: '100%' }}>
+          {session.role === 'ADMIN' ? <StaffPage /> : <ExpertsPage />}
+        </div>
+
         {session.role === 'ADMIN' && (
-          <div style={{ display: activeTab === 'experts' ? 'block' : 'none', height: '100%' }}>
-            <ExpertsPage />
+          <div style={{ display: activeTab === 'system' ? 'block' : 'none', height: '100%' }}>
+            <SystemHealthPage />
           </div>
         )}
 

@@ -11,6 +11,7 @@ export interface AuthUserPayload {
   expertId?: string;
   adminId?: string;
   name?: string;
+  email?: string;
   photoUrl?: string;
 }
 

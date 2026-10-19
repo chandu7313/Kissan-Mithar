@@ -14,4 +14,18 @@ export class AnalyticsController {
       next(error);
     }
   }
+
+  static async executiveSummary(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const timeRange = (req.query.timeRange as '7d' | '30d' | '90d' | 'all') || '30d';
+      const summary = await AnalyticsService.getExecutiveSummary(timeRange);
+
+      res.status(200).json({
+        success: true,
+        data: summary,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

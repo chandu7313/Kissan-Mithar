@@ -35,6 +35,7 @@ export const Layout: React.FC<Props> = ({
       <div className="content-wrapper">
         <Header
           session={session}
+          activeTab={activeTab}
           onSessionChange={onSessionChange}
           onOpenProfile={() => setIsProfileModalOpen(true)}
           onLogout={onLogout}

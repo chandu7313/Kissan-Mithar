@@ -61,4 +61,34 @@ export class NotificationController {
       next(error);
     }
   }
+
+  static async getAdminStats(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const stats = await NotificationService.getAdminNotificationStats();
+      res.status(200).json({
+        success: true,
+        data: stats,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async sendBroadcast(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const result = await NotificationService.sendAdminBroadcast({
+        ...req.body,
+        adminId: req.user?.userId,
+        adminEmail: req.user?.email,
+        ip: req.ip,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

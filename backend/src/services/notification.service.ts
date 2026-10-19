@@ -11,6 +11,18 @@ export interface SendNotificationParams {
   data?: Record<string, string>;
 }
 
+export interface AdminBroadcastParams {
+  targetType: 'ALL' | 'DISTRICT' | 'CROP';
+  targetValue?: string;
+  title: string;
+  body: string;
+  type?: NotificationType;
+  deepLink?: string;
+  adminId?: string;
+  adminEmail?: string;
+  ip?: string;
+}
+
 export class NotificationService {
   /**
    * Dispatches push notification via FCM and stores it in the Notification table
@@ -104,5 +116,177 @@ export class NotificationService {
     return await prisma.notification.count({
       where: { farmerId, isRead: false },
     });
+  }
+
+  /**
+   * Admin: Overview of mobile devices and notification delivery telemetry
+   */
+  static async getAdminNotificationStats() {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const [
+      totalDevices,
+      androidDevices,
+      iosDevices,
+      activeDevices30d,
+      totalNotifications,
+      unreadNotifications,
+      recentHistory,
+    ] = await Promise.all([
+      prisma.device.count(),
+      prisma.device.count({ where: { platform: { equals: 'android', mode: 'insensitive' } } }),
+      prisma.device.count({ where: { platform: { equals: 'ios', mode: 'insensitive' } } }),
+      prisma.device.count({ where: { lastActive: { gte: thirtyDaysAgo } } }),
+      prisma.notification.count(),
+      prisma.notification.count({ where: { isRead: false } }),
+      prisma.notification.findMany({
+        take: 50,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          farmer: {
+            select: { id: true, name: true, phoneNumber: true, village: true, district: true },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      devices: {
+        total: totalDevices,
+        android: androidDevices,
+        ios: iosDevices,
+        active30d: activeDevices30d,
+      },
+      notifications: {
+        total: totalNotifications,
+        unread: unreadNotifications,
+        read: totalNotifications - unreadNotifications,
+      },
+      recentHistory,
+    };
+  }
+
+  /**
+   * Admin: Safe Broadcast Announcement to targeted farmers
+   */
+  static async sendAdminBroadcast(params: AdminBroadcastParams) {
+    const {
+      targetType,
+      targetValue,
+      title,
+      body,
+      type = 'INFO',
+      deepLink,
+      adminId,
+      adminEmail,
+      ip,
+    } = params;
+
+    const where: any = {};
+    if (targetType === 'DISTRICT' && targetValue) {
+      where.district = { contains: targetValue.trim(), mode: 'insensitive' };
+    } else if (targetType === 'CROP' && targetValue) {
+      where.primaryCrop = { contains: targetValue.trim(), mode: 'insensitive' };
+    }
+
+    const targetFarmers = await prisma.farmer.findMany({
+      where,
+      select: {
+        id: true,
+        devices: { select: { fcmToken: true } },
+      },
+    });
+
+    if (targetFarmers.length === 0) {
+      return {
+        targetCount: 0,
+        successCount: 0,
+        message: 'No farmers matched the selected target criteria.',
+      };
+    }
+
+    // Create database records in batches of 100
+    const notificationsToCreate = targetFarmers.map((f) => ({
+      farmerId: f.id,
+      title,
+      body,
+      type,
+      deepLink: deepLink || null,
+    }));
+
+    // Sequential batch insertion
+    const batchSize = 100;
+    for (let i = 0; i < notificationsToCreate.length; i += batchSize) {
+      const batch = notificationsToCreate.slice(i, i + batchSize);
+      await prisma.notification.createMany({ data: batch });
+    }
+
+    // Extract all FCM tokens
+    const tokens: string[] = [];
+    for (const f of targetFarmers) {
+      for (const d of f.devices) {
+        if (d.fcmToken) tokens.push(d.fcmToken);
+      }
+    }
+
+    let fcmSuccess = 0;
+    let fcmFailure = 0;
+
+    const messaging = getFirebaseMessaging();
+    if (messaging && tokens.length > 0) {
+      // Chunk tokens into 500 (FCM multicast limit)
+      for (let i = 0; i < tokens.length; i += 500) {
+        const tokenChunk = tokens.slice(i, i + 500);
+        try {
+          const res = await messaging.sendEachForMulticast({
+            tokens: tokenChunk,
+            notification: { title, body },
+            data: {
+              type,
+              deepLink: deepLink || '',
+              broadcast: 'true',
+            },
+          });
+          fcmSuccess += res.successCount;
+          fcmFailure += res.failureCount;
+        } catch (err) {
+          console.warn('[NotificationService] Broadcast chunk error:', err);
+        }
+      }
+    }
+
+    // Audit broadcast in security log
+    try {
+      await prisma.authAuditLog.create({
+        data: {
+          userId: adminId || 'admin',
+          userType: 'ADMIN',
+          userName: 'Admin Staff',
+          userEmail: adminEmail || 'admin@kissanmithar.in',
+          action: 'LOGIN',
+          ipAddress: ip || null,
+          metadata: {
+            actionType: 'ADMIN_BROADCAST_SENT',
+            title,
+            targetType,
+            targetValue: targetValue || null,
+            targetCount: targetFarmers.length,
+            fcmTokensCount: tokens.length,
+            fcmSuccess,
+            fcmFailure,
+          },
+        },
+      });
+    } catch {
+      // Non-blocking
+    }
+
+    return {
+      targetCount: targetFarmers.length,
+      deviceTokensCount: tokens.length,
+      fcmSuccess,
+      fcmFailure,
+      message: `Broadcast queued successfully to ${targetFarmers.length} farmers (${tokens.length} devices).`,
+    };
   }
 }

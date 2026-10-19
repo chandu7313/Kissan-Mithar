@@ -25,6 +25,7 @@ import expertRoutes from '../routes/expert.routes.js';
 import deviceRoutes from '../routes/device.routes.js';
 import notificationRoutes from '../routes/notification.routes.js';
 import uploadRoutes from '../routes/upload.routes.js';
+import adminRoutes from '../routes/admin.routes.js';
 
 // ─── Cold-start Initialization ─────────────────────────────────
 try {
@@ -96,6 +97,7 @@ export const createCoreIdentityApp = (): Express => {
   domainRouter.use('/devices', deviceRoutes);
   domainRouter.use('/notifications', notificationRoutes);
   domainRouter.use('/uploads', uploadRoutes);
+  domainRouter.use('/admin', adminRoutes);
 
   // Mount at configured API prefix (e.g., /api) and also at root fallback
   app.use(env.API_PREFIX, domainRouter);

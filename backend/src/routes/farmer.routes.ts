@@ -24,7 +24,19 @@ const updateFarmerSchema = z.object({
 router.get('/me', requireAuth, FarmerController.getMe);
 router.patch('/me', requireAuth, validateRequest(updateFarmerSchema), FarmerController.updateMe);
 
-// Admin/Expert: list all farmers
+// Admin/Expert: list all farmers with pagination, search, filters
 router.get('/', requireAuth, requireRole('EXPERT', 'ADMIN'), FarmerController.listAll);
+
+// Admin/Expert: 360-degree farmer dossier
+router.get('/:id', requireAuth, requireRole('EXPERT', 'ADMIN'), FarmerController.getById);
+
+// Admin only: Edit permitted farmer attributes with audit logging
+router.patch(
+  '/:id',
+  requireAuth,
+  requireRole('ADMIN'),
+  validateRequest(updateFarmerSchema),
+  FarmerController.updateByAdmin
+);
 
 export default router;

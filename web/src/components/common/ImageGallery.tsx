@@ -2,15 +2,11 @@ import React, { useState } from 'react';
 import { Camera, X } from 'lucide-react';
 
 interface Props {
-  photos: {
-    front?: string;
-    left?: string;
-    right?: string;
-    center?: string;
-  };
+  photos?: Record<string, string | undefined> | string[];
+  images?: string[];
 }
 
-export const ImageGallery: React.FC<Props> = ({ photos }) => {
+export const ImageGallery: React.FC<Props> = ({ photos, images }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const angleLabels: Record<string, string> = {
@@ -20,7 +16,15 @@ export const ImageGallery: React.FC<Props> = ({ photos }) => {
     center: 'Center Soil View',
   };
 
-  const photoEntries = Object.entries(photos).filter(([_, url]) => Boolean(url));
+  let photoEntries: [string, string][] = [];
+
+  if (images && Array.isArray(images)) {
+    photoEntries = images.filter(Boolean).map((url, idx) => [`Image ${idx + 1}`, url]);
+  } else if (photos && Array.isArray(photos)) {
+    photoEntries = photos.filter(Boolean).map((url, idx) => [`Image ${idx + 1}`, url]);
+  } else if (photos && typeof photos === 'object') {
+    photoEntries = Object.entries(photos).filter(([_, url]) => Boolean(url)) as [string, string][];
+  }
 
   if (photoEntries.length === 0) {
     return (
@@ -40,7 +44,7 @@ export const ImageGallery: React.FC<Props> = ({ photos }) => {
         }}
       >
         <Camera size={18} />
-        <span>No land survey photos uploaded yet</span>
+        <span>No photos uploaded yet</span>
       </div>
     );
   }
@@ -57,7 +61,7 @@ export const ImageGallery: React.FC<Props> = ({ photos }) => {
         {photoEntries.map(([angle, url]) => (
           <div
             key={angle}
-            onClick={() => setSelectedImage(url as string)}
+            onClick={() => setSelectedImage(url)}
             style={{
               position: 'relative',
               borderRadius: '0.5rem',
@@ -69,7 +73,7 @@ export const ImageGallery: React.FC<Props> = ({ photos }) => {
             }}
           >
             <img
-              src={url as string}
+              src={url}
               alt={angle}
               style={{
                 width: '100%',
@@ -101,7 +105,7 @@ export const ImageGallery: React.FC<Props> = ({ photos }) => {
         ))}
       </div>
 
-      {/* Lightbox Zoom Modal */}
+      {/* Full Size Modal */}
       {selectedImage && (
         <div
           onClick={() => setSelectedImage(null)}
@@ -109,45 +113,55 @@ export const ImageGallery: React.FC<Props> = ({ photos }) => {
             position: 'fixed',
             inset: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.85)',
-            zIndex: 9999,
+            backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            zIndex: 10000,
             padding: '2rem',
-            cursor: 'zoom-out',
           }}
         >
-          <div style={{ position: 'relative', maxWidth: '90vw', maxHeight: '90vh' }}>
-            <img
-              src={selectedImage}
-              alt="Zoomed Land Survey"
-              style={{
-                maxWidth: '100%',
-                maxHeight: '85vh',
-                borderRadius: '0.5rem',
-                boxShadow: '0 20px 25px -5px rgba(0,0,0,0.5)',
-              }}
-            />
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
             <button
               onClick={() => setSelectedImage(null)}
               style={{
                 position: 'absolute',
-                top: '-12px',
-                right: '-12px',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                backgroundColor: 'white',
+                top: '-2.5rem',
+                right: 0,
+                background: 'transparent',
                 border: 'none',
+                color: 'white',
                 cursor: 'pointer',
-                boxShadow: 'var(--shadow-md)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                gap: '0.25rem',
+                fontSize: '0.875rem',
               }}
             >
-              <X size={18} />
+              <X size={20} />
+              <span>Close</span>
             </button>
+            <img
+              src={selectedImage}
+              alt="High-resolution view"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '85vh',
+                objectFit: 'contain',
+                borderRadius: '0.5rem',
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+              }}
+            />
           </div>
         </div>
       )}
