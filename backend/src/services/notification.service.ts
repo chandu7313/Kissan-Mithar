@@ -125,20 +125,20 @@ export class NotificationService {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     const [
-      totalDevices,
-      androidDevices,
-      iosDevices,
+      devicePlatformStats,
       activeDevices30d,
-      totalNotifications,
-      unreadNotifications,
+      notificationReadStats,
       recentHistory,
     ] = await Promise.all([
-      prisma.device.count(),
-      prisma.device.count({ where: { platform: { equals: 'android', mode: 'insensitive' } } }),
-      prisma.device.count({ where: { platform: { equals: 'ios', mode: 'insensitive' } } }),
+      prisma.device.groupBy({
+        by: ['platform'],
+        _count: { _all: true },
+      }),
       prisma.device.count({ where: { lastActive: { gte: thirtyDaysAgo } } }),
-      prisma.notification.count(),
-      prisma.notification.count({ where: { isRead: false } }),
+      prisma.notification.groupBy({
+        by: ['isRead'],
+        _count: { _all: true },
+      }),
       prisma.notification.findMany({
         take: 50,
         orderBy: { createdAt: 'desc' },
@@ -150,6 +150,25 @@ export class NotificationService {
       }),
     ]);
 
+    let totalDevices = 0;
+    let androidDevices = 0;
+    let iosDevices = 0;
+    for (const d of devicePlatformStats) {
+      const count = d._count._all;
+      totalDevices += count;
+      const plat = (d.platform || '').toLowerCase();
+      if (plat === 'android') androidDevices += count;
+      else if (plat === 'ios') iosDevices += count;
+    }
+
+    let totalNotifications = 0;
+    let unreadNotifications = 0;
+    for (const n of notificationReadStats) {
+      const count = n._count._all;
+      totalNotifications += count;
+      if (!n.isRead) unreadNotifications += count;
+    }
+
     return {
       devices: {
         total: totalDevices,
@@ -160,7 +179,7 @@ export class NotificationService {
       notifications: {
         total: totalNotifications,
         unread: unreadNotifications,
-        read: totalNotifications - unreadNotifications,
+        read: Math.max(0, totalNotifications - unreadNotifications),
       },
       recentHistory,
     };

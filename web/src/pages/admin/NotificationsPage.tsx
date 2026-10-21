@@ -44,14 +44,18 @@ export const NotificationsPage: React.FC = () => {
     fcmSuccess?: number;
   } | null>(null);
 
+  const [error, setError] = useState<string | null>(null);
+
   const fetchStats = () => {
     setIsLoading(true);
+    setError(null);
     NotificationApi.getStats()
       .then((data) => {
         setStats(data);
       })
       .catch((err) => {
         console.error('[NotificationsPage] Failed to fetch stats:', err);
+        setError(err.response?.data?.error?.message || err.message || 'Failed to fetch notification statistics');
       })
       .finally(() => {
         setIsLoading(false);
@@ -138,6 +142,46 @@ export const NotificationsPage: React.FC = () => {
           <span>Refresh Stats</span>
         </button>
       </div>
+
+      {/* Error Alert Banner */}
+      {error && (
+        <div
+          style={{
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '10px',
+            padding: '1rem 1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+            <div>
+              <div style={{ fontWeight: 600, color: '#991b1b', fontSize: '0.875rem' }}>Failed to retrieve notification statistics</div>
+              <div style={{ color: '#b91c1c', fontSize: '0.8125rem' }}>{error}</div>
+            </div>
+          </div>
+          <button
+            onClick={fetchStats}
+            style={{
+              padding: '0.4rem 0.875rem',
+              borderRadius: '8px',
+              backgroundColor: '#dc2626',
+              color: '#ffffff',
+              border: 'none',
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div

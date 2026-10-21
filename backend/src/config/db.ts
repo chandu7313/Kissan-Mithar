@@ -8,6 +8,18 @@ declare global {
 function getDatabaseUrl(): string | undefined {
   let url = process.env.DATABASE_URL;
   if (!url) return undefined;
+
+  // Supabase pooler host: automatically route to Transaction mode port 6543
+  // to avoid "EMAXCONNSESSION max clients reached in session mode (limit 15)"
+  if (url.includes('.pooler.supabase.com:5432')) {
+    url = url.replace('.pooler.supabase.com:5432', '.pooler.supabase.com:6543');
+  }
+
+  // PgBouncer / Transaction pooler requires pgbouncer=true for Prisma compatibility
+  if (url.includes(':6543') && !url.includes('pgbouncer=true')) {
+    const sep = url.includes('?') ? '&' : '?';
+    url = `${url}${sep}pgbouncer=true`;
+  }
   
   // Guard against single-socket connection pool exhaustion in serverless or monolith
   if (url.includes('connection_limit=1&')) {

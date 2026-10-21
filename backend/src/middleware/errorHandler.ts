@@ -46,19 +46,22 @@ export const errorHandler = (
     message = 'Authentication token expired';
   }
 
-  // Handle Database Connectivity & Timeout Errors first (always 503 retryable)
+  // Handle Database Connectivity, Session Limits, & Timeout Errors first (always 503 retryable)
   const isConnectionOrTimeoutError =
     err instanceof Prisma.PrismaClientInitializationError ||
     err.constructor?.name === 'PrismaClientRustPanicError' ||
+    (typeof err.code === 'string' && err.code.startsWith('P1')) || // All P1xxx codes (P1000-P1017) are DB connection errors
     err.code === 'P2024' || // Connection pool timeout
-    err.code === 'P1001' || // Can't reach database server
-    err.code === 'P1002' || // Database server reached but timed out
-    err.code === 'P1008' || // Operations timed out
-    err.code === 'P1017' || // Server closed connection
     err.message?.includes("Can't reach database server") ||
     err.message?.includes('Connection refused') ||
     err.message?.includes('connection pool') ||
-    err.message?.includes('timed out');
+    err.message?.includes('timed out') ||
+    err.message?.includes('EMAXCONNSESSION') ||
+    err.message?.includes('max clients reached') ||
+    err.message?.includes('pool_size') ||
+    err.message?.includes('FATAL') ||
+    err.message?.includes('closed the connection') ||
+    err.message?.includes('server closed the connection');
 
   if (isConnectionOrTimeoutError) {
     statusCode = 503;
@@ -74,12 +77,17 @@ export const errorHandler = (
       statusCode = 404;
       message = 'Record not found';
     } else {
-      statusCode = 400;
-      message = 'Database request error';
+      statusCode = 500;
+      message = 'Database query failed';
     }
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
     message = 'Invalid data provided';
+  } else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    statusCode = 503;
+    message = 'Database connector error. Retrying...';
+    res.setHeader('Retry-After', '1');
+    logger.warn({ err: err.message }, 'Prisma connector unknown request error');
   }
 
   // Log server errors
