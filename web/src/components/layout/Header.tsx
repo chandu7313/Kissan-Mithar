@@ -97,7 +97,7 @@ export const Header: React.FC<Props> = ({
           />
           <input
             type="text"
-            placeholder="Search farmers, requests, listings..."
+            placeholder={activeTab === 'farmers' ? "Search farmers, phone, or farmer ID..." : "Search farmers, requests, listings..."}
             style={{
               width: '100%',
               padding: '0.52rem 0.875rem 0.52rem 2.25rem',
