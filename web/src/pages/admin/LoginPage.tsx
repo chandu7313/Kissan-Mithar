@@ -4,27 +4,30 @@ import {
   Lock,
   Eye,
   EyeOff,
-  KeyRound,
   RefreshCw,
-  ShieldCheck,
   CheckCircle2,
   AlertTriangle,
   ArrowRight,
   ArrowLeft,
   ChevronDown,
   ChevronUp,
-  Sparkles,
   Loader2,
-  Crown,
-  Server,
-  Briefcase,
+  Globe,
+  LogIn,
+  Info,
+  Code2,
+  Shield,
+  Settings,
+  Users,
   Sprout,
-  ShoppingCart,
+  ShoppingBasket,
   Headphones,
   Tractor,
-  FileSpreadsheet,
+  Folder,
   Megaphone,
-  LineChart,
+  BarChart3,
+  GraduationCap,
+  TrendingUp,
 } from 'lucide-react';
 import { UserSession, DevAccountRole } from '../../types/index.js';
 import { AuthStore } from '../../services/authStore.js';
@@ -35,30 +38,109 @@ interface Props {
   onBackToHome?: () => void;
 }
 
-const ROLE_ICONS: Record<string, React.ComponentType<any>> = {
-  SUPER_ADMIN: Crown,
-  SYSTEM_ADMIN: Server,
-  OPERATIONS_MANAGER: Briefcase,
-  AGRONOMY_EXPERT: Sprout,
-  PROCUREMENT_MANAGER: ShoppingCart,
-  FARMER_SUPPORT: Headphones,
-  FIELD_COORDINATOR: Tractor,
-  FINANCE_COMPLIANCE: FileSpreadsheet,
-  MARKETING_MANAGER: Megaphone,
-  BUSINESS_ANALYST: LineChart,
-};
-
-const ROLE_COLORS: Record<string, { bg: string; border: string; text: string; icon: string }> = {
-  SUPER_ADMIN: { bg: '#fffbeb', border: '#fef3c7', text: '#92400e', icon: '#d97706' },
-  SYSTEM_ADMIN: { bg: '#eff6ff', border: '#dbeafe', text: '#1e40af', icon: '#2563eb' },
-  OPERATIONS_MANAGER: { bg: '#f0fdf4', border: '#dcfce7', text: '#166534', icon: '#16a34a' },
-  AGRONOMY_EXPERT: { bg: '#ecfdf5', border: '#d1fae5', text: '#065f46', icon: '#059669' },
-  PROCUREMENT_MANAGER: { bg: '#faf5ff', border: '#f3e8ff', text: '#6b21a8', icon: '#9333ea' },
-  FARMER_SUPPORT: { bg: '#ecfeff', border: '#cffafe', text: '#155e75', icon: '#0891b2' },
-  FIELD_COORDINATOR: { bg: '#fff7ed', border: '#ffedd5', text: '#9a3412', icon: '#ea580c' },
-  FINANCE_COMPLIANCE: { bg: '#fff1f2', border: '#ffe4e6', text: '#9f1239', icon: '#e11d48' },
-  MARKETING_MANAGER: { bg: '#fdf2f8', border: '#fce7f3', text: '#831843', icon: '#db2777' },
-  BUSINESS_ANALYST: { bg: '#f0fdfa', border: '#ccfbf1', text: '#115e59', icon: '#0d9488' },
+// Visual definition for the 10 company roles matching the screenshot design
+const ROLE_UI_SPECS: Record<
+  string,
+  {
+    name: string;
+    description: string;
+    icon: React.ComponentType<any>;
+    iconColor: string;
+    iconBg: string;
+    column: 1 | 2;
+    order: number;
+  }
+> = {
+  SUPER_ADMIN: {
+    name: 'Founder / Super Admin',
+    description: 'Full system access',
+    icon: Shield,
+    iconColor: '#d97706',
+    iconBg: '#fef3c7',
+    column: 1,
+    order: 1,
+  },
+  SYSTEM_ADMIN: {
+    name: 'System Administrator',
+    description: 'Manage system health & settings',
+    icon: Settings,
+    iconColor: '#2563eb',
+    iconBg: '#dbeafe',
+    column: 1,
+    order: 2,
+  },
+  OPERATIONS_MANAGER: {
+    name: 'Operations Manager',
+    description: 'Oversee daily operations',
+    icon: Users,
+    iconColor: '#0284c7',
+    iconBg: '#e0f2fe',
+    column: 1,
+    order: 3,
+  },
+  AGRONOMY_EXPERT: {
+    name: 'Agriculture Expert',
+    description: 'Provide expert advisory',
+    icon: Sprout,
+    iconColor: '#16a34a',
+    iconBg: '#dcfce7',
+    column: 1,
+    order: 4,
+  },
+  PROCUREMENT_MANAGER: {
+    name: 'Procurement Manager',
+    description: 'Manage Agri Bazaar & procurement',
+    icon: ShoppingBasket,
+    iconColor: '#e11d48',
+    iconBg: '#ffe4e6',
+    column: 1,
+    order: 5,
+  },
+  FARMER_SUPPORT: {
+    name: 'Farmer Support Executive',
+    description: 'Handle farmer inquiries',
+    icon: Headphones,
+    iconColor: '#9333ea',
+    iconBg: '#f3e8ff',
+    column: 2,
+    order: 1,
+  },
+  FIELD_COORDINATOR: {
+    name: 'Field Services Coordinator',
+    description: 'Manage labour & machinery',
+    icon: Tractor,
+    iconColor: '#15803d',
+    iconBg: '#dcfce7',
+    column: 2,
+    order: 2,
+  },
+  FINANCE_COMPLIANCE: {
+    name: 'Finance & Compliance Officer',
+    description: 'View financial records & reports',
+    icon: Folder,
+    iconColor: '#ca8a04',
+    iconBg: '#fef9c3',
+    column: 2,
+    order: 3,
+  },
+  MARKETING_MANAGER: {
+    name: 'Marketing & Content Manager',
+    description: 'Manage content & communications',
+    icon: Megaphone,
+    iconColor: '#dc2626',
+    iconBg: '#fee2e2',
+    column: 2,
+    order: 4,
+  },
+  BUSINESS_ANALYST: {
+    name: 'Business Analyst / Auditor',
+    description: 'View reports & analytics (read-only)',
+    icon: BarChart3,
+    iconColor: '#4f46e5',
+    iconBg: '#e0e7ff',
+    column: 2,
+    order: 5,
+  },
 };
 
 export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => {
@@ -68,11 +150,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1';
 
-  // Login Mode: 'PASSWORD' (default production mode) or 'OTP'
-  const [loginMethod, setLoginMethod] = useState<'PASSWORD' | 'OTP'>('PASSWORD');
-  const [isForgotPassword, setIsForgotPassword] = useState<boolean>(false);
-
-  // Form Fields
+  // State
   const [email, setEmail] = useState<string>(() => {
     return localStorage.getItem('kissan_mithar_remembered_email') || '';
   });
@@ -81,29 +159,26 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
   const [rememberMe, setRememberMe] = useState<boolean>(() => {
     return !!localStorage.getItem('kissan_mithar_remembered_email');
   });
-  const [otp, setOtp] = useState<string>('');
+
+  // UI Flow States
+  const [isForgotPassword, setIsForgotPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Quick Login Collapsible State & Real DB Accounts
+  const [quickLoginOpen, setQuickLoginOpen] = useState<boolean>(true);
+  const [devAccounts, setDevAccounts] = useState<DevAccountRole[]>([]);
+  const [loadingDevAccounts, setLoadingDevAccounts] = useState<boolean>(false);
+  const [submittingRole, setSubmittingRole] = useState<string | null>(null);
 
   // Reset Password Fields
   const [resetEmail, setResetEmail] = useState<string>('');
   const [resetOtp, setResetOtp] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
-
-  // UI States
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [otpSent, setOtpSent] = useState<boolean>(false);
   const [otpCountdown, setOtpCountdown] = useState<number>(0);
-  const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
-
-  // Developer Quick Login States
-  const [quickLoginOpen, setQuickLoginOpen] = useState<boolean>(true);
-  const [devAccounts, setDevAccounts] = useState<DevAccountRole[]>([]);
-  const [loadingDevAccounts, setLoadingDevAccounts] = useState<boolean>(false);
-  const [quickLoginRoleLoading, setQuickLoginRoleLoading] = useState<string | null>(null);
 
   // Timer for OTP resend cooldown
   useEffect(() => {
@@ -114,7 +189,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
     return () => clearInterval(timer);
   }, [otpCountdown]);
 
-  // Load real development accounts in development mode
+  // Load real development accounts from database in development mode
   useEffect(() => {
     if (isDev) {
       setLoadingDevAccounts(true);
@@ -141,81 +216,27 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
     }
   };
 
-  // Toggle between Password and OTP modes
-  const handleToggleLoginMethod = (method: 'PASSWORD' | 'OTP') => {
-    setLoginMethod(method);
-    setErrorMessage(null);
-    setSuccessMessage(null);
-    setDevOtpHint(null);
-  };
-
-  // --- 1. Send OTP to Mail ---
-  const handleSendOtp = async (purpose: 'LOGIN' | 'RESET_PASSWORD' = 'LOGIN') => {
-    const targetEmail = purpose === 'LOGIN' ? email.trim() : resetEmail.trim();
-    if (!targetEmail || !targetEmail.includes('@')) {
-      setErrorMessage('Please enter a valid email address.');
-      return;
-    }
-
-    setLoading(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    try {
-      const res = await AuthApi.sendEmailOtp({
-        email: targetEmail,
-        purpose,
-      });
-
-      setOtpSent(true);
-      setOtpCountdown(60);
-      setSuccessMessage(res.message || `A 6-digit OTP code has been dispatched to ${targetEmail}`);
-      if (res.devOtp) {
-        setDevOtpHint(res.devOtp);
-      }
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to send OTP code.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // --- 2. Production Form Submit (Password or OTP) ---
+  // --- Production Form Submit ---
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
       setErrorMessage('Please enter your registered email address.');
       return;
     }
+    if (!password.trim()) {
+      setErrorMessage('Please enter your password.');
+      return;
+    }
 
     setLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
 
     try {
-      let res: { token: string; user: any };
-
-      if (loginMethod === 'PASSWORD') {
-        if (!password.trim()) {
-          setErrorMessage('Please enter your password.');
-          setLoading(false);
-          return;
-        }
-        res = await AuthApi.loginWithPassword({
-          email: email.trim(),
-          password: password.trim(),
-        });
-      } else {
-        if (!otp.trim()) {
-          setErrorMessage('Please enter the 6-digit OTP sent to your mail.');
-          setLoading(false);
-          return;
-        }
-        res = await AuthApi.loginWithEmailOtp({
-          email: email.trim(),
-          otp: otp.trim(),
-        });
-      }
+      const res = await AuthApi.loginWithPassword({
+        email: email.trim(),
+        password: password.trim(),
+      });
 
       const role = res.user?.role;
       if (!role || !res.user?.userId) {
@@ -248,44 +269,46 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
 
       setTimeout(() => {
         onLoginSuccess(session);
-      }, 500);
+      }, 400);
     } catch (err: any) {
       setErrorMessage(
         err.response?.data?.message ||
-        err.message ||
-        'Authentication failed. Please verify your credentials or contact your administrator.'
+          err.message ||
+          'Authentication failed. Please verify your credentials or contact administration.'
       );
     } finally {
       setLoading(false);
     }
   };
 
-  // --- 3. Quick-Login Action (Uses Real Backend Endpoint & Real Dev Credentials) ---
-  const handleQuickLoginRole = async (accountRole: DevAccountRole) => {
-    if (!accountRole.isAvailable || !accountRole.email) {
-      setErrorMessage(`No active development account configured for ${accountRole.roleName}.`);
+  // --- Quick-Login Action (Authenticates Real Development Account) ---
+  const handleUseAccount = async (roleKey: string) => {
+    const accountInfo = devAccounts.find((a) => a.roleKey === roleKey);
+    if (!accountInfo || !accountInfo.isAvailable || !accountInfo.email) {
+      setErrorMessage(`No development account configured for this role.`);
       return;
     }
 
-    setEmail(accountRole.email);
-    setQuickLoginRoleLoading(accountRole.roleKey);
+    setEmail(accountInfo.email);
+    setPassword('Kisan@123');
+    setSubmittingRole(roleKey);
     setErrorMessage(null);
     setSuccessMessage(null);
 
     try {
-      // Submits real credentials through the exact same backend authentication endpoint
+      // Submits real credentials through the standard backend authentication endpoint
       const res = await AuthApi.loginWithPassword({
-        email: accountRole.email,
+        email: accountInfo.email,
         password: 'Kisan@123',
       });
 
       const role = res.user?.role;
       if (!role || !res.user?.userId) {
-        throw new Error('Invalid user payload returned from server.');
+        throw new Error('Invalid authentication response from server.');
       }
 
       setIsSuccess(true);
-      setSuccessMessage(`Authenticated as ${accountRole.roleName} (${accountRole.accountName}). Navigating...`);
+      setSuccessMessage(`Signed in as ${accountInfo.roleName}. Redirecting...`);
 
       const session: UserSession = {
         userId: res.user.userId,
@@ -304,33 +327,55 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
 
       setTimeout(() => {
         onLoginSuccess(session);
-      }, 500);
+      }, 400);
     } catch (err: any) {
       setErrorMessage(
         err.response?.data?.message ||
-        err.message ||
-        `Quick login failed for ${accountRole.roleName}. Please verify credentials.`
+          err.message ||
+          `Failed to sign in as ${accountInfo.roleName}. Please check credentials.`
       );
     } finally {
-      setQuickLoginRoleLoading(null);
+      setSubmittingRole(null);
     }
   };
 
-  // --- 4. Submit Reset Password ---
+  // --- Password Reset Handlers ---
+  const handleSendResetOtp = async () => {
+    if (!resetEmail.trim() || !resetEmail.includes('@')) {
+      setErrorMessage('Please enter a valid registered email address.');
+      return;
+    }
+
+    setLoading(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    try {
+      const res = await AuthApi.sendEmailOtp({
+        email: resetEmail.trim(),
+        purpose: 'RESET_PASSWORD',
+      });
+      setOtpCountdown(60);
+      setSuccessMessage(res.message || `Password reset code sent to ${resetEmail}`);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Failed to dispatch reset code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleResetPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!resetEmail.trim() || !resetOtp.trim() || !newPassword.trim()) {
-      setErrorMessage('Please complete all required fields.');
+      setErrorMessage('Please fill in all required fields.');
       return;
     }
-
     if (newPassword.length < 6) {
-      setErrorMessage('New password must be at least 6 characters long.');
+      setErrorMessage('Password must be at least 6 characters long.');
       return;
     }
-
     if (newPassword !== confirmPassword) {
-      setErrorMessage('New password and confirmation password do not match.');
+      setErrorMessage('Passwords do not match.');
       return;
     }
 
@@ -343,14 +388,12 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
         otp: resetOtp.trim(),
         newPassword: newPassword.trim(),
       });
-
       setSuccessMessage(res.message || 'Password successfully updated! You can now log in.');
       setPassword(newPassword);
       setEmail(resetEmail);
       setTimeout(() => {
         setIsForgotPassword(false);
-        setLoginMethod('PASSWORD');
-      }, 1500);
+      }, 1200);
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to reset password. Please verify your OTP code.');
     } finally {
@@ -364,112 +407,522 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
         minHeight: '100vh',
         width: '100vw',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #06190e 0%, #0c2d1b 45%, #05140b 100%)',
-        padding: '2rem 1.5rem',
-        boxSizing: 'border-box',
-        overflowY: 'auto',
+        flexDirection: 'row',
+        backgroundColor: '#ffffff',
+        fontFamily: "'Inter', sans-serif",
+        overflowX: 'hidden',
       }}
     >
+      {/* ============================================================ */}
+      {/* LEFT PANEL: HERO & BRAND STORY (MATCHING PROVIDED IMAGE)      */}
+      {/* ============================================================ */}
       <div
         style={{
-          width: '100%',
-          maxWidth: isDev ? '840px' : '480px',
+          flex: '1 1 50%',
+          position: 'relative',
+          minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          gap: '1.5rem',
-          margin: 'auto',
+          justifyContent: 'space-between',
+          padding: '2.75rem 3.5rem',
+          boxSizing: 'border-box',
+          backgroundImage: 'url(/assets/loginpage-img.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center bottom',
+          backgroundRepeat: 'no-repeat',
         }}
       >
-        {/* Main Glass Panel Card */}
+        {/* Soft top gradient to ensure crystal-clear text contrast */}
         <div
-          className="glass-panel"
           style={{
-            width: '100%',
-            borderRadius: '1.25rem',
-            padding: '2.5rem',
-            backgroundColor: '#ffffff',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.45)',
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.78) 32%, rgba(255,255,255,0.15) 55%, rgba(0,0,0,0.1) 100%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Decorative translucent organic green leaf curves at upper right */}
+        <svg
+          style={{
+            position: 'absolute',
+            top: '80px',
+            right: '-10px',
+            width: '280px',
+            height: '280px',
+            opacity: 0.28,
+            pointerEvents: 'none',
+          }}
+          viewBox="0 0 200 200"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M50 160C80 90 140 60 190 40C180 110 140 160 80 180C65 185 55 175 50 160Z"
+            fill="#16a34a"
+          />
+          <path
+            d="M30 190C60 140 110 110 160 90C150 150 110 190 60 200C45 205 35 200 30 190Z"
+            fill="#22c55e"
+          />
+        </svg>
+
+        {/* Top Header Bar inside Left Hero */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
             display: 'flex',
-            flexDirection: 'column',
-            gap: '1.5rem',
-            boxSizing: 'border-box',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
           }}
         >
-          {/* Back to Website Button */}
-          {onBackToHome && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '-0.5rem' }}>
-              <button
-                type="button"
-                onClick={onBackToHome}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  background: 'none',
-                  border: 'none',
-                  color: '#64748b',
-                  fontSize: '0.8125rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  padding: '0.25rem 0',
-                }}
-              >
-                <ArrowLeft size={15} />
-                <span>Back to Website</span>
-              </button>
-            </div>
-          )}
-
-          {/* Brand Header */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              gap: '0.65rem',
-            }}
-          >
-            <img
-              src="/kissan_mithar_logo_v2.png"
-              alt="Kissan Mithar Logo"
+          {/* Brand Logo & Slogan */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <div
               style={{
-                height: '76px',
-                width: '76px',
-                objectFit: 'contain',
-                borderRadius: '16px',
+                width: '46px',
+                height: '46px',
+                borderRadius: '12px',
                 backgroundColor: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
                 padding: '4px',
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
               }}
-            />
+            >
+              <img
+                src="/kissan_mithar_logo_v2.png"
+                alt="Kissan Mithar"
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
+            </div>
             <div>
-              <h1
+              <div
                 style={{
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '1.75rem',
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: '1.45rem',
                   fontWeight: 800,
                   color: '#0f172a',
-                  margin: 0,
-                  letterSpacing: '-0.025em',
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.02em',
                 }}
               >
-                Welcome back
-              </h1>
-              <p
+                Kissan Mithar
+              </div>
+              <div
+                style={{
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  color: '#475569',
+                  marginTop: '0.15rem',
+                }}
+              >
+                For a Prosperous Farmer
+              </div>
+            </div>
+          </div>
+
+          {/* Handwritten Tagline: "Empowering Farmers. Growing Together." */}
+          <div
+            style={{
+              fontFamily: "'Caveat', cursive",
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              color: '#14532d',
+              lineHeight: 1.15,
+              textAlign: 'left',
+              transform: 'rotate(-4deg)',
+              userSelect: 'none',
+            }}
+          >
+            <div>Empowering</div>
+            <div>Farmers.</div>
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              Growing Together.
+              <span
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  bottom: '-3px',
+                  width: '100%',
+                  height: '3px',
+                  backgroundColor: '#16a34a',
+                  borderRadius: '2px',
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Middle Content: Headline, Subtitle, & 4 Value Props */}
+        <div style={{ position: 'relative', zIndex: 2, margin: '2rem 0' }}>
+          <h1
+            style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: '2.5rem',
+              fontWeight: 800,
+              color: '#06291a',
+              lineHeight: 1.18,
+              letterSpacing: '-0.03em',
+              margin: '0 0 1rem 0',
+              maxWidth: '560px',
+            }}
+          >
+            A Stronger
+            <br />
+            Agriculture Ecosystem
+            <br />
+            for a Brighter Tomorrow
+          </h1>
+
+          <p
+            style={{
+              fontSize: '0.9375rem',
+              color: '#334155',
+              lineHeight: 1.55,
+              maxWidth: '520px',
+              margin: '0 0 2rem 0',
+              fontWeight: 500,
+            }}
+          >
+            Kissan Mithar connects farmers, experts, markets and resources to build a more sustainable
+            and prosperous agricultural community.
+          </p>
+
+          {/* 4 Feature Cards in a row */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '1rem',
+              maxWidth: '680px',
+            }}
+          >
+            {/* Feature 1 */}
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.94)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '12px',
+                padding: '1rem 0.85rem',
+                border: '1px solid rgba(255, 255, 255, 0.8)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  backgroundColor: '#dcfce7',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#16a34a',
+                  marginBottom: '0.65rem',
+                }}
+              >
+                <Sprout size={18} />
+              </div>
+              <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0f172a' }}>
+                Farmers First
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: '#64748b', marginTop: '0.2rem', lineHeight: 1.35 }}>
+                Better support.
+                <br />
+                Greater opportunities.
+              </div>
+            </div>
+
+            {/* Feature 2 */}
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.94)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '12px',
+                padding: '1rem 0.85rem',
+                border: '1px solid rgba(255, 255, 255, 0.8)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  backgroundColor: '#dbeafe',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#2563eb',
+                  marginBottom: '0.65rem',
+                }}
+              >
+                <GraduationCap size={18} />
+              </div>
+              <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0f172a' }}>
+                Expert Guidance
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: '#64748b', marginTop: '0.2rem', lineHeight: 1.35 }}>
+                From soil to markets,
+                <br />
+                we're with you.
+              </div>
+            </div>
+
+            {/* Feature 3 */}
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.94)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '12px',
+                padding: '1rem 0.85rem',
+                border: '1px solid rgba(255, 255, 255, 0.8)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  backgroundColor: '#e0e7ff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#4f46e5',
+                  marginBottom: '0.65rem',
+                }}
+              >
+                <Users size={18} />
+              </div>
+              <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0f172a' }}>
+                Stronger Markets
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: '#64748b', marginTop: '0.2rem', lineHeight: 1.35 }}>
+                More value for
+                <br />
+                every harvest.
+              </div>
+            </div>
+
+            {/* Feature 4 */}
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.94)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '12px',
+                padding: '1rem 0.85rem',
+                border: '1px solid rgba(255, 255, 255, 0.8)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  backgroundColor: '#dcfce7',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#16a34a',
+                  marginBottom: '0.65rem',
+                }}
+              >
+                <TrendingUp size={18} />
+              </div>
+              <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0f172a' }}>
+                Sustainable Growth
+              </div>
+              <div style={{ fontSize: '0.6875rem', color: '#64748b', marginTop: '0.2rem', lineHeight: 1.35 }}>
+                Healthy farms.
+                <br />
+                Thriving communities.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Floating Quote Box */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            alignSelf: 'flex-end',
+            maxWidth: '320px',
+            backgroundColor: 'rgba(12, 38, 26, 0.88)',
+            backdropFilter: 'blur(12px)',
+            borderRadius: '14px',
+            padding: '1rem 1.25rem',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)',
+            color: '#ffffff',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem' }}>
+            <div
+              style={{
+                width: '26px',
+                height: '26px',
+                borderRadius: '50%',
+                backgroundColor: '#16a34a',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                flexShrink: 0,
+                marginTop: '2px',
+              }}
+            >
+              <Sprout size={14} />
+            </div>
+            <div>
+              <div
                 style={{
                   fontSize: '0.875rem',
-                  color: '#64748b',
-                  margin: '0.35rem 0 0 0',
-                  fontWeight: 500,
+                  fontWeight: 600,
+                  lineHeight: 1.4,
+                  color: '#f8fafc',
+                  fontStyle: 'italic',
                 }}
               >
-                Sign in to manage Kissan Mithar operations.
-              </p>
+                “When farmers grow, communities prosper.”
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.35rem' }}>
+                — Kissan Mithar
+              </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* RIGHT PANEL: LOGIN & DEVELOPER QUICK LOGIN (MATCHING SCREEN)  */}
+      {/* ============================================================ */}
+      <div
+        style={{
+          flex: '1 1 50%',
+          minHeight: '100vh',
+          backgroundColor: '#f8fafc',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '2.5rem 3rem',
+          boxSizing: 'border-box',
+          overflowY: 'auto',
+        }}
+      >
+        {/* Top Navigation Row: Language Selector & Back Button */}
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '620px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '1.25rem',
+          }}
+        >
+          {onBackToHome ? (
+            <button
+              type="button"
+              onClick={onBackToHome}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                background: 'none',
+                border: 'none',
+                color: '#64748b',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                padding: '0.25rem 0',
+              }}
+            >
+              <ArrowLeft size={14} />
+              <span>Back to Website</span>
+            </button>
+          ) : (
+            <div />
+          )}
+
+          {/* Language Selector Pill */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '9999px',
+              backgroundColor: '#ffffff',
+              border: '1px solid #e2e8f0',
+              fontSize: '0.8125rem',
+              color: '#334155',
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+            }}
+          >
+            <Globe size={14} color="#64748b" />
+            <span>English</span>
+            <ChevronDown size={14} color="#94a3b8" />
+          </div>
+        </div>
+
+        {/* White Card Container */}
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '620px',
+            backgroundColor: '#ffffff',
+            borderRadius: '20px',
+            padding: '2.25rem 2.25rem',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.05)',
+            border: '1px solid #f1f5f9',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* Card Header */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                color: '#15803d',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                marginBottom: '0.35rem',
+              }}
+            >
+              KISSAN MITHAR ADMIN PORTAL
+            </div>
+            <h2
+              style={{
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: '2rem',
+                fontWeight: 800,
+                color: '#0f172a',
+                margin: 0,
+                letterSpacing: '-0.025em',
+              }}
+            >
+              Welcome back
+            </h2>
+            <p
+              style={{
+                fontSize: '0.875rem',
+                color: '#64748b',
+                margin: '0.35rem 0 0 0',
+                fontWeight: 500,
+              }}
+            >
+              Sign in to manage Kissan Mithar operations.
+            </p>
           </div>
 
           {/* Feedback Alerts */}
@@ -478,7 +931,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
               role="alert"
               style={{
                 padding: '0.75rem 1rem',
-                borderRadius: '0.625rem',
+                borderRadius: '8px',
                 backgroundColor: '#fef2f2',
                 border: '1px solid #fecaca',
                 color: '#991b1b',
@@ -486,7 +939,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.65rem',
-                lineHeight: 1.4,
+                marginBottom: '1.25rem',
               }}
             >
               <AlertTriangle size={18} color="#dc2626" style={{ flexShrink: 0 }} />
@@ -499,7 +952,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
               role="status"
               style={{
                 padding: '0.75rem 1rem',
-                borderRadius: '0.625rem',
+                borderRadius: '8px',
                 backgroundColor: '#f0fdf4',
                 border: '1px solid #bbf7d0',
                 color: '#166534',
@@ -507,7 +960,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.65rem',
-                lineHeight: 1.4,
+                marginBottom: '1.25rem',
               }}
             >
               <CheckCircle2 size={18} color="#16a34a" style={{ flexShrink: 0 }} />
@@ -515,354 +968,187 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
             </div>
           )}
 
-          {/* Dev OTP Helper Banner */}
-          {devOtpHint && (
-            <div
-              style={{
-                padding: '0.55rem 0.85rem',
-                borderRadius: '0.5rem',
-                backgroundColor: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                color: '#1e40af',
-                fontSize: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <KeyRound size={15} color="#2563eb" />
-                <span>
-                  Simulated OTP: <strong>{devOtpHint}</strong>
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (isForgotPassword) setResetOtp(devOtpHint);
-                  else setOtp(devOtpHint);
-                }}
-                style={{
-                  backgroundColor: '#1d4ed8',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  padding: '0.25rem 0.6rem',
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                Fill Code
-              </button>
-            </div>
-          )}
-
           {/* ---------------------------------------------------- */}
-          {/* PRODUCTION LOGIN FORM (Password by default / OTP)    */}
+          {/* MAIN LOGIN FORM (MATCHING SCREENSHOT)                */}
           {/* ---------------------------------------------------- */}
           {!isForgotPassword ? (
             <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
               {/* Field 1: Email Address */}
               <div>
                 <label
-                  htmlFor="admin-login-email"
+                  htmlFor="admin-email-input"
                   style={{
                     display: 'block',
                     fontSize: '0.8125rem',
                     fontWeight: 700,
-                    color: '#334155',
-                    marginBottom: '0.35rem',
+                    color: '#0f172a',
+                    marginBottom: '0.45rem',
                   }}
                 >
-                  Email Address
+                  Email address
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
-                    id="admin-login-email"
+                    id="admin-email-input"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@kissanmithar.in"
+                    placeholder="Enter your email"
                     autoComplete="email"
                     required
                     style={{
                       width: '100%',
-                      padding: '0.65rem 0.85rem 0.65rem 2.4rem',
-                      borderRadius: '0.5rem',
+                      padding: '0.7rem 0.85rem 0.7rem 2.45rem',
+                      borderRadius: '8px',
                       border: '1px solid #cbd5e1',
                       fontSize: '0.875rem',
                       boxSizing: 'border-box',
                       outline: 'none',
                       color: '#0f172a',
+                      backgroundColor: '#ffffff',
                       transition: 'border-color 0.15s ease',
                     }}
                     onFocus={(e) => (e.target.style.borderColor = '#16a34a')}
                     onBlur={(e) => (e.target.style.borderColor = '#cbd5e1')}
                   />
                   <Mail
-                    size={17}
+                    size={16}
                     color="#94a3b8"
                     style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }}
                   />
                 </div>
               </div>
 
-              {/* Field 2: Password (Default) OR OTP */}
-              {loginMethod === 'PASSWORD' ? (
-                <div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    <label
-                      htmlFor="admin-login-password"
-                      style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#334155' }}
-                    >
-                      Password
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsForgotPassword(true);
-                        setResetEmail(email);
-                        setErrorMessage(null);
-                        setSuccessMessage(null);
-                      }}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '0.75rem',
-                        color: '#15803d',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        padding: 0,
-                      }}
-                    >
-                      Forgot password?
-                    </button>
-                  </div>
-
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      id="admin-login-password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your account password"
-                      autoComplete="current-password"
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '0.65rem 2.6rem 0.65rem 2.4rem',
-                        borderRadius: '0.5rem',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.875rem',
-                        boxSizing: 'border-box',
-                        outline: 'none',
-                        color: '#0f172a',
-                        transition: 'border-color 0.15s ease',
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = '#16a34a')}
-                      onBlur={(e) => (e.target.style.borderColor = '#cbd5e1')}
-                    />
-                    <Lock
-                      size={17}
-                      color="#94a3b8"
-                      style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      style={{
-                        position: 'absolute',
-                        right: '0.85rem',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'none',
-                        border: 'none',
-                        color: '#64748b',
-                        cursor: 'pointer',
-                        padding: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    >
-                      {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-                    </button>
-                  </div>
-
-                  {/* Remember Me & OTP Switch Row */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginTop: '0.65rem',
-                    }}
-                  >
-                    <label
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.45rem',
-                        fontSize: '0.8125rem',
-                        color: '#475569',
-                        cursor: 'pointer',
-                        userSelect: 'none',
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={rememberMe}
-                        onChange={(e) => handleRememberMeChange(e.target.checked)}
-                        style={{
-                          accentColor: '#16a34a',
-                          width: '15px',
-                          height: '15px',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                        }}
-                      />
-                      <span>Remember me</span>
-                    </label>
-
-                    <button
-                      type="button"
-                      onClick={() => handleToggleLoginMethod('OTP')}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '0.75rem',
-                        color: '#15803d',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        padding: 0,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.25rem',
-                      }}
-                    >
-                      <KeyRound size={13} />
-                      <span>Sign in with Email OTP</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                /* OTP Verification Mode */
-                <div>
+              {/* Field 2: Password with Forgot password? link */}
+              <div>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '0.45rem',
+                  }}
+                >
                   <label
-                    htmlFor="admin-login-otp"
+                    htmlFor="admin-password-input"
+                    style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a' }}
+                  >
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsForgotPassword(true);
+                      setResetEmail(email);
+                      setErrorMessage(null);
+                      setSuccessMessage(null);
+                    }}
                     style={{
-                      display: 'block',
+                      background: 'none',
+                      border: 'none',
                       fontSize: '0.8125rem',
-                      fontWeight: 700,
-                      color: '#334155',
-                      marginBottom: '0.35rem',
+                      color: '#2563eb',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      padding: 0,
                     }}
                   >
-                    6-Digit Security OTP
-                  </label>
+                    Forgot password?
+                  </button>
+                </div>
+
+                <div style={{ position: 'relative' }}>
                   <input
-                    id="admin-login-otp"
-                    type="text"
-                    maxLength={6}
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
-                    placeholder="• • • • • •"
+                    id="admin-password-input"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
                     required
                     style={{
                       width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '0.5rem',
-                      border: '2px solid #cbd5e1',
-                      fontSize: '1.25rem',
-                      textAlign: 'center',
-                      letterSpacing: '0.35em',
-                      fontWeight: 800,
+                      padding: '0.7rem 2.5rem 0.7rem 2.45rem',
+                      borderRadius: '8px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.875rem',
                       boxSizing: 'border-box',
-                      fontFamily: 'monospace',
                       outline: 'none',
+                      color: '#0f172a',
+                      backgroundColor: '#ffffff',
+                      transition: 'border-color 0.15s ease',
                     }}
                     onFocus={(e) => (e.target.style.borderColor = '#16a34a')}
                     onBlur={(e) => (e.target.style.borderColor = '#cbd5e1')}
                   />
-
-                  {/* Actions below OTP field: Send OTP & Switch back to password */}
-                  <div
+                  <Lock
+                    size={16}
+                    color="#94a3b8"
+                    style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
                     style={{
+                      position: 'absolute',
+                      right: '0.85rem',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      color: '#64748b',
+                      cursor: 'pointer',
+                      padding: 0,
                       display: 'flex',
-                      justifyContent: 'space-between',
                       alignItems: 'center',
-                      marginTop: '0.65rem',
                     }}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    <button
-                      type="button"
-                      onClick={() => handleSendOtp('LOGIN')}
-                      disabled={loading || otpCountdown > 0}
-                      style={{
-                        padding: '0.4rem 0.75rem',
-                        backgroundColor: otpCountdown > 0 ? '#e2e8f0' : '#15803d',
-                        color: otpCountdown > 0 ? '#64748b' : '#ffffff',
-                        border: 'none',
-                        borderRadius: '0.375rem',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        cursor: otpCountdown > 0 || loading ? 'not-allowed' : 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.35rem',
-                      }}
-                    >
-                      <Mail size={13} />
-                      <span>
-                        {otpCountdown > 0
-                          ? `Resend in ${otpCountdown}s`
-                          : otpSent
-                          ? 'Resend OTP'
-                          : 'Send Code to Email'}
-                      </span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleToggleLoginMethod('PASSWORD')}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '0.75rem',
-                        color: '#64748b',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        padding: 0,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.25rem',
-                      }}
-                    >
-                      <Lock size={13} />
-                      <span>Use password instead</span>
-                    </button>
-                  </div>
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-              )}
+              </div>
 
-              {/* Submit Button */}
+              {/* Remember me Checkbox */}
+              <div>
+                <label
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    fontSize: '0.8125rem',
+                    color: '#475569',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    fontWeight: 500,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => handleRememberMeChange(e.target.checked)}
+                    style={{
+                      accentColor: '#0a3d2e',
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                    }}
+                  />
+                  <span>Remember me</span>
+                </label>
+              </div>
+
+              {/* Sign in Button */}
               <button
                 type="submit"
                 disabled={loading || isSuccess}
                 style={{
                   width: '100%',
-                  padding: '0.75rem',
-                  borderRadius: '0.5rem',
+                  height: '46px',
+                  borderRadius: '8px',
                   border: 'none',
-                  backgroundColor: isSuccess ? '#16a34a' : '#15803d',
+                  backgroundColor: isSuccess ? '#16a34a' : '#083325',
                   color: '#ffffff',
                   fontSize: '0.9375rem',
                   fontWeight: 700,
@@ -871,34 +1157,32 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '0.5rem',
-                  marginTop: '0.35rem',
-                  boxShadow: '0 4px 12px rgba(22, 163, 74, 0.3)',
-                  transition: 'all 0.15s ease',
+                  marginTop: '0.25rem',
+                  boxShadow: '0 4px 12px rgba(8, 51, 37, 0.25)',
+                  transition: 'background-color 0.15s ease',
                   opacity: loading ? 0.75 : 1,
                 }}
               >
                 {loading ? (
                   <>
-                    <Loader2 size={17} className="animate-spin" />
-                    <span>Authenticating...</span>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Signing in...</span>
                   </>
                 ) : isSuccess ? (
                   <>
-                    <CheckCircle2 size={17} />
+                    <CheckCircle2 size={16} />
                     <span>Authenticated</span>
                   </>
                 ) : (
                   <>
-                    <span>{loginMethod === 'PASSWORD' ? 'Sign In' : 'Verify & Sign In'}</span>
-                    <ArrowRight size={17} />
+                    <LogIn size={16} />
+                    <span>Sign in</span>
                   </>
                 )}
               </button>
             </form>
           ) : (
-            /* ---------------------------------------------------- */
-            /* FORGOT / RESET PASSWORD WORKFLOW                      */
-            /* ---------------------------------------------------- */
+            /* Forgot Password Flow */
             <form onSubmit={handleResetPasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div
                 style={{
@@ -917,121 +1201,78 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsForgotPassword(false);
-                    setErrorMessage(null);
-                    setSuccessMessage(null);
-                  }}
+                  onClick={() => setIsForgotPassword(false)}
                   style={{
                     background: 'none',
                     border: 'none',
                     fontSize: '0.75rem',
-                    color: '#15803d',
+                    color: '#2563eb',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
                   }}
                 >
-                  <span>Back to Sign In</span>
-                  <ArrowRight size={13} />
+                  Back to Sign In
                 </button>
               </div>
 
-              {/* Reset Email Address */}
               <div>
-                <label
-                  htmlFor="reset-email"
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8125rem',
-                    fontWeight: 700,
-                    color: '#334155',
-                    marginBottom: '0.35rem',
-                  }}
-                >
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem' }}>
                   Registered Email Address
                 </label>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <div style={{ position: 'relative', flex: 1 }}>
-                    <input
-                      id="reset-email"
-                      type="email"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      placeholder="name@kissanmithar.in"
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '0.55rem 0.75rem 0.55rem 2.25rem',
-                        borderRadius: '0.375rem',
-                        border: '1px solid #cbd5e1',
-                        fontSize: '0.8125rem',
-                        boxSizing: 'border-box',
-                      }}
-                    />
-                    <Mail
-                      size={15}
-                      color="#94a3b8"
-                      style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}
-                    />
-                  </div>
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="Enter email"
+                    required
+                    style={{
+                      flex: 1,
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '0.8125rem',
+                    }}
+                  />
                   <button
                     type="button"
-                    onClick={() => handleSendOtp('RESET_PASSWORD')}
+                    onClick={handleSendResetOtp}
                     disabled={loading || otpCountdown > 0}
                     style={{
-                      padding: '0.55rem 0.85rem',
-                      backgroundColor: otpCountdown > 0 ? '#e2e8f0' : '#15803d',
+                      padding: '0.6rem 0.85rem',
+                      backgroundColor: otpCountdown > 0 ? '#e2e8f0' : '#083325',
                       color: otpCountdown > 0 ? '#64748b' : '#ffffff',
                       border: 'none',
-                      borderRadius: '0.375rem',
+                      borderRadius: '8px',
                       fontSize: '0.75rem',
                       fontWeight: 700,
                       cursor: otpCountdown > 0 || loading ? 'not-allowed' : 'pointer',
-                      whiteSpace: 'nowrap',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
                     }}
                   >
-                    <Mail size={13} />
-                    <span>{otpCountdown > 0 ? `Resend (${otpCountdown}s)` : 'Send OTP'}</span>
+                    {otpCountdown > 0 ? `Resend (${otpCountdown}s)` : 'Send OTP'}
                   </button>
                 </div>
               </div>
 
-              {/* OTP Input */}
               <div>
-                <label
-                  htmlFor="reset-otp"
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8125rem',
-                    fontWeight: 700,
-                    color: '#334155',
-                    marginBottom: '0.35rem',
-                  }}
-                >
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem' }}>
                   6-Digit OTP Code
                 </label>
                 <input
-                  id="reset-otp"
                   type="text"
                   maxLength={6}
                   value={resetOtp}
                   onChange={(e) => setResetOtp(e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder="Enter 6-digit code"
+                  placeholder="• • • • • •"
                   required
                   style={{
                     width: '100%',
-                    padding: '0.55rem 0.75rem',
-                    borderRadius: '0.375rem',
+                    padding: '0.6rem 0.75rem',
+                    borderRadius: '8px',
                     border: '1px solid #cbd5e1',
-                    fontSize: '1rem',
-                    letterSpacing: '0.25em',
+                    fontSize: '1.1rem',
                     textAlign: 'center',
+                    letterSpacing: '0.25em',
                     fontWeight: 800,
                     boxSizing: 'border-box',
                     fontFamily: 'monospace',
@@ -1039,101 +1280,46 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 />
               </div>
 
-              {/* New Password */}
               <div>
-                <label
-                  htmlFor="reset-new-password"
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8125rem',
-                    fontWeight: 700,
-                    color: '#334155',
-                    marginBottom: '0.35rem',
-                  }}
-                >
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem' }}>
                   New Password
                 </label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    id="reset-new-password"
-                    type={showNewPassword ? 'text' : 'password'}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Minimum 6 characters"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '0.55rem 2.4rem 0.55rem 2.25rem',
-                      borderRadius: '0.375rem',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.8125rem',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                  <Lock
-                    size={15}
-                    color="#94a3b8"
-                    style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    style={{
-                      position: 'absolute',
-                      right: '0.75rem',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      color: '#64748b',
-                      cursor: 'pointer',
-                      padding: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {showNewPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                </div>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Min 6 characters"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.6rem 0.75rem',
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.8125rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
               </div>
 
-              {/* Confirm Password */}
               <div>
-                <label
-                  htmlFor="reset-confirm-password"
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8125rem',
-                    fontWeight: 700,
-                    color: '#334155',
-                    marginBottom: '0.35rem',
-                  }}
-                >
-                  Confirm New Password
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.35rem' }}>
+                  Confirm Password
                 </label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    id="reset-confirm-password"
-                    type={showNewPassword ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Re-enter password to confirm"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '0.55rem 0.75rem 0.55rem 2.25rem',
-                      borderRadius: '0.375rem',
-                      border: '1px solid #cbd5e1',
-                      fontSize: '0.8125rem',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                  <Lock
-                    size={15}
-                    color="#94a3b8"
-                    style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}
-                  />
-                </div>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter new password"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.6rem 0.75rem',
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '0.8125rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
@@ -1142,8 +1328,8 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                   onClick={() => setIsForgotPassword(false)}
                   style={{
                     flex: 1,
-                    padding: '0.55rem',
-                    borderRadius: '0.375rem',
+                    padding: '0.6rem',
+                    borderRadius: '8px',
                     border: '1px solid #cbd5e1',
                     backgroundColor: '#ffffff',
                     color: '#475569',
@@ -1159,62 +1345,53 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                   disabled={loading}
                   style={{
                     flex: 1,
-                    padding: '0.55rem',
-                    borderRadius: '0.375rem',
+                    padding: '0.6rem',
+                    borderRadius: '8px',
                     border: 'none',
-                    backgroundColor: '#15803d',
+                    backgroundColor: '#083325',
                     color: '#ffffff',
                     fontSize: '0.8125rem',
                     fontWeight: 700,
                     cursor: loading ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {loading ? 'Updating...' : 'Save New Password'}
+                  {loading ? 'Saving...' : 'Save New Password'}
                 </button>
               </div>
             </form>
           )}
 
-          {/* Security & Audit Footer */}
+          {/* OR Divider */}
           <div
             style={{
-              fontSize: '0.75rem',
-              color: '#64748b',
-              borderTop: '1px solid #e2e8f0',
-              paddingTop: '0.85rem',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.45rem',
+              margin: '1.5rem 0',
+              color: '#94a3b8',
+              fontSize: '0.75rem',
+              fontWeight: 700,
             }}
           >
-            <ShieldCheck size={16} color="#16a34a" />
-            <span>Secured via Argon2/Bcrypt Password Hash & Database Audit Trail</span>
+            <div style={{ flex: 1, height: '1px', backgroundColor: '#e2e8f0' }} />
+            <span style={{ padding: '0 0.85rem' }}>OR</span>
+            <div style={{ flex: 1, height: '1px', backgroundColor: '#e2e8f0' }} />
           </div>
-        </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* DEVELOPER QUICK LOGIN SECTION (STRICTLY IN DEVELOPMENT ONLY)        */}
-        {/* ------------------------------------------------------------------ */}
-        {isDev && (
+          {/* ============================================================ */}
+          {/* DEVELOPER QUICK LOGIN SECTION (MATCHING SCREENSHOT)           */}
+          {/* ============================================================ */}
           <div
             style={{
-              width: '100%',
-              borderRadius: '1.25rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.98)',
-              boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.35)',
-              border: '1px solid #fde047',
-              overflow: 'hidden',
-              boxSizing: 'border-box',
+              backgroundColor: '#f6fcf8',
+              borderRadius: '12px',
+              border: '1px solid #e0f2e9',
+              padding: '1.25rem',
             }}
           >
-            {/* Collapsible Header */}
+            {/* Quick Login Header with Chevron */}
             <div
               onClick={() => setQuickLoginOpen(!quickLoginOpen)}
               style={{
-                padding: '1.15rem 1.5rem',
-                backgroundColor: '#fefce8',
-                borderBottom: quickLoginOpen ? '1px solid #fef08a' : 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -1222,68 +1399,74 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 userSelect: 'none',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <div
                   style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '8px',
-                    backgroundColor: '#eab308',
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '6px',
+                    backgroundColor: '#dcfce7',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#ffffff',
+                    color: '#16a34a',
                   }}
                 >
-                  <Sparkles size={18} />
+                  <Code2 size={16} />
                 </div>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-heading)',
-                        fontWeight: 800,
-                        fontSize: '0.9375rem',
-                        color: '#713f12',
-                      }}
-                    >
-                      Developer Quick Login — Development Only
-                    </span>
-                    <span
-                      style={{
-                        padding: '0.15rem 0.45rem',
-                        borderRadius: '9999px',
-                        backgroundColor: '#ca8a04',
-                        color: '#ffffff',
-                        fontSize: '0.625rem',
-                        fontWeight: 800,
-                        letterSpacing: '0.05em',
-                      }}
-                    >
-                      DEV ONLY
-                    </span>
+                  <div
+                    style={{
+                      fontSize: '0.875rem',
+                      fontWeight: 800,
+                      color: '#0f172a',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    Developer Quick Login — Development Only
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.75rem', color: '#854d0e' }}>
-                    Simulate all 10 authoritative company roles with active development staff accounts.
-                  </p>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.15rem' }}>
+                    Use these accounts for faster access during development.
+                  </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#854d0e' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700 }}>
-                  {devAccounts.filter((a) => a.isAvailable).length} / 10 Roles Ready
-                </span>
+              <div style={{ color: '#64748b' }}>
                 {quickLoginOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
               </div>
             </div>
 
-            {/* Quick Login 10 Roles Grid */}
             {quickLoginOpen && (
-              <div style={{ padding: '1.25rem', backgroundColor: '#ffffff' }}>
+              <div style={{ marginTop: '1rem' }}>
+                {/* Cyan Info Callout Banner */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.5rem',
+                    backgroundColor: '#e0f2fe',
+                    borderRadius: '8px',
+                    border: '1px solid #bae6fd',
+                    padding: '0.65rem 0.85rem',
+                    fontSize: '0.75rem',
+                    color: '#0369a1',
+                    lineHeight: 1.4,
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <Info size={15} color="#0284c7" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <div>
+                    These are real accounts from your development database.
+                    <br />
+                    Please do not use them in production.
+                  </div>
+                </div>
+
+                {/* 2-Column Grid of 10 Roles */}
                 {loadingDevAccounts ? (
                   <div
                     style={{
-                      padding: '2rem',
+                      padding: '1.5rem',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -1291,214 +1474,133 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                       color: '#64748b',
                     }}
                   >
-                    <Loader2 size={24} className="animate-spin" color="#16a34a" />
-                    <span style={{ fontSize: '0.8125rem' }}>
-                      Connecting to PostgreSQL development account registry...
-                    </span>
-                  </div>
-                ) : devAccounts.length === 0 ? (
-                  <div
-                    style={{
-                      padding: '1.5rem',
-                      textAlign: 'center',
-                      backgroundColor: '#f8fafc',
-                      borderRadius: '8px',
-                      color: '#64748b',
-                      fontSize: '0.8125rem',
-                    }}
-                  >
-                    No development accounts configured. Run `npm run seed:dev-staff` in backend to populate.
+                    <Loader2 size={20} className="animate-spin" color="#16a34a" />
+                    <span style={{ fontSize: '0.75rem' }}>Checking database accounts...</span>
                   </div>
                 ) : (
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
-                      gap: '0.85rem',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '0.75rem',
                     }}
                   >
-                    {devAccounts.map((accountRole) => {
-                      const IconComponent = ROLE_ICONS[accountRole.roleKey] || Briefcase;
-                      const roleColor = ROLE_COLORS[accountRole.roleKey] || {
-                        bg: '#f8fafc',
-                        border: '#e2e8f0',
-                        text: '#334155',
-                        icon: '#64748b',
-                      };
-                      const isLoadingThis = quickLoginRoleLoading === accountRole.roleKey;
+                    {/* Render roles in 2 columns according to specification */}
+                    {Object.entries(ROLE_UI_SPECS)
+                      .sort((a, b) => {
+                        if (a[1].column !== b[1].column) return a[1].column - b[1].column;
+                        return a[1].order - b[1].order;
+                      })
+                      .map(([roleKey, spec]) => {
+                        const account = devAccounts.find((a) => a.roleKey === roleKey);
+                        const isSubmitting = submittingRole === roleKey;
+                        const IconComponent = spec.icon;
 
-                      return (
-                        <div
-                          key={accountRole.roleKey}
-                          style={{
-                            padding: '0.85rem 1rem',
-                            borderRadius: '10px',
-                            border: `1px solid ${accountRole.isAvailable ? roleColor.border : '#e2e8f0'}`,
-                            backgroundColor: accountRole.isAvailable ? roleColor.bg : '#f8fafc',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            gap: '0.75rem',
-                            transition: 'all 0.15s ease',
-                            opacity: accountRole.isAvailable ? 1 : 0.6,
-                          }}
-                        >
-                          <div>
-                            {/* Role Header */}
-                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem' }}>
+                        return (
+                          <div
+                            key={roleKey}
+                            style={{
+                              backgroundColor: '#ffffff',
+                              borderRadius: '8px',
+                              border: '1px solid #f1f5f9',
+                              padding: '0.75rem 0.85rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '0.5rem',
+                              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02)',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', minWidth: 0 }}>
                               <div
                                 style={{
-                                  width: '34px',
-                                  height: '34px',
-                                  borderRadius: '8px',
-                                  backgroundColor: '#ffffff',
+                                  width: '32px',
+                                  height: '32px',
+                                  borderRadius: '6px',
+                                  backgroundColor: spec.iconBg,
+                                  color: spec.iconColor,
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
-                                  border: `1px solid ${roleColor.border}`,
-                                  color: roleColor.icon,
                                   flexShrink: 0,
                                 }}
                               >
-                                <IconComponent size={18} />
+                                <IconComponent size={16} />
                               </div>
-                              <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ minWidth: 0 }}>
                                 <div
                                   style={{
-                                    fontWeight: 800,
-                                    fontSize: '0.875rem',
-                                    color: roleColor.text,
+                                    fontWeight: 700,
+                                    fontSize: '0.8125rem',
+                                    color: '#0f172a',
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
+                                    lineHeight: 1.2,
                                   }}
                                 >
-                                  {accountRole.roleName}
+                                  {spec.name}
                                 </div>
                                 <div
                                   style={{
-                                    fontSize: '0.75rem',
+                                    fontSize: '0.6875rem',
                                     color: '#64748b',
-                                    marginTop: '0.15rem',
-                                    lineHeight: 1.35,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    marginTop: '2px',
                                   }}
                                 >
-                                  {accountRole.description}
+                                  {spec.description}
                                 </div>
                               </div>
                             </div>
 
-                            {/* Account Status Pill */}
-                            <div style={{ marginTop: '0.65rem' }}>
-                              {accountRole.isAvailable ? (
-                                <div
-                                  style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '0.35rem',
-                                    padding: '0.2rem 0.5rem',
-                                    borderRadius: '6px',
-                                    backgroundColor: '#ffffff',
-                                    border: '1px solid #cbd5e1',
-                                    fontSize: '0.6875rem',
-                                    color: '#334155',
-                                    fontFamily: 'monospace',
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      width: '6px',
-                                      height: '6px',
-                                      borderRadius: '50%',
-                                      backgroundColor: '#16a34a',
-                                    }}
-                                  />
-                                  <span>{accountRole.email}</span>
-                                </div>
-                              ) : (
-                                <span
-                                  style={{
-                                    fontSize: '0.6875rem',
-                                    color: '#94a3b8',
-                                    fontStyle: 'italic',
-                                  }}
-                                >
-                                  No development account configured
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Quick Action Button */}
-                          <div style={{ display: 'flex', gap: '0.5rem' }}>
                             <button
                               type="button"
-                              onClick={() => {
-                                if (accountRole.email) {
-                                  setEmail(accountRole.email);
-                                  setPassword('Kisan@123');
-                                }
-                              }}
+                              disabled={isSubmitting || loading || isSuccess}
+                              onClick={() => handleUseAccount(roleKey)}
                               style={{
-                                flex: 1,
-                                padding: '0.4rem 0.65rem',
-                                borderRadius: '6px',
-                                border: '1px solid #cbd5e1',
-                                backgroundColor: '#ffffff',
-                                color: '#475569',
-                                fontSize: '0.75rem',
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                              }}
-                            >
-                              Fill Form
-                            </button>
-
-                            <button
-                              type="button"
-                              disabled={!accountRole.isAvailable || !!quickLoginRoleLoading}
-                              onClick={() => handleQuickLoginRole(accountRole)}
-                              style={{
-                                flex: 1.5,
-                                padding: '0.4rem 0.75rem',
-                                borderRadius: '6px',
-                                border: 'none',
-                                backgroundColor: accountRole.isAvailable ? '#15803d' : '#e2e8f0',
-                                color: accountRole.isAvailable ? '#ffffff' : '#94a3b8',
-                                fontSize: '0.75rem',
-                                fontWeight: 700,
-                                cursor: accountRole.isAvailable && !quickLoginRoleLoading ? 'pointer' : 'not-allowed',
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '0.35rem',
-                                boxShadow: accountRole.isAvailable
-                                  ? '0 2px 4px rgba(21, 128, 61, 0.25)'
-                                  : 'none',
+                                gap: '0.25rem',
+                                padding: '0.35rem 0.55rem',
+                                borderRadius: '4px',
+                                backgroundColor: '#f0fdf4',
+                                border: '1px solid #bbf7d0',
+                                color: '#166534',
+                                fontSize: '0.6875rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
+                                transition: 'all 0.15s ease',
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = '#dcfce7';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = '#f0fdf4';
                               }}
                             >
-                              {isLoadingThis ? (
-                                <>
-                                  <Loader2 size={13} className="animate-spin" />
-                                  <span>Signing in...</span>
-                                </>
+                              {isSubmitting ? (
+                                <Loader2 size={11} className="animate-spin" />
                               ) : (
                                 <>
                                   <span>Use this account</span>
-                                  <ArrowRight size={13} />
+                                  <ArrowRight size={10} />
                                 </>
                               )}
                             </button>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 )}
               </div>
             )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
