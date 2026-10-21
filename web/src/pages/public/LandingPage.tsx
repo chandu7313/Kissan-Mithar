@@ -9,14 +9,21 @@ import {
 
 import { ASSETS } from '../../assets';
 import { PublicNavbar } from '../../components/layout/PublicNavbar';
+import { PartnershipSection } from '../../components/public/PartnershipSection';
 
 interface LandingPageProps {
   onAdminLogin: () => void;
   onNavigateService?: (slug: string) => void;
   onNavigateSection?: (sectionId: string) => void;
+  onNavigatePartnerships?: () => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin, onNavigateService, onNavigateSection }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({
+  onAdminLogin,
+  onNavigateService,
+  onNavigateSection,
+  onNavigatePartnerships,
+}) => {
   useEffect(() => {
     const path = window.location.pathname;
     let targetId = '';
@@ -622,6 +629,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin, onNaviga
         </div>
       </section>
 
+      {/* Partnership Opportunities Section */}
+      <PartnershipSection
+        onNavigatePartnerships={
+          onNavigatePartnerships ||
+          (() => {
+            window.location.href = '/partnerships';
+          })
+        }
+      />
+
       {/* CTA Section */}
       <section className="cta-section">
         <div className="cta-container">
@@ -700,6 +717,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onAdminLogin, onNaviga
             <a href="#about">About Kissan Mithar</a>
             <a href="#experts">Agronomist Network</a>
             <a href="/agri-bazaar">Agri Bazaar</a>
+            <a
+              href="/partnerships"
+              onClick={(e) => {
+                e.preventDefault();
+                if (onNavigatePartnerships) onNavigatePartnerships();
+                else window.location.href = '/partnerships';
+              }}
+            >
+              Partnership Opportunities
+            </a>
             <a href={downloadUrl} target="_blank" rel="noopener noreferrer">Download Android App</a>
             <button type="button" className="footer-admin-link" onClick={onAdminLogin}>
               Admin Desk Login &rarr;

@@ -14,8 +14,10 @@ import {
   Circle,
   TreeDeciduous,
   UserCheck,
+  Handshake,
 } from 'lucide-react';
 import { UserSession } from '../../types/index.js';
+import { CollaborationApi } from '../../api/collaboration.api.js';
 
 interface Props {
   activeTab: string;
@@ -48,8 +50,27 @@ export const Sidebar: React.FC<Props> = ({
   session,
 }) => {
   const isAdmin = session?.role === 'ADMIN';
+  const [collabCount, setCollabCount] = React.useState<number | undefined>(undefined);
 
-  // 10 Unified Operational Workspaces
+  const canAccessCollaborations =
+    isAdmin ||
+    ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'OPERATIONS_MANAGER', 'BUSINESS_ANALYST'].includes(
+      session?.staffRole || ''
+    );
+
+  React.useEffect(() => {
+    if (canAccessCollaborations) {
+      CollaborationApi.getStats()
+        .then((s) => {
+          if (s?.kpis?.newRequests) {
+            setCollabCount(s.kpis.newRequests);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [canAccessCollaborations]);
+
+  // Operational Workspaces
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'farmers', label: 'Farmers', icon: Users },
@@ -59,12 +80,17 @@ export const Sidebar: React.FC<Props> = ({
     { id: 'labour', label: 'Farm Labour', icon: UserCheck },
     { id: 'machinery', label: 'Farm Machinery', icon: Tractor },
     { id: 'agri-bazaar', label: 'Agri Bazaar', icon: ShoppingCart },
+    ...(canAccessCollaborations
+      ? [{ id: 'collaborations', label: 'Collaboration Requests', icon: Handshake, badge: collabCount }]
+      : []),
     { id: 'notifications', label: 'Push & Broadcast', icon: Bell },
     { id: 'reports', label: 'Reports & Exports', icon: FileText },
-    ...(isAdmin ? [
-      { id: 'staff', label: 'Staff & Roles', icon: ShieldCheck },
-      { id: 'system', label: 'System & Audits', icon: Activity },
-    ] : []),
+    ...(isAdmin
+      ? [
+          { id: 'staff', label: 'Staff & Roles', icon: ShieldCheck },
+          { id: 'system', label: 'System & Audits', icon: Activity },
+        ]
+      : []),
   ];
 
   return (

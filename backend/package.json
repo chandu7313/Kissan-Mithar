@@ -20,7 +20,8 @@
     "test:bazaar-labour": "tsx test/bazaar-labour.test.ts",
     "test:agronomy-advisory": "tsx test/agronomy-advisory.test.ts",
     "test:core-identity": "tsx test/core-identity.test.ts",
-    "test:auth-staff": "tsx test/auth-staff-rbac.test.ts"
+    "test:auth-staff": "tsx test/auth-staff-rbac.test.ts",
+    "test:collaboration": "tsx test/collaboration-lifecycle.test.ts"
   },
   "keywords": [
     "kisan-mithar",

@@ -19,9 +19,11 @@ import { NotificationsPage } from './pages/admin/NotificationsPage.js';
 import { ReportsPage } from './pages/admin/ReportsPage.js';
 import { StaffPage } from './pages/admin/StaffPage.js';
 import { SystemHealthPage } from './pages/admin/SystemHealthPage.js';
+import { CollaborationAdminPage } from './pages/admin/CollaborationAdminPage.js';
 import { SocketProvider } from './context/SocketContext.js';
 import { LandingPage } from './pages/public/LandingPage.js';
 import { ServiceDetailPage } from './pages/public/ServiceDetailPage.js';
+import { PartnershipsPage } from './pages/public/PartnershipsPage.js';
 
 const ROLE_DEFAULT_TABS: Record<string, string> = {
   SUPER_ADMIN: 'dashboard',
@@ -49,12 +51,13 @@ export const App: React.FC = () => {
     const path = window.location.pathname;
     if (path.startsWith('/admin') || path.startsWith('/admin-login') || path === '/login') return 'app';
     if (path.startsWith('/agri-bazaar') || path === '/services/crop-connect') return 'agri-bazaar';
+    if (path.startsWith('/partnerships') || path === '/partners') return 'partnerships';
     if (path.startsWith('/services/')) return 'service-detail';
     return 'landing';
   };
 
-  // App routing state (Landing vs Admin Dashboard vs Service Detail vs Agri Bazaar)
-  const [view, setView] = useState<'landing' | 'app' | 'service-detail' | 'agri-bazaar'>(getInitialView());
+  // App routing state (Landing vs Admin Dashboard vs Service Detail vs Agri Bazaar vs Partnerships)
+  const [view, setView] = useState<'landing' | 'app' | 'service-detail' | 'agri-bazaar' | 'partnerships'>(getInitialView());
   const [serviceSlug, setServiceSlug] = useState<string>(
     window.location.pathname.startsWith('/services/') ? window.location.pathname.split('/services/')[1] : ''
   );
@@ -69,6 +72,10 @@ export const App: React.FC = () => {
     } else if (view === 'agri-bazaar') {
       if (!window.location.pathname.startsWith('/agri-bazaar') && window.location.pathname !== '/services/crop-connect') {
         window.history.replaceState({}, '', '/agri-bazaar');
+      }
+    } else if (view === 'partnerships') {
+      if (window.location.pathname !== '/partnerships' && window.location.pathname !== '/partners') {
+        window.history.replaceState({}, '', '/partnerships');
       }
     } else if (view === 'service-detail') {
       const expectedPath = `/services/${serviceSlug}`;
@@ -107,6 +114,12 @@ export const App: React.FC = () => {
     window.history.pushState({}, '', '/');
   };
 
+  const navigateToPartnerships = () => {
+    setView('partnerships');
+    window.history.pushState({}, '', '/partnerships');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const navigateToService = (slug: string) => {
     if (slug === 'crop-connect' || slug === 'agri-bazaar') {
       setView('agri-bazaar');
@@ -122,6 +135,10 @@ export const App: React.FC = () => {
     if (sectionId === 'agri-bazaar') {
       setView('agri-bazaar');
       window.history.pushState({}, '', '/agri-bazaar');
+      return;
+    }
+    if (sectionId === 'partners' || sectionId === 'partnerships') {
+      navigateToPartnerships();
       return;
     }
     setView('landing');
@@ -162,13 +179,31 @@ export const App: React.FC = () => {
     );
   }
 
+  if (view === 'partnerships') {
+    return (
+      <PartnershipsPage
+        onNavigateHome={navigateToHome}
+        onAdminLogin={navigateToAdminLogin}
+        onNavigateSection={navigateToSection}
+        onNavigateService={navigateToService}
+      />
+    );
+  }
+
   if (view === 'service-detail') {
     return <ServiceDetailPage slug={serviceSlug} onNavigateHome={navigateToHome} onNavigateService={navigateToService} onAdminLogin={navigateToAdminLogin} onNavigateSection={navigateToSection} />;
   }
 
   // Always show landing page if view === 'landing'
   if (view === 'landing') {
-    return <LandingPage onAdminLogin={navigateToAdminLogin} onNavigateService={navigateToService} onNavigateSection={navigateToSection} />;
+    return (
+      <LandingPage
+        onAdminLogin={navigateToAdminLogin}
+        onNavigateService={navigateToService}
+        onNavigateSection={navigateToSection}
+        onNavigatePartnerships={navigateToPartnerships}
+      />
+    );
   }
 
   // If viewing app but not logged in (e.g. clicked Admin Login)
@@ -291,6 +326,10 @@ export const App: React.FC = () => {
 
         <div style={{ display: activeTab === 'agri-bazaar' ? 'block' : 'none', height: '100%' }}>
           <AgriBazaarAdminPage />
+        </div>
+
+        <div style={{ display: activeTab === 'collaborations' ? 'block' : 'none', height: '100%' }}>
+          <CollaborationAdminPage session={session} />
         </div>
       </>
     );

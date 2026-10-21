@@ -16,6 +16,8 @@ import diseaseRoutes from './disease.routes.js';
 import labourRoutes from './labour.routes.js';
 import agriBazaarRoutes from './agriBazaar.routes.js';
 import adminRoutes from './admin.routes.js';
+import collaborationRoutes from './collaboration.routes.js';
+import adminCollaborationRoutes from './adminCollaboration.routes.js';
 
 const router = Router();
 
@@ -77,6 +79,9 @@ router.use('/labour-requests', labourRoutes);
 router.use('/labour-help', labourRoutes);
 router.use('/agri-bazaar', agriBazaarRoutes);
 router.use('/crop-buying-selling', agriBazaarRoutes);
+router.use('/collaborations', collaborationRoutes);
+router.use('/partnerships', collaborationRoutes);
+router.use('/admin/collaborations', adminCollaborationRoutes);
 router.use('/admin', adminRoutes);
 
 export default router;

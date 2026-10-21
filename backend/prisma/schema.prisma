@@ -655,4 +655,105 @@ model AgriProductRequestHistory {
   @@map("agri_product_request_history")
 }
 
+enum CollaborationVerificationStatus {
+  NOT_VERIFIED
+  IN_PROGRESS
+  VERIFIED
+  VERIFICATION_FAILED
+}
+
+enum CollaborationReviewStatus {
+  NEW
+  UNDER_REVIEW
+  NEEDS_INFORMATION
+  ACCEPTED
+  REJECTED
+  CLOSED
+}
+
+model CollaborationRequest {
+  id                    String                          @id @default(uuid())
+  referenceId           String                          @unique
+  companyName           String
+  contactPerson         String
+  officialEmail         String
+  phoneNumber           String
+  organizationType      String
+  collaborationCategory String
+  country               String                          @default("India")
+  state                 String
+  cityDistrict          String?
+  website               String?
+  proposalDescription   String                          @db.Text
+  expectedOutcomes      String?                         @db.Text
+  documentUrl           String?
+  documentName          String?
+  documentSizeBytes     Int?
+  consentAgreed         Boolean                         @default(true)
+
+  verificationStatus    CollaborationVerificationStatus @default(NOT_VERIFIED)
+  verificationNotes     String?                         @db.Text
+  verifiedByAdminId     String?
+  verifiedAt            DateTime?
+
+  reviewStatus          CollaborationReviewStatus       @default(NEW)
+  assignedReviewerId    String?
+  assignedReviewerName  String?
+  decisionNotes         String?                         @db.Text
+  rejectionReason       String?                         @db.Text
+  informationRequested  String?                         @db.Text
+  decidedByAdminId      String?
+  decidedAt             DateTime?
+
+  concurrencyVersion    Int                             @default(1)
+  submittedAt           DateTime                        @default(now())
+  updatedAt             DateTime                        @updatedAt
+
+  history               CollaborationAuditLog[]
+  notes                 CollaborationInternalNote[]
+
+  @@index([reviewStatus])
+  @@index([verificationStatus])
+  @@index([organizationType])
+  @@index([collaborationCategory])
+  @@index([submittedAt])
+  @@index([officialEmail])
+  @@map("collaboration_requests")
+}
+
+model CollaborationAuditLog {
+  id            String               @id @default(uuid())
+  requestId     String
+  action        String
+  previousState Json?
+  newState      Json?
+  reason        String?              @db.Text
+  actorId       String?
+  actorName     String?
+  actorRole     String?
+  createdAt     DateTime             @default(now())
+
+  request       CollaborationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([createdAt])
+  @@map("collaboration_audit_logs")
+}
+
+model CollaborationInternalNote {
+  id         String               @id @default(uuid())
+  requestId  String
+  authorId   String
+  authorName String
+  authorRole String
+  note       String               @db.Text
+  createdAt  DateTime             @default(now())
+
+  request    CollaborationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([createdAt])
+  @@map("collaboration_internal_notes")
+}
+
 
