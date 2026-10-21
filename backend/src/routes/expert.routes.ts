@@ -6,11 +6,10 @@ import { cacheMiddleware } from '../middleware/cache.js';
 
 const router = Router();
 
-// Only Admins can list and create experts
+// Authenticated route
 router.use(requireAuth);
-router.use(requireRole('ADMIN'));
 
-router.get('/', cacheMiddleware(60), listExperts);
-router.post('/', createExpert);
+router.get('/', requireRole('ADMIN', 'EXPERT'), cacheMiddleware(60), listExperts);
+router.post('/', requireRole('ADMIN'), createExpert);
 
 export default router;

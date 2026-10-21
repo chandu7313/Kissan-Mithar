@@ -23,8 +23,10 @@ router.get('/', requireAuth, NotificationController.list);
 router.patch('/:id/read', requireAuth, NotificationController.markAsRead);
 router.patch('/read-all', requireAuth, NotificationController.markAllAsRead);
 
-// Admin notification actions
-router.get('/admin-stats', requireAuth, requireRole('ADMIN'), NotificationController.getAdminStats);
+import { cacheMiddleware } from '../middleware/cache.js';
+
+// Admin notification actions (30s cache absorbs burst requests)
+router.get('/admin-stats', requireAuth, requireRole('ADMIN'), cacheMiddleware(30), NotificationController.getAdminStats);
 router.post(
   '/admin-broadcast',
   requireAuth,

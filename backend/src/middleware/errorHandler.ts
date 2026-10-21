@@ -48,14 +48,20 @@ export const errorHandler = (
 
   // Handle Prisma Client Errors
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    statusCode = 400;
-    if (err.code === 'P2002') {
+    if (err.code === 'P2024') {
+      statusCode = 503;
+      message = 'Database connection pool busy. Please retry in a moment.';
+      res.setHeader('Retry-After', '2');
+      logger.warn({ err: err.message }, 'Database pool exhaustion (P2024)');
+    } else if (err.code === 'P2002') {
+      statusCode = 400;
       message = 'A record with this value already exists';
       details = { field: (err.meta as any)?.target };
     } else if (err.code === 'P2025') {
       statusCode = 404;
       message = 'Record not found';
     } else {
+      statusCode = 400;
       message = 'Database request error';
     }
   } else if (err instanceof Prisma.PrismaClientInitializationError) {

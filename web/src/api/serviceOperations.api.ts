@@ -40,10 +40,33 @@ export interface FertilizerRequestItem {
     schedule: any[];
     organicAlternatives: string | null;
     soilTreatment: string | null;
+    precautions?: string | null;
     estimatedBudget: number | null;
     pdfUrl: string | null;
     createdAt: string;
   } | null;
+}
+
+export interface FertilizerScheduleStage {
+  stage: string;
+  timing: string;
+  fertilizers: Array<{
+    name: string;
+    dosage: string;
+    method: string;
+  }>;
+  notes?: string;
+}
+
+export interface FertilizerPlanPayload {
+  diagnosis: string;
+  summary: string;
+  schedule: FertilizerScheduleStage[];
+  organicAlternatives?: string;
+  soilTreatment?: string;
+  precautions?: string;
+  estimatedBudget?: number;
+  pdfUrl?: string;
 }
 
 // --- Disease Types ---
@@ -92,6 +115,28 @@ export interface DiseaseRequestItem {
     pdfUrl: string | null;
     createdAt: string;
   } | null;
+}
+
+export interface ChemicalTreatmentItem {
+  chemicalName: string;
+  commercialBrand: string;
+  dosage: string;
+  applicationMethod: string;
+  waitingPeriodDays?: number;
+}
+
+export interface DiseaseTreatmentPayload {
+  diseaseName: string;
+  causalOrganism?: string;
+  severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  diagnosisSummary: string;
+  immediateAction: string;
+  chemicalTreatment: ChemicalTreatmentItem[];
+  organicTreatment?: string;
+  preventativeMeasures?: string;
+  followUpDays?: number;
+  estimatedCost?: number;
+  pdfUrl?: string;
 }
 
 // --- Labour Types ---
@@ -172,6 +217,16 @@ export class ServiceOperationsApi {
     return res.data?.data;
   }
 
+  static async assignFertilizerExpert(id: string, expertId: string): Promise<FertilizerRequestItem> {
+    const res = await apiClient.post(`/fertilizer-requests/${id}/assign`, { expertId });
+    return res.data?.data;
+  }
+
+  static async createFertilizerPlan(id: string, plan: FertilizerPlanPayload): Promise<any> {
+    const res = await apiClient.post(`/fertilizer-requests/${id}/plan`, plan);
+    return res.data?.data;
+  }
+
   // Disease Requests
   static async listDiseaseRequests(params?: { status?: string; cropType?: string; page?: number; limit?: number }): Promise<DiseaseRequestItem[]> {
     const query = new URLSearchParams();
@@ -202,6 +257,16 @@ export class ServiceOperationsApi {
 
   static async updateDiseaseStatus(id: string, status: string): Promise<DiseaseRequestItem> {
     const res = await apiClient.patch(`/disease-requests/${id}/status`, { status });
+    return res.data?.data;
+  }
+
+  static async assignDiseaseExpert(id: string, expertId: string): Promise<DiseaseRequestItem> {
+    const res = await apiClient.post(`/disease-requests/${id}/assign`, { expertId });
+    return res.data?.data;
+  }
+
+  static async createDiseaseTreatment(id: string, treatment: DiseaseTreatmentPayload): Promise<any> {
+    const res = await apiClient.post(`/disease-requests/${id}/treatment`, treatment);
     return res.data?.data;
   }
 

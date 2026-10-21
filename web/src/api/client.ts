@@ -25,9 +25,17 @@ apiClient.interceptors.response.use(
 
     // Handle 401 Unauthorized errors — clear session and redirect to login
     if (error.response && error.response.status === 401) {
-      console.warn('[API Client] Unauthorized (401). Clearing stale session.');
-      AuthStore.clearSession();
-      window.location.href = '/';
+      const url = config?.url || '';
+      const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/verify') || url.includes('/auth/send-otp') || url.includes('/auth/reset-password');
+
+      // Do not redirect if this is an authentication attempt — allow the login form to display error feedback
+      if (!isAuthEndpoint) {
+        console.warn('[API Client] Unauthorized (401). Clearing stale session.');
+        AuthStore.clearSession();
+        if (window.location.pathname.startsWith('/admin') && window.location.pathname !== '/admin-login') {
+          window.location.href = '/admin-login';
+        }
+      }
       return Promise.reject(error);
     }
 

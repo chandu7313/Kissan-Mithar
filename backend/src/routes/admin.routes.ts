@@ -27,6 +27,8 @@ const updateAdminSchema = z.object({
   }),
 });
 
+import { cacheMiddleware } from '../middleware/cache.js';
+
 // All admin routes strictly require valid authentication and ADMIN role
 router.use(requireAuth);
 router.use(requireRole('ADMIN'));
@@ -37,7 +39,7 @@ router.post('/users', validateRequest(createAdminSchema), AdminController.create
 router.patch('/users/:id', validateRequest(updateAdminSchema), AdminController.updateUser);
 router.delete('/users/:id', AdminController.deleteUser);
 
-// Infrastructure and telemetry health
-router.get('/system-health', AdminController.getSystemHealth);
+// Infrastructure and telemetry health (15s cache protects against duplicate UI polling)
+router.get('/system-health', cacheMiddleware(15), AdminController.getSystemHealth);
 
 export default router;

@@ -5,13 +5,32 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
+function getDatabaseUrl(): string | undefined {
+  let url = process.env.DATABASE_URL;
+  if (!url) return undefined;
+  
+  // Guard against single-socket connection pool exhaustion in serverless or monolith
+  if (url.includes('connection_limit=1&')) {
+    url = url.replace('connection_limit=1&', 'connection_limit=10&');
+  } else if (url.includes('connection_limit=1')) {
+    url = url.replace('connection_limit=1', 'connection_limit=10');
+  }
+
+  // Ensure reasonable pool timeout so queries don't abort after 10s under burst
+  if (!url.includes('pool_timeout=')) {
+    const sep = url.includes('?') ? '&' : '?';
+    url = `${url}${sep}pool_timeout=30`;
+  }
+  return url;
+}
+
 export const prisma =
   global.prisma ||
   new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
     datasources: {
       db: {
-        url: process.env.DATABASE_URL,
+        url: getDatabaseUrl(),
       },
     },
   });

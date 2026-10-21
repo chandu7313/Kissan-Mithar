@@ -33,7 +33,7 @@ export const App: React.FC = () => {
   // Determine initial view based on URL
   const getInitialView = () => {
     const path = window.location.pathname;
-    if (path.startsWith('/admin') || path.startsWith('/admin-login')) return 'app';
+    if (path.startsWith('/admin') || path.startsWith('/admin-login') || path === '/login') return 'app';
     if (path.startsWith('/agri-bazaar') || path === '/services/crop-connect') return 'agri-bazaar';
     if (path.startsWith('/services/')) return 'service-detail';
     return 'landing';
@@ -85,6 +85,7 @@ export const App: React.FC = () => {
 
   const navigateToAdminLogin = () => {
     setView('app');
+    window.history.pushState({}, '', '/admin-login');
   };
 
   const navigateToHome = () => {
@@ -162,7 +163,8 @@ export const App: React.FC = () => {
       <LoginPage 
         onLoginSuccess={(s) => {
           setSession(s);
-          // The useEffect will automatically update the URL to /admin
+          setView('app');
+          window.history.pushState({}, '', '/admin');
         }} 
         onBackToHome={navigateToHome}
       />

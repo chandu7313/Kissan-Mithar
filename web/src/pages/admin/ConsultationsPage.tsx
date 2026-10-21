@@ -18,6 +18,7 @@ export const ConsultationsPage: React.FC = () => {
   const [medicines, setMedicines] = useState('');
   const [followUp, setFollowUp] = useState('');
   const [prescribedSuccess, setPrescribedSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     ConsultationApi.getConsultations().then((list) => {
@@ -28,9 +29,46 @@ export const ConsultationsPage: React.FC = () => {
     });
   }, []);
 
-  const handleSavePrescription = () => {
-    setPrescribedSuccess(true);
-    setTimeout(() => setPrescribedSuccess(false), 3000);
+  useEffect(() => {
+    if (selectedConsultation?.prescription) {
+      const p = selectedConsultation.prescription as any;
+      setDiagnosis(p.diagnosis || '');
+      setMedicines(Array.isArray(p.medicines) ? p.medicines.join('\n') : (p.medicines || ''));
+      setFollowUp(p.followUpNotes || '');
+    } else {
+      setDiagnosis('');
+      setMedicines('');
+      setFollowUp('');
+    }
+  }, [selectedConsultation]);
+
+  const handleSavePrescription = async () => {
+    if (!selectedConsultation) return;
+    setIsSubmitting(true);
+    try {
+      const medicineList = medicines
+        .split('\n')
+        .map((m) => m.trim())
+        .filter((m) => m.length > 0);
+
+      const updated = await ConsultationApi.updateConsultation(selectedConsultation.id, {
+        status: 'COMPLETED',
+        prescription: {
+          diagnosis: diagnosis.trim() || 'General Agronomy Assessment',
+          medicines: medicineList.length > 0 ? medicineList : [medicines.trim() || 'Standard foliar spray protocol'],
+          followUpNotes: followUp.trim() || undefined,
+        },
+      });
+
+      setSelectedConsultation(updated);
+      setConsultations((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+      setPrescribedSuccess(true);
+      setTimeout(() => setPrescribedSuccess(false), 3500);
+    } catch (err) {
+      console.error('[ConsultationsPage] Failed to save prescription:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -197,9 +235,14 @@ export const ConsultationsPage: React.FC = () => {
                     Prescription dispatched to farmer app!
                   </span>
                 )}
-                <button onClick={handleSavePrescription} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                <button
+                  onClick={handleSavePrescription}
+                  disabled={isSubmitting}
+                  className="btn-primary"
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', opacity: isSubmitting ? 0.7 : 1 }}
+                >
                   <Send size={14} />
-                  <span>Dispatch Prescription</span>
+                  <span>{isSubmitting ? 'Dispatching...' : 'Dispatch Prescription'}</span>
                 </button>
               </div>
             </div>

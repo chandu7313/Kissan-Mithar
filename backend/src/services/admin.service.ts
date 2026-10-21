@@ -199,9 +199,13 @@ export class AdminService {
     let dbLatencyMs = 0;
 
     try {
-      await prisma.$queryRaw`SELECT 1`;
+      // Bounded probe: max 2500ms timeout so health check never hangs or starves connection pool
+      await Promise.race([
+        prisma.$queryRaw`SELECT 1`,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('DB health probe timeout')), 2500)),
+      ]);
       dbLatencyMs = Date.now() - startTime;
-    } catch (err: any) {
+    } catch {
       dbStatus = 'unhealthy';
       dbLatencyMs = Date.now() - startTime;
     }
@@ -214,10 +218,18 @@ export class AdminService {
     const seconds = uptimeSec % 60;
     const uptimeFormatted = `${hours}h ${minutes}m ${seconds}s`;
 
-    // Count recent security events
-    const recentAuditCount = await prisma.authAuditLog.count({
-      where: { timestamp: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
-    });
+    // Count recent security events with time budget
+    let recentAuditCount = 0;
+    try {
+      recentAuditCount = await Promise.race([
+        prisma.authAuditLog.count({
+          where: { timestamp: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+        }),
+        new Promise<number>((_, reject) => setTimeout(() => reject(new Error('Audit count timeout')), 2500)),
+      ]);
+    } catch {
+      recentAuditCount = 0;
+    }
 
     return {
       status: dbStatus === 'healthy' ? 'operational' : 'degraded',

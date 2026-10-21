@@ -14,12 +14,26 @@ import {
   Calendar,
   Layers,
   ArrowRight,
+  UserCheck,
+  ShieldAlert,
+  FileCheck,
+  CalendarCheck,
+  Sparkles,
+  Plus,
+  Edit3,
+  IndianRupee,
+  HelpCircle,
 } from 'lucide-react';
 import {
   ServiceOperationsApi,
   FertilizerRequestItem,
   DiseaseRequestItem,
+  FertilizerPlanPayload,
+  DiseaseTreatmentPayload,
 } from '../../api/serviceOperations.api.js';
+import { ExpertApi, Expert } from '../../api/expert.api.js';
+import { FertilizerPlanModal } from '../../components/services/FertilizerPlanModal.js';
+import { DiseaseTreatmentModal } from '../../components/services/DiseaseTreatmentModal.js';
 import { DataTable, Column } from '../../components/common/DataTable.js';
 import { FilterBar, FilterSelect } from '../../components/common/FilterBar.js';
 import { Pagination } from '../../components/common/Pagination.js';
@@ -59,6 +73,22 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
   const [statusModalOpen, setStatusModalOpen] = useState<boolean>(false);
   const [targetNewStatus, setTargetNewStatus] = useState<string>('');
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
+
+  // Experts Directory State
+  const [experts, setExperts] = useState<Expert[]>([]);
+  const [selectedExpertId, setSelectedExpertId] = useState<string>('');
+  const [isAssigningExpert, setIsAssigningExpert] = useState<boolean>(false);
+
+  // Prescription Modals State
+  const [fertilizerModalOpen, setFertilizerModalOpen] = useState<boolean>(false);
+  const [diseaseTreatmentModalOpen, setDiseaseTreatmentModalOpen] = useState<boolean>(false);
+
+  // Load Experts List on Mount
+  useEffect(() => {
+    ExpertApi.listExperts()
+      .then((res) => setExperts(res))
+      .catch((err) => console.warn('[ServicesPage] Could not load experts:', err));
+  }, []);
 
   // Load Fertilizer Requests
   const loadFertilizers = () => {
@@ -137,6 +167,69 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
     }
   };
 
+  // Load full details upon selecting a row
+  const handleSelectFert = async (row: FertilizerRequestItem) => {
+    setSelectedFert(row);
+    try {
+      const full = await ServiceOperationsApi.getFertilizerRequestById(row.id);
+      if (full) setSelectedFert(full);
+    } catch {}
+  };
+
+  const handleSelectDisease = async (row: DiseaseRequestItem) => {
+    setSelectedDisease(row);
+    try {
+      const full = await ServiceOperationsApi.getDiseaseRequestById(row.id);
+      if (full) setSelectedDisease(full);
+    } catch {}
+  };
+
+  // Expert Assignment Handlers
+  const handleAssignFertilizerExpert = async (expertId: string) => {
+    if (!selectedFert || !expertId) return;
+    setIsAssigningExpert(true);
+    try {
+      const updated = await ServiceOperationsApi.assignFertilizerExpert(selectedFert.id, expertId);
+      setSelectedFert((prev) => (prev ? { ...prev, expertId: updated.expertId, expert: updated.expert, status: updated.status } : null));
+      loadFertilizers();
+    } catch (err) {
+      console.error('[ServicesPage] Failed to assign fertilizer expert:', err);
+    } finally {
+      setIsAssigningExpert(false);
+    }
+  };
+
+  const handleAssignDiseaseExpert = async (expertId: string) => {
+    if (!selectedDisease || !expertId) return;
+    setIsAssigningExpert(true);
+    try {
+      const updated = await ServiceOperationsApi.assignDiseaseExpert(selectedDisease.id, expertId);
+      setSelectedDisease((prev) => (prev ? { ...prev, expertId: updated.expertId, expert: updated.expert, status: updated.status } : null));
+      loadDiseases();
+    } catch (err) {
+      console.error('[ServicesPage] Failed to assign disease expert:', err);
+    } finally {
+      setIsAssigningExpert(false);
+    }
+  };
+
+  // Prescription Plan Handlers
+  const handleSubmitFertilizerPlan = async (plan: FertilizerPlanPayload) => {
+    if (!selectedFert) return;
+    await ServiceOperationsApi.createFertilizerPlan(selectedFert.id, plan);
+    const refreshed = await ServiceOperationsApi.getFertilizerRequestById(selectedFert.id);
+    setSelectedFert(refreshed);
+    loadFertilizers();
+  };
+
+  const handleSubmitDiseaseTreatment = async (treatment: DiseaseTreatmentPayload) => {
+    if (!selectedDisease) return;
+    await ServiceOperationsApi.createDiseaseTreatment(selectedDisease.id, treatment);
+    const refreshed = await ServiceOperationsApi.getDiseaseRequestById(selectedDisease.id);
+    setSelectedDisease(refreshed);
+    loadDiseases();
+  };
+
   // Columns for Fertilizer Table
   const fertColumns: Column<FertilizerRequestItem>[] = [
     {
@@ -205,7 +298,7 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
       header: 'Action',
       render: (row) => (
         <button
-          onClick={() => setSelectedFert(row)}
+          onClick={() => handleSelectFert(row)}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -295,7 +388,7 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
       header: 'Action',
       render: (row) => (
         <button
-          onClick={() => setSelectedDisease(row)}
+          onClick={() => handleSelectDisease(row)}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -573,6 +666,115 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
       >
         {selectedFert && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Agronomist Assignment Card */}
+            <div
+              style={{
+                padding: '1rem',
+                borderRadius: '10px',
+                border: '1px solid #e2e8f0',
+                backgroundColor: '#ffffff',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <UserCheck size={16} color="#166534" />
+                  <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a' }}>
+                    Assigned Agronomy Specialist
+                  </span>
+                </div>
+                {selectedFert.expert && (
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#166534', backgroundColor: '#dcfce7', padding: '0.15rem 0.5rem', borderRadius: '9999px' }}>
+                    Active Assignment
+                  </span>
+                )}
+              </div>
+
+              {selectedFert.expert ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.875rem' }}>
+                      {selectedFert.expert.name}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      {selectedFert.expert.specialization || 'Soil & Agronomy Consultant'}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) handleAssignFertilizerExpert(e.target.value);
+                      }}
+                      defaultValue=""
+                      disabled={isAssigningExpert}
+                      style={{
+                        padding: '0.35rem 0.5rem',
+                        borderRadius: '6px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.75rem',
+                        color: '#475569',
+                      }}
+                    >
+                      <option value="" disabled>
+                        Reassign specialist...
+                      </option>
+                      {experts.map((exp) => (
+                        <option key={exp.id} value={exp.id}>
+                          {exp.name} ({exp.specialization})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>
+                    No agronomist assigned yet:
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                    <select
+                      id="assignFertExpertSelect"
+                      defaultValue=""
+                      style={{
+                        padding: '0.35rem 0.5rem',
+                        borderRadius: '6px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select agronomist...
+                      </option>
+                      {experts.map((exp) => (
+                        <option key={exp.id} value={exp.id}>
+                          {exp.name} ({exp.specialization})
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => {
+                        const el = document.getElementById('assignFertExpertSelect') as HTMLSelectElement;
+                        if (el && el.value) handleAssignFertilizerExpert(el.value);
+                      }}
+                      disabled={isAssigningExpert}
+                      style={{
+                        padding: '0.35rem 0.75rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#166534',
+                        color: '#ffffff',
+                        border: 'none',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {isAssigningExpert ? 'Assigning...' : 'Assign'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Agronomic Summary Box */}
             <div style={{ padding: '1rem', borderRadius: '10px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.8125rem' }}>
@@ -637,6 +839,137 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
                 <ImageGallery images={selectedFert.photos} />
               </div>
             )}
+
+            {/* Official Fertilizer Recommendation Schedule */}
+            <div
+              style={{
+                padding: '1.25rem',
+                borderRadius: '12px',
+                border: '1px solid #bbf7d0',
+                backgroundColor: '#f0fdf4',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Sprout size={18} color="#166534" />
+                  <h4 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#166534', margin: 0 }}>
+                    Official Fertilizer Recommendation Schedule
+                  </h4>
+                </div>
+
+                <button
+                  onClick={() => setFertilizerModalOpen(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.375rem',
+                    padding: '0.375rem 0.75rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#166534',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {selectedFert.plan ? <Edit3 size={12} /> : <Plus size={12} />}
+                  <span>{selectedFert.plan ? 'Update Schedule' : 'Formulate Schedule'}</span>
+                </button>
+              </div>
+
+              {selectedFert.plan ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#15803d', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Clinical Diagnosis
+                    </div>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0f172a', marginTop: '0.125rem' }}>
+                      {selectedFert.plan.diagnosis}
+                    </div>
+                    <div style={{ fontSize: '0.8125rem', color: '#334155', marginTop: '0.25rem', lineHeight: 1.4 }}>
+                      {selectedFert.plan.summary}
+                    </div>
+                  </div>
+
+                  {selectedFert.plan.estimatedBudget && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.8125rem', color: '#166534', fontWeight: 700 }}>
+                      <IndianRupee size={14} />
+                      <span>Estimated Nutritional Budget: ₹{selectedFert.plan.estimatedBudget.toLocaleString()}</span>
+                    </div>
+                  )}
+
+                  {selectedFert.plan.schedule && Array.isArray(selectedFert.plan.schedule) && selectedFert.plan.schedule.length > 0 && (
+                    <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
+                        <thead>
+                          <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', color: '#475569' }}>
+                            <th style={{ padding: '0.5rem 0.75rem' }}>Stage & Timing</th>
+                            <th style={{ padding: '0.5rem 0.75rem' }}>Fertilizers & Dosage</th>
+                            <th style={{ padding: '0.5rem 0.75rem' }}>Method & Notes</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedFert.plan.schedule.map((stg: any, sIdx: number) => (
+                            <tr key={sIdx} style={{ borderBottom: sIdx === selectedFert.plan!.schedule.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '0.5rem 0.75rem', verticalAlign: 'top', fontWeight: 600, color: '#0f172a' }}>
+                                <div>{stg.stage}</div>
+                                <div style={{ fontSize: '0.6875rem', color: '#64748b' }}>{stg.timing}</div>
+                              </td>
+                              <td style={{ padding: '0.5rem 0.75rem', verticalAlign: 'top' }}>
+                                {stg.fertilizers && Array.isArray(stg.fertilizers) ? (
+                                  stg.fertilizers.map((f: any, fIdx: number) => (
+                                    <div key={fIdx} style={{ marginBottom: '0.25rem' }}>
+                                      <strong style={{ color: '#166534' }}>{f.name}:</strong> {f.dosage}
+                                    </div>
+                                  ))
+                                ) : (
+                                  '—'
+                                )}
+                              </td>
+                              <td style={{ padding: '0.5rem 0.75rem', verticalAlign: 'top', color: '#475569' }}>
+                                {stg.fertilizers && stg.fertilizers[0]?.method && (
+                                  <div style={{ fontWeight: 600 }}>{stg.fertilizers[0].method}</div>
+                                )}
+                                {stg.notes && <div style={{ fontStyle: 'italic', fontSize: '0.6875rem' }}>{stg.notes}</div>}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {(selectedFert.plan.soilTreatment || selectedFert.plan.organicAlternatives) && (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem' }}>
+                      {selectedFert.plan.soilTreatment && (
+                        <div style={{ padding: '0.5rem', backgroundColor: '#ffffff', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                          <strong style={{ color: '#0f172a' }}>Soil Amendment:</strong> {selectedFert.plan.soilTreatment}
+                        </div>
+                      )}
+                      {selectedFert.plan.organicAlternatives && (
+                        <div style={{ padding: '0.5rem', backgroundColor: '#ffffff', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                          <strong style={{ color: '#15803d' }}>Organic Options:</strong> {selectedFert.plan.organicAlternatives}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {selectedFert.plan.precautions && (
+                    <div style={{ fontSize: '0.75rem', color: '#b45309', backgroundColor: '#fef3c7', padding: '0.5rem', borderRadius: '6px', border: '1px solid #fde68a' }}>
+                      <strong>Precautions:</strong> {selectedFert.plan.precautions}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b', fontSize: '0.8125rem' }}>
+                  No customized fertilizer plan has been formulated yet. Formulate and deliver a multi-stage schedule to the farmer's mobile app.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </Drawer>
@@ -697,6 +1030,115 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
       >
         {selectedDisease && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Plant Pathologist Assignment Card */}
+            <div
+              style={{
+                padding: '1rem',
+                borderRadius: '10px',
+                border: '1px solid #e2e8f0',
+                backgroundColor: '#ffffff',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <UserCheck size={16} color="#c2410c" />
+                  <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a' }}>
+                    Assigned Plant Pathologist
+                  </span>
+                </div>
+                {selectedDisease.expert && (
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#c2410c', backgroundColor: '#fed7aa', padding: '0.15rem 0.5rem', borderRadius: '9999px' }}>
+                    Active Assignment
+                  </span>
+                )}
+              </div>
+
+              {selectedDisease.expert ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.875rem' }}>
+                      {selectedDisease.expert.name}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      {selectedDisease.expert.specialization || 'Plant Pathology Specialist'}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) handleAssignDiseaseExpert(e.target.value);
+                      }}
+                      defaultValue=""
+                      disabled={isAssigningExpert}
+                      style={{
+                        padding: '0.35rem 0.5rem',
+                        borderRadius: '6px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.75rem',
+                        color: '#475569',
+                      }}
+                    >
+                      <option value="" disabled>
+                        Reassign pathologist...
+                      </option>
+                      {experts.map((exp) => (
+                        <option key={exp.id} value={exp.id}>
+                          {exp.name} ({exp.specialization})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>
+                    No pathologist assigned yet:
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                    <select
+                      id="assignDiseaseExpertSelect"
+                      defaultValue=""
+                      style={{
+                        padding: '0.35rem 0.5rem',
+                        borderRadius: '6px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select pathologist...
+                      </option>
+                      {experts.map((exp) => (
+                        <option key={exp.id} value={exp.id}>
+                          {exp.name} ({exp.specialization})
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => {
+                        const el = document.getElementById('assignDiseaseExpertSelect') as HTMLSelectElement;
+                        if (el && el.value) handleAssignDiseaseExpert(el.value);
+                      }}
+                      disabled={isAssigningExpert}
+                      style={{
+                        padding: '0.35rem 0.75rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#c2410c',
+                        color: '#ffffff',
+                        border: 'none',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {isAssigningExpert ? 'Assigning...' : 'Assign'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Pathology Symptoms Box */}
             <div style={{ padding: '1rem', borderRadius: '10px', backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.8125rem' }}>
@@ -756,6 +1198,178 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
                 <ImageGallery images={selectedDisease.photos} />
               </div>
             )}
+
+            {/* Official Pathology Prescription Section */}
+            <div
+              style={{
+                padding: '1.25rem',
+                borderRadius: '12px',
+                border: '1px solid #fed7aa',
+                backgroundColor: '#fff7ed',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Activity size={18} color="#c2410c" />
+                  <h4 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#c2410c', margin: 0 }}>
+                    Official Plant Pathology Prescription
+                  </h4>
+                </div>
+
+                <button
+                  onClick={() => setDiseaseTreatmentModalOpen(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.375rem',
+                    padding: '0.375rem 0.75rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#c2410c',
+                    color: '#ffffff',
+                    border: 'none',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {selectedDisease.treatment ? <Edit3 size={12} /> : <Plus size={12} />}
+                  <span>{selectedDisease.treatment ? 'Update Prescription' : 'Formulate Prescription'}</span>
+                </button>
+              </div>
+
+              {selectedDisease.treatment ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                      <span
+                        style={{
+                          fontSize: '0.6875rem',
+                          fontWeight: 800,
+                          padding: '0.15rem 0.5rem',
+                          borderRadius: '9999px',
+                          backgroundColor:
+                            selectedDisease.treatment.severity === 'CRITICAL'
+                              ? '#fee2e2'
+                              : selectedDisease.treatment.severity === 'HIGH'
+                              ? '#ffedd5'
+                              : '#fef3c7',
+                          color:
+                            selectedDisease.treatment.severity === 'CRITICAL'
+                              ? '#dc2626'
+                              : selectedDisease.treatment.severity === 'HIGH'
+                              ? '#c2410c'
+                              : '#b45309',
+                        }}
+                      >
+                        {selectedDisease.treatment.severity || 'MEDIUM'} SEVERITY
+                      </span>
+                      {selectedDisease.treatment.causalOrganism && (
+                        <span style={{ fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic' }}>
+                          Pathogen: {selectedDisease.treatment.causalOrganism}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a' }}>
+                      {selectedDisease.treatment.diseaseName}
+                    </div>
+                    <div style={{ fontSize: '0.8125rem', color: '#334155', marginTop: '0.25rem', lineHeight: 1.4 }}>
+                      {selectedDisease.treatment.diagnosisSummary}
+                    </div>
+                  </div>
+
+                  {/* Immediate Emergency Action Alert Box */}
+                  <div
+                    style={{
+                      padding: '0.75rem',
+                      borderRadius: '8px',
+                      backgroundColor: '#fef2f2',
+                      border: '1px solid #fca5a5',
+                      fontSize: '0.8125rem',
+                      color: '#991b1b',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <strong>🚨 Immediate Emergency Action:</strong> {selectedDisease.treatment.immediateAction}
+                  </div>
+
+                  {/* Estimated Cost & Follow-up */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8125rem', color: '#475569' }}>
+                    {selectedDisease.treatment.estimatedCost && (
+                      <span style={{ fontWeight: 700, color: '#c2410c', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <IndianRupee size={14} />
+                        Estimated Cost: ₹{selectedDisease.treatment.estimatedCost.toLocaleString()}
+                      </span>
+                    )}
+                    {selectedDisease.treatment.followUpDays && (
+                      <span style={{ fontWeight: 600 }}>
+                        📅 Follow-up inspection: Every {selectedDisease.treatment.followUpDays} days
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Chemical Treatment Table */}
+                  {selectedDisease.treatment.chemicalTreatment &&
+                    Array.isArray(selectedDisease.treatment.chemicalTreatment) &&
+                    selectedDisease.treatment.chemicalTreatment.length > 0 && (
+                      <div style={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
+                          <thead>
+                            <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', color: '#475569' }}>
+                              <th style={{ padding: '0.5rem 0.75rem' }}>Chemical & Brand</th>
+                              <th style={{ padding: '0.5rem 0.75rem' }}>Dosage</th>
+                              <th style={{ padding: '0.5rem 0.75rem' }}>Application & PHI</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {selectedDisease.treatment.chemicalTreatment.map((chem: any, cIdx: number) => (
+                              <tr key={cIdx} style={{ borderBottom: cIdx === selectedDisease.treatment!.chemicalTreatment.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
+                                <td style={{ padding: '0.5rem 0.75rem', verticalAlign: 'top', fontWeight: 600, color: '#0f172a' }}>
+                                  <div>{chem.chemicalName}</div>
+                                  <div style={{ fontSize: '0.6875rem', color: '#c2410c' }}>Brand: {chem.commercialBrand}</div>
+                                </td>
+                                <td style={{ padding: '0.5rem 0.75rem', verticalAlign: 'top', fontWeight: 600 }}>
+                                  {chem.dosage}
+                                </td>
+                                <td style={{ padding: '0.5rem 0.75rem', verticalAlign: 'top', color: '#475569' }}>
+                                  <div>{chem.applicationMethod}</div>
+                                  {chem.waitingPeriodDays && (
+                                    <div style={{ fontSize: '0.6875rem', color: '#dc2626', fontWeight: 600 }}>
+                                      PHI: {chem.waitingPeriodDays} days
+                                    </div>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                  {/* Organic & Cultural Controls */}
+                  {(selectedDisease.treatment.organicTreatment || selectedDisease.treatment.preventativeMeasures) && (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem' }}>
+                      {selectedDisease.treatment.organicTreatment && (
+                        <div style={{ padding: '0.5rem', backgroundColor: '#ffffff', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                          <strong style={{ color: '#15803d' }}>Bio/Organic:</strong> {selectedDisease.treatment.organicTreatment}
+                        </div>
+                      )}
+                      {selectedDisease.treatment.preventativeMeasures && (
+                        <div style={{ padding: '0.5rem', backgroundColor: '#ffffff', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                          <strong style={{ color: '#0f172a' }}>Cultural Control:</strong> {selectedDisease.treatment.preventativeMeasures}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b', fontSize: '0.8125rem' }}>
+                  No pathology treatment plan formulated yet. Formulate and deliver scientific fungicide and cultural control instructions to the farmer.
+                </div>
+              )}
+            </div>
           </div>
         )}
       </Drawer>
@@ -769,6 +1383,45 @@ export const ServicesPage: React.FC<Props> = ({ onNavigateToOrchards }) => {
         message={`Are you sure you want to change the status of this request to "${targetNewStatus}"? This will be recorded in the system audit trail.`}
         confirmText="Confirm Status Update"
         isLoading={isUpdatingStatus}
+      />
+
+      {/* Fertilizer Plan Formulation Modal */}
+      <FertilizerPlanModal
+        isOpen={fertilizerModalOpen}
+        onClose={() => setFertilizerModalOpen(false)}
+        onSubmit={handleSubmitFertilizerPlan}
+        initialPlan={selectedFert?.plan ? {
+          diagnosis: selectedFert.plan.diagnosis,
+          summary: selectedFert.plan.summary,
+          schedule: selectedFert.plan.schedule,
+          organicAlternatives: selectedFert.plan.organicAlternatives || undefined,
+          soilTreatment: selectedFert.plan.soilTreatment || undefined,
+          precautions: (selectedFert.plan as any).precautions || undefined,
+          estimatedBudget: selectedFert.plan.estimatedBudget || undefined,
+        } : null}
+        cropType={selectedFert?.cropType || undefined}
+        landAcres={selectedFert?.landAcres}
+      />
+
+      {/* Disease Treatment Formulation Modal */}
+      <DiseaseTreatmentModal
+        isOpen={diseaseTreatmentModalOpen}
+        onClose={() => setDiseaseTreatmentModalOpen(false)}
+        onSubmit={handleSubmitDiseaseTreatment}
+        initialTreatment={selectedDisease?.treatment ? {
+          diseaseName: selectedDisease.treatment.diseaseName,
+          causalOrganism: selectedDisease.treatment.causalOrganism || undefined,
+          severity: selectedDisease.treatment.severity as any,
+          diagnosisSummary: selectedDisease.treatment.diagnosisSummary,
+          immediateAction: selectedDisease.treatment.immediateAction,
+          chemicalTreatment: selectedDisease.treatment.chemicalTreatment,
+          organicTreatment: selectedDisease.treatment.organicTreatment || undefined,
+          preventativeMeasures: selectedDisease.treatment.preventativeMeasures || undefined,
+          followUpDays: selectedDisease.treatment.followUpDays || undefined,
+          estimatedCost: selectedDisease.treatment.estimatedCost || undefined,
+        } : null}
+        cropType={selectedDisease?.cropType || undefined}
+        affectedPart={selectedDisease?.affectedPart || undefined}
       />
 
     </div>

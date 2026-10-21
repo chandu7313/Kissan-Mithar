@@ -45,11 +45,14 @@ export const Header: React.FC<Props> = ({
       });
 
     const interval = setInterval(() => {
-      AdminApi.getSystemHealth()
-        .then((data) => {
-          if (mounted) setHealth(data);
-        })
-        .catch(() => {});
+      // Avoid duplicate polling if user is on the dedicated SystemHealthPage or browser tab is hidden
+      if (!document.hidden && activeTab !== 'system') {
+        AdminApi.getSystemHealth()
+          .then((data) => {
+            if (mounted) setHealth(data);
+          })
+          .catch(() => {});
+      }
     }, 60000);
 
     return () => {
