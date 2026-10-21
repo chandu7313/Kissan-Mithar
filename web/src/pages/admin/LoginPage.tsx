@@ -423,8 +423,8 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '2.75rem 3.5rem',
+          justifyContent: 'flex-start',
+          padding: '2.25rem 3.5rem',
           boxSizing: 'border-box',
           backgroundImage: 'url(/assets/loginpage-img.png)',
           backgroundSize: 'cover',
@@ -558,7 +558,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
         </div>
 
         {/* Hero Middle Content: Headline, Subtitle, & 4 Value Props */}
-        <div style={{ position: 'relative', zIndex: 2, margin: '2rem 0' }}>
+        <div style={{ position: 'relative', zIndex: 2, margin: '1.25rem 0 0 0' }}>
           <h1
             style={{
               fontFamily: "'Outfit', sans-serif",
@@ -567,7 +567,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
               color: '#06291a',
               lineHeight: 1.18,
               letterSpacing: '-0.03em',
-              margin: '0 0 1rem 0',
+              margin: '0 0 0.85rem 0',
               maxWidth: '560px',
             }}
           >
@@ -584,7 +584,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
               color: '#334155',
               lineHeight: 1.55,
               maxWidth: '520px',
-              margin: '0 0 2rem 0',
+              margin: '0 0 1.25rem 0',
               fontWeight: 500,
             }}
           >
@@ -597,7 +597,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '1rem',
+              gap: '0.85rem',
               maxWidth: '680px',
             }}
           >
@@ -607,25 +607,25 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 backgroundColor: 'rgba(255, 255, 255, 0.94)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '12px',
-                padding: '1rem 0.85rem',
+                padding: '0.85rem 0.75rem',
                 border: '1px solid rgba(255, 255, 255, 0.8)',
                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
               }}
             >
               <div
                 style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '7px',
                   backgroundColor: '#dcfce7',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#16a34a',
-                  marginBottom: '0.65rem',
+                  marginBottom: '0.5rem',
                 }}
               >
-                <Sprout size={18} />
+                <Sprout size={16} />
               </div>
               <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0f172a' }}>
                 Farmers First
@@ -643,25 +643,25 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 backgroundColor: 'rgba(255, 255, 255, 0.94)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '12px',
-                padding: '1rem 0.85rem',
+                padding: '0.85rem 0.75rem',
                 border: '1px solid rgba(255, 255, 255, 0.8)',
                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
               }}
             >
               <div
                 style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '7px',
                   backgroundColor: '#dbeafe',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#2563eb',
-                  marginBottom: '0.65rem',
+                  marginBottom: '0.5rem',
                 }}
               >
-                <GraduationCap size={18} />
+                <GraduationCap size={16} />
               </div>
               <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0f172a' }}>
                 Expert Guidance
@@ -679,25 +679,25 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 backgroundColor: 'rgba(255, 255, 255, 0.94)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '12px',
-                padding: '1rem 0.85rem',
+                padding: '0.85rem 0.75rem',
                 border: '1px solid rgba(255, 255, 255, 0.8)',
                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
               }}
             >
               <div
                 style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '7px',
                   backgroundColor: '#e0e7ff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#4f46e5',
-                  marginBottom: '0.65rem',
+                  marginBottom: '0.5rem',
                 }}
               >
-                <Users size={18} />
+                <Users size={16} />
               </div>
               <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0f172a' }}>
                 Stronger Markets
@@ -715,25 +715,25 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 backgroundColor: 'rgba(255, 255, 255, 0.94)',
                 backdropFilter: 'blur(10px)',
                 borderRadius: '12px',
-                padding: '1rem 0.85rem',
+                padding: '0.85rem 0.75rem',
                 border: '1px solid rgba(255, 255, 255, 0.8)',
                 boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
               }}
             >
               <div
                 style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '7px',
                   backgroundColor: '#dcfce7',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#16a34a',
-                  marginBottom: '0.65rem',
+                  marginBottom: '0.5rem',
                 }}
               >
-                <TrendingUp size={18} />
+                <TrendingUp size={16} />
               </div>
               <div style={{ fontWeight: 800, fontSize: '0.8125rem', color: '#0f172a' }}>
                 Sustainable Growth
@@ -753,6 +753,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
             position: 'relative',
             zIndex: 2,
             alignSelf: 'flex-end',
+            marginTop: 'auto',
             maxWidth: '320px',
             backgroundColor: 'rgba(12, 38, 26, 0.88)',
             backdropFilter: 'blur(12px)',
