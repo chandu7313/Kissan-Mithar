@@ -46,14 +46,27 @@ export const errorHandler = (
     message = 'Authentication token expired';
   }
 
-  // Handle Prisma Client Errors
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    if (err.code === 'P2024') {
-      statusCode = 503;
-      message = 'Database connection pool busy. Please retry in a moment.';
-      res.setHeader('Retry-After', '2');
-      logger.warn({ err: err.message }, 'Database pool exhaustion (P2024)');
-    } else if (err.code === 'P2002') {
+  // Handle Database Connectivity & Timeout Errors first (always 503 retryable)
+  const isConnectionOrTimeoutError =
+    err instanceof Prisma.PrismaClientInitializationError ||
+    err.constructor?.name === 'PrismaClientRustPanicError' ||
+    err.code === 'P2024' || // Connection pool timeout
+    err.code === 'P1001' || // Can't reach database server
+    err.code === 'P1002' || // Database server reached but timed out
+    err.code === 'P1008' || // Operations timed out
+    err.code === 'P1017' || // Server closed connection
+    err.message?.includes("Can't reach database server") ||
+    err.message?.includes('Connection refused') ||
+    err.message?.includes('connection pool') ||
+    err.message?.includes('timed out');
+
+  if (isConnectionOrTimeoutError) {
+    statusCode = 503;
+    message = 'Database temporarily unavailable or connection pool busy. Retrying...';
+    res.setHeader('Retry-After', '1');
+    logger.warn({ err: err.message, code: err.code }, 'Transient database connectivity issue');
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === 'P2002') {
       statusCode = 400;
       message = 'A record with this value already exists';
       details = { field: (err.meta as any)?.target };
@@ -64,23 +77,9 @@ export const errorHandler = (
       statusCode = 400;
       message = 'Database request error';
     }
-  } else if (err instanceof Prisma.PrismaClientInitializationError) {
-    statusCode = 503;
-    message = 'Database connection unavailable. Please try again in a moment.';
-    logger.error({ err: err.message }, 'Database initialization error');
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     statusCode = 400;
     message = 'Invalid data provided';
-  } else if (
-    err.constructor?.name === 'PrismaClientRustPanicError' ||
-    err.message?.includes('Can\'t reach database server') ||
-    err.message?.includes('Connection refused') ||
-    err.message?.includes('connection pool') ||
-    err.message?.includes('timed out')
-  ) {
-    statusCode = 503;
-    message = 'Database temporarily unavailable. Please retry shortly.';
-    logger.error({ err: err.message }, 'Database connection error');
   }
 
   // Log server errors

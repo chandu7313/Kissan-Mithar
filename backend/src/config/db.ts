@@ -21,6 +21,12 @@ function getDatabaseUrl(): string | undefined {
     const sep = url.includes('?') ? '&' : '?';
     url = `${url}${sep}pool_timeout=30`;
   }
+
+  // Ensure connect_timeout allows international TLS handshake to remote pooler (15s instead of default 5s)
+  if (!url.includes('connect_timeout=')) {
+    const sep = url.includes('?') ? '&' : '?';
+    url = `${url}${sep}connect_timeout=15`;
+  }
   return url;
 }
 
