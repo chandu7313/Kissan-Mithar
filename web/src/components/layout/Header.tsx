@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ExternalLink, Activity, ShieldCheck, ChevronRight } from 'lucide-react';
+import { ExternalLink, Activity, ShieldCheck, ChevronRight, Search, Bell } from 'lucide-react';
 import { UserSession } from '../../types/index.js';
 import { AdminApi, SystemHealthData } from '../../api/admin.api.js';
 
@@ -9,6 +9,7 @@ interface Props {
   onSessionChange: (session: UserSession) => void;
   onOpenProfile: () => void;
   onLogout: () => void;
+  onNavigateToNotifications?: () => void;
 }
 
 const TAB_TITLES: Record<string, string> = {
@@ -31,6 +32,7 @@ export const Header: React.FC<Props> = ({
   activeTab = 'dashboard',
   onOpenProfile,
   onLogout,
+  onNavigateToNotifications,
 }) => {
   const [health, setHealth] = useState<SystemHealthData | null>(null);
 
@@ -75,31 +77,52 @@ export const Header: React.FC<Props> = ({
         justifyContent: 'space-between',
         flexShrink: 0,
         zIndex: 50,
+        gap: '1rem',
       }}
     >
-      {/* Left: Dynamic Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#64748b' }}>
-          KM Admin
-        </span>
-        <ChevronRight size={14} color="#94a3b8" />
-        <h1
+      {/* Left: Global Search Input */}
+      <div style={{ display: 'flex', alignItems: 'center', flex: 1, maxWidth: '420px' }}>
+        <div
           style={{
-            fontSize: '1rem',
-            fontWeight: 700,
-            color: '#0f172a',
-            margin: 0,
+            position: 'relative',
+            width: '100%',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
           }}
         >
-          {pageTitle}
-        </h1>
+          <Search
+            size={16}
+            color="#94a3b8"
+            style={{ position: 'absolute', left: '12px', pointerEvents: 'none' }}
+          />
+          <input
+            type="text"
+            placeholder="Search farmers, requests, listings..."
+            style={{
+              width: '100%',
+              padding: '0.52rem 0.875rem 0.52rem 2.25rem',
+              borderRadius: '10px',
+              border: '1px solid #e2e8f0',
+              backgroundColor: '#f8fafc',
+              fontSize: '0.84rem',
+              color: '#0f172a',
+              outline: 'none',
+              transition: 'border-color 0.15s ease, background-color 0.15s ease',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#16a34a';
+              e.currentTarget.style.backgroundColor = '#ffffff';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.backgroundColor = '#f8fafc';
+            }}
+          />
+        </div>
       </div>
 
-      {/* Right: Telemetry pill, Public link & Profile */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      {/* Right: Notification Bell, Health pill & Profile */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
         {/* Telemetry pill */}
         {health && (
           <div
@@ -156,47 +179,80 @@ export const Header: React.FC<Props> = ({
           <ExternalLink size={13} />
         </a>
 
-        {/* User profile capsule */}
+        {/* Notification Bell */}
+        <button
+          onClick={onNavigateToNotifications}
+          title="Notifications"
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '38px',
+            height: '38px',
+            borderRadius: '50%',
+            backgroundColor: '#f1f5f9',
+            border: 'none',
+            color: '#475569',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s ease',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#e2e8f0')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#f1f5f9')}
+        >
+          <Bell size={18} />
+          <span
+            style={{
+              position: 'absolute',
+              top: '6px',
+              right: '6px',
+              width: '15px',
+              height: '15px',
+              borderRadius: '50%',
+              backgroundColor: '#ef4444',
+              color: '#ffffff',
+              fontSize: '0.625rem',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2px solid #ffffff',
+            }}
+          >
+            1
+          </span>
+        </button>
+
+        {/* Subtle divider */}
+        <div style={{ width: '1px', height: '24px', backgroundColor: '#e2e8f0', margin: '0 0.15rem' }} />
+
+        {/* User profile avatar matching screenshot */}
         <div
           onClick={onOpenProfile}
+          title={session.name}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.625rem',
-            padding: '0.375rem 0.75rem',
-            borderRadius: '10px',
             cursor: 'pointer',
-            transition: 'background-color 0.15s ease, border-color 0.15s ease',
-            backgroundColor: '#f8fafc',
-            border: '1px solid #e2e8f0',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f1f5f9';
-            e.currentTarget.style.borderColor = '#cbd5e1';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#f8fafc';
-            e.currentTarget.style.borderColor = '#e2e8f0';
           }}
         >
-          <img
-            src={session.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(session.name || 'User')}&background=166534&color=fff&size=200`}
-            alt={session.name}
-            style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }}
-          />
-          <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', lineHeight: 1.2 }}>
-            <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#0f172a' }}>
-              {session.name}
-            </span>
-            <span
-              style={{
-                fontSize: '0.6875rem',
-                color: session.role === 'ADMIN' ? '#166534' : '#2563eb',
-                fontWeight: 600,
-              }}
-            >
-              {session.role === 'ADMIN' ? 'Super Admin' : 'Agronomist'}
-            </span>
+          <div
+            style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              backgroundColor: '#166534',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              boxShadow: '0 2px 4px rgba(22, 101, 52, 0.2)',
+            }}
+          >
+            {session.name ? session.name.charAt(0).toUpperCase() : 'R'}
           </div>
         </div>
       </div>

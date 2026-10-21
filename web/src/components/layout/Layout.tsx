@@ -39,6 +39,7 @@ export const Layout: React.FC<Props> = ({
           onSessionChange={onSessionChange}
           onOpenProfile={() => setIsProfileModalOpen(true)}
           onLogout={onLogout}
+          onNavigateToNotifications={() => setActiveTab('notifications')}
         />
         <main className="main-content">
           {children}
