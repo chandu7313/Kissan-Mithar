@@ -68,15 +68,16 @@ export const Sidebar: React.FC<Props> = ({
         }}
       >
         <img
-          src="/kissan_mithar_logo.PNG"
+          src="/kissan_mithar_logo_v2.png"
           alt="Kissan Mithar"
           style={{
-            height: '40px',
-            width: '40px',
+            height: '42px',
+            width: '42px',
             objectFit: 'contain',
-            borderRadius: '8px',
-            backgroundColor: 'white',
+            borderRadius: '10px',
+            backgroundColor: '#ffffff',
             padding: '2px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.18)',
           }}
         />
         <div>

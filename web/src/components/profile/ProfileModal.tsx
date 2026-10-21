@@ -125,9 +125,9 @@ export const ProfileModal: React.FC<Props> = ({ session, isOpen, onClose, onLogo
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <img
-              src="/kissan_mithar_logo.PNG"
+              src="/kissan_mithar_logo_v2.png"
               alt="Kissan Mithar"
-              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+              style={{ width: '42px', height: '42px', objectFit: 'contain', borderRadius: '8px' }}
             />
             <div>
               <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>

@@ -245,7 +245,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
         {/* Brand Header */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '0.5rem' }}>
           <img
-            src="/kissan_mithar_logo.PNG"
+            src="/kissan_mithar_logo_v2.png"
             alt="Kissan Mithar Logo"
             style={{
               height: '84px',
