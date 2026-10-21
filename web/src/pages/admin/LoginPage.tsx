@@ -820,7 +820,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
         <div
           style={{
             width: '100%',
-            maxWidth: '620px',
+            maxWidth: '640px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -878,7 +878,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
         <div
           style={{
             width: '100%',
-            maxWidth: '620px',
+            maxWidth: '640px',
             backgroundColor: '#ffffff',
             borderRadius: '20px',
             padding: '2.25rem 2.25rem',
@@ -1385,7 +1385,8 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
               backgroundColor: '#f6fcf8',
               borderRadius: '12px',
               border: '1px solid #e0f2e9',
-              padding: '1.25rem',
+              padding: '1rem',
+              boxSizing: 'border-box',
             }}
           >
             {/* Quick Login Header with Chevron */}
@@ -1399,11 +1400,11 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 userSelect: 'none',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
                 <div
                   style={{
-                    width: '28px',
-                    height: '28px',
+                    width: '26px',
+                    height: '26px',
                     borderRadius: '6px',
                     backgroundColor: '#dcfce7',
                     display: 'flex',
@@ -1412,12 +1413,12 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                     color: '#16a34a',
                   }}
                 >
-                  <Code2 size={16} />
+                  <Code2 size={15} />
                 </div>
                 <div>
                   <div
                     style={{
-                      fontSize: '0.875rem',
+                      fontSize: '0.8125rem',
                       fontWeight: 800,
                       color: '#0f172a',
                       lineHeight: 1.2,
@@ -1425,36 +1426,36 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                   >
                     Developer Quick Login — Development Only
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.15rem' }}>
+                  <div style={{ fontSize: '0.6875rem', color: '#64748b', marginTop: '0.1rem' }}>
                     Use these accounts for faster access during development.
                   </div>
                 </div>
               </div>
 
               <div style={{ color: '#64748b' }}>
-                {quickLoginOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                {quickLoginOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </div>
             </div>
 
             {quickLoginOpen && (
-              <div style={{ marginTop: '1rem' }}>
+              <div style={{ marginTop: '0.85rem' }}>
                 {/* Cyan Info Callout Banner */}
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
-                    gap: '0.5rem',
+                    gap: '0.45rem',
                     backgroundColor: '#e0f2fe',
                     borderRadius: '8px',
                     border: '1px solid #bae6fd',
-                    padding: '0.65rem 0.85rem',
-                    fontSize: '0.75rem',
+                    padding: '0.5rem 0.75rem',
+                    fontSize: '0.6875rem',
                     color: '#0369a1',
                     lineHeight: 1.4,
-                    marginBottom: '1rem',
+                    marginBottom: '0.75rem',
                   }}
                 >
-                  <Info size={15} color="#0284c7" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <Info size={14} color="#0284c7" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
                     These are real accounts from your development database.
                     <br />
@@ -1466,7 +1467,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                 {loadingDevAccounts ? (
                   <div
                     style={{
-                      padding: '1.5rem',
+                      padding: '1.25rem',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -1474,15 +1475,17 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                       color: '#64748b',
                     }}
                   >
-                    <Loader2 size={20} className="animate-spin" color="#16a34a" />
+                    <Loader2 size={18} className="animate-spin" color="#16a34a" />
                     <span style={{ fontSize: '0.75rem' }}>Checking database accounts...</span>
                   </div>
                 ) : (
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '0.75rem',
+                      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                      gap: '0.45rem',
+                      width: '100%',
+                      boxSizing: 'border-box',
                     }}
                   >
                     {/* Render roles in 2 columns according to specification */}
@@ -1501,21 +1504,24 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                             key={roleKey}
                             style={{
                               backgroundColor: '#ffffff',
-                              borderRadius: '8px',
-                              border: '1px solid #f1f5f9',
-                              padding: '0.75rem 0.85rem',
+                              borderRadius: '7px',
+                              border: '1px solid #e2e8f0',
+                              padding: '0.45rem 0.55rem',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'space-between',
-                              gap: '0.5rem',
-                              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02)',
+                              gap: '0.4rem',
+                              minWidth: 0,
+                              minHeight: '46px',
+                              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.02)',
+                              boxSizing: 'border-box',
                             }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0, flex: 1 }}>
                               <div
                                 style={{
-                                  width: '32px',
-                                  height: '32px',
+                                  width: '26px',
+                                  height: '26px',
                                   borderRadius: '6px',
                                   backgroundColor: spec.iconBg,
                                   color: spec.iconColor,
@@ -1525,13 +1531,14 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                                   flexShrink: 0,
                                 }}
                               >
-                                <IconComponent size={16} />
+                                <IconComponent size={13} />
                               </div>
-                              <div style={{ minWidth: 0 }}>
+                              <div style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
                                 <div
+                                  title={spec.name}
                                   style={{
                                     fontWeight: 700,
-                                    fontSize: '0.8125rem',
+                                    fontSize: '0.75rem',
                                     color: '#0f172a',
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
@@ -1542,13 +1549,15 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                                   {spec.name}
                                 </div>
                                 <div
+                                  title={spec.description}
                                   style={{
-                                    fontSize: '0.6875rem',
+                                    fontSize: '0.625rem',
                                     color: '#64748b',
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
-                                    marginTop: '2px',
+                                    marginTop: '1px',
+                                    lineHeight: 1.2,
                                   }}
                                 >
                                   {spec.description}
@@ -1563,13 +1572,13 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: '0.25rem',
-                                padding: '0.35rem 0.55rem',
+                                gap: '0.2rem',
+                                padding: '0.28rem 0.45rem',
                                 borderRadius: '4px',
                                 backgroundColor: '#f0fdf4',
                                 border: '1px solid #bbf7d0',
                                 color: '#166534',
-                                fontSize: '0.6875rem',
+                                fontSize: '0.625rem',
                                 fontWeight: 700,
                                 cursor: 'pointer',
                                 whiteSpace: 'nowrap',
@@ -1584,11 +1593,11 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                               }}
                             >
                               {isSubmitting ? (
-                                <Loader2 size={11} className="animate-spin" />
+                                <Loader2 size={10} className="animate-spin" />
                               ) : (
                                 <>
                                   <span>Use this account</span>
-                                  <ArrowRight size={10} />
+                                  <ArrowRight size={9} />
                                 </>
                               )}
                             </button>
