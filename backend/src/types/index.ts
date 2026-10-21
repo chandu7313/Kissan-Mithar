@@ -7,6 +7,7 @@ export interface AuthUserPayload {
   firebaseUid?: string;
   phoneNumber?: string;
   role: UserRole;
+  staffRole?: string;
   farmerId?: string;
   expertId?: string;
   adminId?: string;

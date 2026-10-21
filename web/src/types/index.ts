@@ -14,9 +14,23 @@ export interface UserSession {
   userId: string;
   name: string;
   role: UserRole;
+  staffRole?: string;
+  email?: string;
   phoneNumber?: string;
   token: string;
   avatarUrl?: string;
+}
+
+export interface DevAccountRole {
+  roleKey: string;
+  roleName: string;
+  description: string;
+  icon: string;
+  defaultTab: string;
+  isAvailable: boolean;
+  email: string | null;
+  accountName: string | null;
+  defaultDevPasswordAvailable: boolean;
 }
 
 export interface FarmerProfile {

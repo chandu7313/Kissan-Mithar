@@ -208,4 +208,16 @@ export class AuthController {
       next(error);
     }
   }
+
+  static async getDevAccounts(_req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const accounts = await AuthService.getDevelopmentAccounts();
+      res.status(200).json({
+        success: true,
+        data: accounts,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

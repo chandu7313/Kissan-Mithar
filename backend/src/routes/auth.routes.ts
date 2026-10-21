@@ -88,6 +88,9 @@ router.post('/login-password', authLimiter, validateRequest(loginPasswordSchema)
 router.post('/reset-password', otpVerifyLimiter, validateRequest(resetPasswordSchema), AuthController.resetPassword);
 router.post('/logout', validateRequest(logoutSchema), AuthController.logout);
 
+// Development-only staff account discovery (Strictly disabled in production)
+router.get('/dev-accounts', AuthController.getDevAccounts);
+
 // SECURED: audit logs now require admin authentication
 router.get('/audit-logs', requireAuth, requireRole('ADMIN'), AuthController.getAuditLogs);
 

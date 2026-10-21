@@ -12,13 +12,15 @@
     "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",
     "seed": "tsx prisma/seed.ts",
+    "seed:dev-staff": "tsx scripts/provision-dev-staff.ts",
     "test": "tsx test/lambda.test.ts",
     "test:integration": "tsx test/api.test.ts",
     "test:lambda": "tsx test/lambda.test.ts",
     "test:market-weather": "tsx test/market-weather.test.ts",
     "test:bazaar-labour": "tsx test/bazaar-labour.test.ts",
     "test:agronomy-advisory": "tsx test/agronomy-advisory.test.ts",
-    "test:core-identity": "tsx test/core-identity.test.ts"
+    "test:core-identity": "tsx test/core-identity.test.ts",
+    "test:auth-staff": "tsx test/auth-staff-rbac.test.ts"
   },
   "keywords": [
     "kisan-mithar",

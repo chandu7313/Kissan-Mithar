@@ -84,6 +84,8 @@ model Expert {
   experienceYears Int      @default(5)
   rating          Float    @default(4.8)
   isAvailable     Boolean  @default(true)
+  staffRole       String?  @default("AGRONOMY_EXPERT")
+  isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -105,6 +107,8 @@ model Admin {
   passwordHash String?
   photoUrl     String?
   mobileNumber String?
+  staffRole    String?  @default("SYSTEM_ADMIN")
+  isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

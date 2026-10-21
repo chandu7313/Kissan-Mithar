@@ -26,6 +26,19 @@ interface Props {
   session?: UserSession;
 }
 
+const ROLE_DISPLAY_NAMES: Record<string, string> = {
+  SUPER_ADMIN: 'Founder / Super Admin',
+  SYSTEM_ADMIN: 'System Administrator',
+  OPERATIONS_MANAGER: 'Operations Manager',
+  AGRONOMY_EXPERT: 'Agriculture Expert',
+  PROCUREMENT_MANAGER: 'Procurement Manager',
+  FARMER_SUPPORT: 'Farmer Support Executive',
+  FIELD_COORDINATOR: 'Field Services Coordinator',
+  FINANCE_COMPLIANCE: 'Finance & Compliance Officer',
+  MARKETING_MANAGER: 'Marketing & Content Manager',
+  BUSINESS_ANALYST: 'Business Analyst / Auditor',
+};
+
 export const Sidebar: React.FC<Props> = ({
   activeTab,
   setActiveTab,
@@ -95,12 +108,13 @@ export const Sidebar: React.FC<Props> = ({
           <div
             style={{
               fontSize: '0.625rem',
-              color: 'rgba(255,255,255,0.7)',
-              fontWeight: 600,
-              letterSpacing: '0.05em',
+              color: '#86efac',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
             }}
           >
-            Administrative Control Center
+            {session?.staffRole ? ROLE_DISPLAY_NAMES[session.staffRole] || session.staffRole : 'Administrative Console'}
           </div>
         </div>
       </div>

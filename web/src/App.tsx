@@ -23,6 +23,19 @@ import { SocketProvider } from './context/SocketContext.js';
 import { LandingPage } from './pages/public/LandingPage.js';
 import { ServiceDetailPage } from './pages/public/ServiceDetailPage.js';
 
+const ROLE_DEFAULT_TABS: Record<string, string> = {
+  SUPER_ADMIN: 'dashboard',
+  SYSTEM_ADMIN: 'system',
+  OPERATIONS_MANAGER: 'services',
+  AGRONOMY_EXPERT: 'consultations',
+  PROCUREMENT_MANAGER: 'agri-bazaar',
+  FARMER_SUPPORT: 'farmers',
+  FIELD_COORDINATOR: 'labour',
+  FINANCE_COMPLIANCE: 'reports',
+  MARKETING_MANAGER: 'notifications',
+  BUSINESS_ANALYST: 'reports',
+};
+
 export const App: React.FC = () => {
   const [session, setSession] = useState<UserSession | null>(AuthStore.getSession());
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -164,6 +177,8 @@ export const App: React.FC = () => {
       <LoginPage 
         onLoginSuccess={(s) => {
           setSession(s);
+          const defaultTab = (s.staffRole && ROLE_DEFAULT_TABS[s.staffRole]) || (s.role === 'ADMIN' ? 'dashboard' : 'consultations');
+          setActiveTab(defaultTab);
           setView('app');
           window.history.pushState({}, '', '/admin');
         }} 

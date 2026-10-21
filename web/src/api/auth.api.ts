@@ -1,5 +1,5 @@
 import { apiClient } from './client.js';
-import { UserSession, UserRole } from '../types/index.js';
+import { UserSession, UserRole, DevAccountRole } from '../types/index.js';
 
 export interface AuthAuditRecord {
   id: string;
@@ -136,5 +136,14 @@ export class AuthApi {
   static async updateProfile(photoUrl: string): Promise<any> {
     const response = await apiClient.patch('/auth/profile', { photoUrl });
     return response.data.data;
+  }
+
+  /**
+   * Fetches real development accounts for developer quick-login.
+   * Fails automatically in production.
+   */
+  static async getDevAccounts(): Promise<DevAccountRole[]> {
+    const response = await apiClient.get('/auth/dev-accounts');
+    return response.data?.data || [];
   }
 }

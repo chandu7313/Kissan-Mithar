@@ -23,6 +23,7 @@ export interface VerifyAuthDto {
   name?: string;
   email?: string;
   role?: UserRole;
+  staffRole?: string;
   languageCode?: string;
   ipAddress?: string;
   userAgent?: string;
@@ -276,6 +277,11 @@ export class AuthService {
       logger.warn({ err }, 'DB query during login');
     }
 
+    const activeAccount = expertRecord || adminRecord;
+    if (activeAccount && activeAccount.isActive === false) {
+      throw new AppError('This staff account has been deactivated or suspended. Please contact administration.', 403);
+    }
+
     const userHash = expertRecord?.passwordHash || adminRecord?.passwordHash;
     if (!userHash) {
       throw new AppError('Incorrect email or password. Please verify your credentials or sign in with OTP.', 401);
@@ -287,11 +293,14 @@ export class AuthService {
       throw new AppError('Incorrect email or password. Please verify your credentials or sign in with OTP.', 401);
     }
 
+    const authoritativeStaffRole = activeAccount?.staffRole || (actualRole === 'ADMIN' ? 'SYSTEM_ADMIN' : 'AGRONOMY_EXPERT');
+
     return await this.verifyAndAuthenticate({
       email,
       name: expertRecord?.name || adminRecord?.name,
       phoneNumber: expertRecord?.phoneNumber || adminRecord?.mobileNumber,
       role: actualRole,
+      staffRole: authoritativeStaffRole,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
     });
@@ -478,35 +487,28 @@ export class AuthService {
         }
       }
     } catch (dbError: any) {
-      if (!isProduction) {
-        logger.warn('Mocking user record due to DB failure in development mode');
-        if (role === 'FARMER') {
-          farmerRecord = {
-            id: 'mock_farmer_id',
-            firebaseUid,
-            phoneNumber,
-            name: name && name !== 'farmer' && name !== 'User' && name !== 'Farmer' ? name : 'farmer',
-            languageCode: dto.languageCode || 'en',
-          };
-        } else if (role === 'EXPERT') {
-          expertRecord = { id: 'mock_expert_id', phoneNumber, email, name: name || 'Mock Expert' };
-        } else {
-          adminRecord = { id: 'mock_admin_id', phoneNumber, email, name: name || 'Mock Admin' };
-        }
-      } else {
-        if (dbError instanceof AppError) throw dbError;
-        throw new AppError('Database error during authentication', 500, dbError.message);
+      if (dbError instanceof AppError) throw dbError;
+      throw new AppError('Database error during authentication', 500, dbError.message);
+    }
+
+    if (role === 'ADMIN' || role === 'EXPERT') {
+      const activeRecord = adminRecord || expertRecord;
+      if (activeRecord && activeRecord.isActive === false) {
+        throw new AppError('This staff account has been deactivated or suspended. Please contact administration.', 403);
       }
     }
 
     const userId = farmerRecord?.id || expertRecord?.id || adminRecord?.id;
     if (!userId) throw new AppError('Failed to resolve user record', 500);
 
+    const authoritativeStaffRole = dto.staffRole || adminRecord?.staffRole || expertRecord?.staffRole || (role === 'ADMIN' ? 'SYSTEM_ADMIN' : role === 'EXPERT' ? 'AGRONOMY_EXPERT' : undefined);
+
     const payload: AuthUserPayload = {
       userId,
       firebaseUid,
       phoneNumber: expertRecord?.phoneNumber || farmerRecord?.phoneNumber || adminRecord?.mobileNumber || phoneNumber,
       role,
+      staffRole: authoritativeStaffRole,
       farmerId: farmerRecord?.id || (role === 'FARMER' ? userId : undefined),
       expertId: expertRecord?.id || (role === 'EXPERT' ? userId : undefined),
       adminId: adminRecord?.id || (role === 'ADMIN' ? userId : undefined),
@@ -528,6 +530,7 @@ export class AuthService {
       metadata: {
         loginMethod: dto.idToken ? 'firebase_token' : 'email_auth',
         role,
+        staffRole: authoritativeStaffRole,
       },
     });
 
@@ -536,6 +539,7 @@ export class AuthService {
       user: {
         ...payload,
         email: expertRecord?.email || adminRecord?.email || email,
+        staffRole: authoritativeStaffRole,
         profile: farmerRecord || expertRecord || adminRecord,
       },
     };
@@ -764,6 +768,164 @@ export class AuthService {
       role: 'FARMER',
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
+    });
+  }
+
+  /**
+   * Discovers authorized development accounts for developer quick-login.
+   * STRICT SAFEGUARD: Throws 403 Forbidden immediately in production environments.
+   * NEVER returns passwords or password hashes.
+   */
+  static async getDevelopmentAccounts() {
+    if (isProduction) {
+      throw new AppError('Developer accounts discovery is strictly forbidden in production.', 403);
+    }
+
+    const ROLES_SPEC = [
+      {
+        key: 'SUPER_ADMIN',
+        roleName: 'Founder / Super Admin',
+        description: 'Executive oversight, company KPI telemetry & full platform governance',
+        targetType: 'ADMIN',
+        defaultTab: 'dashboard',
+        icon: 'Crown',
+      },
+      {
+        key: 'SYSTEM_ADMIN',
+        roleName: 'System Administrator',
+        description: 'Telemetry monitoring, audit logs, system health & technical operations',
+        targetType: 'ADMIN',
+        defaultTab: 'system',
+        icon: 'Server',
+      },
+      {
+        key: 'OPERATIONS_MANAGER',
+        roleName: 'Operations Manager',
+        description: 'Service requests, dispatch queues, SLAs & operational desk',
+        targetType: 'ADMIN',
+        defaultTab: 'services',
+        icon: 'Briefcase',
+      },
+      {
+        key: 'AGRONOMY_EXPERT',
+        roleName: 'Agriculture Expert',
+        description: 'Orchard soil evaluations, crop prescriptions & tele-consultations',
+        targetType: 'EXPERT',
+        defaultTab: 'consultations',
+        icon: 'Sprout',
+      },
+      {
+        key: 'PROCUREMENT_MANAGER',
+        roleName: 'Procurement Manager',
+        description: 'Agri-bazaar listings, produce procurement & farmer market connections',
+        targetType: 'ADMIN',
+        defaultTab: 'agri-bazaar',
+        icon: 'ShoppingCart',
+      },
+      {
+        key: 'FARMER_SUPPORT',
+        roleName: 'Farmer Support Executive',
+        description: 'Farmer directory dossiers, KYC verification & helpline issue tickets',
+        targetType: 'ADMIN',
+        defaultTab: 'farmers',
+        icon: 'Headphones',
+      },
+      {
+        key: 'FIELD_COORDINATOR',
+        roleName: 'Field Services Coordinator',
+        description: 'Farm labour deployment, equipment reservations & machinery dispatch',
+        targetType: 'ADMIN',
+        defaultTab: 'labour',
+        icon: 'Tractor',
+      },
+      {
+        key: 'FINANCE_COMPLIANCE',
+        roleName: 'Finance & Compliance Officer',
+        description: 'Subsidy audit logs, transaction settlements & compliance exports',
+        targetType: 'ADMIN',
+        defaultTab: 'reports',
+        icon: 'FileSpreadsheet',
+      },
+      {
+        key: 'MARKETING_MANAGER',
+        roleName: 'Marketing & Content Manager',
+        description: 'Mobile push broadcasts, scheme announcements & localized campaigns',
+        targetType: 'ADMIN',
+        defaultTab: 'notifications',
+        icon: 'Megaphone',
+      },
+      {
+        key: 'BUSINESS_ANALYST',
+        roleName: 'Business Analyst / Read-Only Auditor',
+        description: 'Yield analytics, export trends, platform reporting & audit trail',
+        targetType: 'ADMIN',
+        defaultTab: 'reports',
+        icon: 'LineChart',
+      },
+    ];
+
+    const activeAdmins = await prisma.admin.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        staffRole: true,
+        isActive: true,
+        passwordHash: true,
+      },
+    });
+
+    const activeExperts = await prisma.expert.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        staffRole: true,
+        isActive: true,
+        passwordHash: true,
+      },
+    });
+
+    return ROLES_SPEC.map((spec) => {
+      let matchedRecord: any = null;
+
+      if (spec.targetType === 'EXPERT') {
+        matchedRecord = activeExperts.find((e) => e.staffRole === spec.key) || activeExperts[0];
+      } else {
+        matchedRecord = activeAdmins.find((a) => a.staffRole === spec.key);
+        // Fallback for SUPER_ADMIN if legacy admin@gmail.com exists
+        if (!matchedRecord && spec.key === 'SUPER_ADMIN') {
+          matchedRecord = activeAdmins.find((a) => a.email === 'admin@gmail.com');
+        }
+      }
+
+      if (matchedRecord && matchedRecord.isActive && matchedRecord.passwordHash) {
+        return {
+          roleKey: spec.key,
+          roleName: spec.roleName,
+          description: spec.description,
+          icon: spec.icon,
+          defaultTab: spec.defaultTab,
+          isAvailable: true,
+          email: matchedRecord.email,
+          accountName: matchedRecord.name,
+          defaultDevPasswordAvailable: true,
+        };
+      }
+
+      return {
+        roleKey: spec.key,
+        roleName: spec.roleName,
+        description: spec.description,
+        icon: spec.icon,
+        defaultTab: spec.defaultTab,
+        isAvailable: false,
+        email: null,
+        accountName: null,
+        defaultDevPasswordAvailable: false,
+      };
     });
   }
 }
