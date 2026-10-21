@@ -13,6 +13,7 @@ import {
   LogOut,
   Circle,
   TreeDeciduous,
+  UserCheck,
 } from 'lucide-react';
 import { UserSession } from '../../types/index.js';
 
@@ -42,7 +43,8 @@ export const Sidebar: React.FC<Props> = ({
     { id: 'services', label: 'Services Desk', icon: Sprout, badge: pendingCount },
     { id: 'requests', label: 'Orchard Surveys', icon: TreeDeciduous },
     { id: 'consultations', label: 'Consultations', icon: PhoneCall },
-    { id: 'labour', label: 'Labour & Machinery', icon: Tractor },
+    { id: 'labour', label: 'Farm Labour', icon: UserCheck },
+    { id: 'machinery', label: 'Farm Machinery', icon: Tractor },
     { id: 'agri-bazaar', label: 'Agri Bazaar', icon: ShoppingCart },
     { id: 'notifications', label: 'Push & Broadcast', icon: Bell },
     { id: 'reports', label: 'Reports & Exports', icon: FileText },

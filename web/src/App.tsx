@@ -14,6 +14,7 @@ import { AgriBazaarPage } from './pages/bazaar/AgriBazaarPage.js';
 import { FarmersPage } from './pages/admin/FarmersPage.js';
 import { ServicesPage } from './pages/admin/ServicesPage.js';
 import { LabourAdminPage } from './pages/admin/LabourAdminPage.js';
+import { MachineryAdminPage } from './pages/admin/MachineryAdminPage.js';
 import { NotificationsPage } from './pages/admin/NotificationsPage.js';
 import { ReportsPage } from './pages/admin/ReportsPage.js';
 import { StaffPage } from './pages/admin/StaffPage.js';
@@ -228,7 +229,11 @@ export const App: React.FC = () => {
         </div>
 
         <div style={{ display: activeTab === 'labour' ? 'block' : 'none', height: '100%' }}>
-          <LabourAdminPage />
+          <LabourAdminPage onNavigateToMachinery={() => setActiveTab('machinery')} />
+        </div>
+
+        <div style={{ display: activeTab === 'machinery' ? 'block' : 'none', height: '100%' }}>
+          <MachineryAdminPage onNavigateToLabour={() => setActiveTab('labour')} />
         </div>
 
         <div style={{ display: activeTab === 'requests' ? 'block' : 'none', height: '100%' }}>

@@ -18,7 +18,8 @@ const TAB_TITLES: Record<string, string> = {
   services: 'Service Operations Desk',
   requests: 'Orchard Surveys',
   consultations: 'Tele-Consultation Queue',
-  labour: 'Labour & Farm Mechanization Desk',
+  labour: 'Farm Labour Hub',
+  machinery: 'Farm Machinery & Equipment',
   'agri-bazaar': 'Agri Bazaar & Procurement',
   notifications: 'Mobile Notifications & FCM Broadcast',
   reports: 'Reports & Data Exports',
@@ -97,7 +98,15 @@ export const Header: React.FC<Props> = ({
           />
           <input
             type="text"
-            placeholder={activeTab === 'farmers' ? "Search farmers, phone, or farmer ID..." : "Search farmers, requests, listings..."}
+            placeholder={
+              activeTab === 'farmers'
+                ? "Search farmers, phone, or farmer ID..."
+                : activeTab === 'labour'
+                ? "Search labour groups, village, or phone..."
+                : activeTab === 'machinery'
+                ? "Search machinery, equipment, or rentals..."
+                : "Search farmers, requests, listings..."
+            }
             style={{
               width: '100%',
               padding: '0.52rem 0.875rem 0.52rem 2.25rem',
