@@ -1,0 +1,790 @@
+/* ===================================================
+   ABOUT SECTION STYLES (CRISP, PROFESSIONAL, LOW BORDER-RADIUS)
+   =================================================== */
+
+.about-section-wrapper {
+  background: #fbfdfc;
+  padding: 4.5rem 1.5rem 5rem;
+  color: #0f172a;
+}
+
+.about-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+/* Common Section Tags and Titles */
+.about-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #15803d;
+  margin-bottom: 0.5rem;
+}
+
+.about-heading {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #0b3d20;
+  line-height: 1.2;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+
+/* ---------------------------------------------------
+   1. HERO BANNER
+   --------------------------------------------------- */
+.about-hero-card {
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid #dcf2e3;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(15, 60, 35, 0.04);
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+}
+
+.about-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/farmer_hero_banner.jpg'), url('/assets/about/about_hero_banner.png');
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+}
+
+.about-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(255, 255, 255, 0.95) 45%,
+    rgba(255, 255, 255, 0.75) 62%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  pointer-events: none;
+}
+
+.about-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 650px;
+  padding: 3.5rem 3rem;
+}
+
+.about-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #e8f7ee;
+  color: #15803d;
+  border: 1px solid #c2e8cd;
+  padding: 0.35rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.about-hero-title {
+  font-size: 2.75rem;
+  font-weight: 900;
+  color: #0f291e;
+  line-height: 1.15;
+  margin: 0 0 1.25rem;
+  letter-spacing: -0.025em;
+}
+
+.about-hero-title-highlight {
+  color: #16a34a;
+}
+
+.about-hero-desc {
+  font-size: 1.05rem;
+  color: #4b6656;
+  line-height: 1.65;
+  margin-bottom: 2rem;
+}
+
+.about-hero-ctas {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.about-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #15803d;
+  color: #ffffff;
+  padding: 0.75rem 1.4rem;
+  border-radius: 4px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid #15803d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.about-btn-primary:hover {
+  background: #166534;
+  transform: translateY(-1px);
+}
+
+.about-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  color: #0f5132;
+  padding: 0.75rem 1.4rem;
+  border-radius: 4px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid #c2e8cd;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.about-btn-secondary:hover {
+  background: #f0fdf4;
+  border-color: #15803d;
+}
+
+.about-hero-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(215, 235, 222, 0.8);
+}
+
+.about-hero-pillar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.about-pillar-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-pillar-icon.green { background: #e8f7ee; color: #16a34a; }
+.about-pillar-icon.orange { background: #fff7ed; color: #ea580c; }
+.about-pillar-icon.blue { background: #eff6ff; color: #2563eb; }
+.about-pillar-icon.purple { background: #f5f3ff; color: #7c3aed; }
+
+.about-pillar-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-pillar-label strong {
+  font-size: 0.8rem;
+  color: #0f291e;
+  line-height: 1.2;
+}
+
+.about-pillar-label span {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.about-hero-slogan-decor {
+  position: absolute;
+  top: 2rem;
+  right: 2.5rem;
+  z-index: 2;
+  text-align: right;
+  color: #0f4024;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1.35;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------
+   2. FOUR CORE PILLARS (VISION, MISSION, PURPOSE, VALUES)
+   --------------------------------------------------- */
+.about-core-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.about-core-pillar-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.75rem 1.35rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.about-core-pillar-card:hover {
+  transform: translateY(-4px);
+  border-color: #bbf7d0;
+  box-shadow: 0 8px 20px rgba(16, 83, 44, 0.06);
+}
+
+.about-card-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.about-card-icon-circle.vision { background: #e6f7ec; color: #166534; }
+.about-card-icon-circle.mission { background: #fef3c7; color: #b45309; }
+.about-card-icon-circle.purpose { background: #e0f2fe; color: #0369a1; }
+.about-card-icon-circle.values { background: #eafaf1; color: #15803d; }
+
+.about-core-pillar-card h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0b3d20;
+  margin: 0 0 0.75rem;
+}
+
+.about-core-pillar-card p {
+  font-size: 0.9rem;
+  color: #4b6656;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.about-values-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.about-values-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.about-values-check {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #15803d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------
+   3. OUR STORY
+   --------------------------------------------------- */
+.about-story-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.about-story-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-story-desc {
+  font-size: 1rem;
+  color: #4b6656;
+  line-height: 1.7;
+  margin: 0 0 1.75rem;
+}
+
+.about-story-quote-card {
+  position: relative;
+  background-color: #0f3d24;
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 2.75rem 2.25rem;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid #1b5e34;
+  box-shadow: 0 8px 24px rgba(10, 50, 30, 0.12);
+}
+
+.about-story-quote-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/about/story_quote_bg.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.about-story-quote-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(8, 40, 22, 0.88) 0%, rgba(12, 60, 34, 0.72) 100%);
+}
+
+.about-story-quote-inner {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+}
+
+.about-quote-mark {
+  font-size: 3.5rem;
+  line-height: 1;
+  font-family: Georgia, serif;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 0.5rem;
+}
+
+.about-quote-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ---------------------------------------------------
+   4. LEADERSHIP & COMPANY SNAPSHOT
+   --------------------------------------------------- */
+.about-leadership-snapshot-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 2rem;
+}
+
+.about-founder-composite-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.25rem;
+}
+
+.about-founder-profile-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.25rem;
+  text-align: center;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-founder-avatar-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 0.85rem;
+  background: #f1f5f9;
+}
+
+.about-founder-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.2rem;
+}
+
+.about-founder-title {
+  font-size: 0.82rem;
+  color: #15803d;
+  font-weight: 700;
+  margin: 0 0 0.65rem;
+}
+
+.about-founder-bio {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0 0 1rem;
+}
+
+.about-founder-socials {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: center;
+}
+
+.about-social-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: #f0fdf4;
+  color: #15803d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: 1px solid #dcfce7;
+  transition: all 0.2s ease;
+}
+
+.about-social-btn:hover {
+  background: #15803d;
+  color: white;
+}
+
+.about-founder-quote-bubble {
+  background: #f4faf6;
+  border: 1px solid #d7ecdf;
+  border-radius: 6px;
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.about-bubble-quote-mark {
+  color: #16a34a;
+  font-size: 2.75rem;
+  line-height: 1;
+  font-family: Georgia, serif;
+  margin-bottom: 0.5rem;
+}
+
+.about-founder-quote-msg {
+  font-size: 0.96rem;
+  color: #1e3a29;
+  line-height: 1.65;
+  margin: 0 0 1.25rem;
+}
+
+.about-founder-signature strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #0b3d20;
+}
+
+.about-founder-signature span {
+  font-size: 0.78rem;
+  color: #556c5e;
+}
+
+/* Company Snapshot Table Card */
+.about-snapshot-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.about-snapshot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.about-snapshot-row {
+  display: grid;
+  grid-template-columns: 28px 140px 1fr;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px dashed #f1f5f9;
+  font-size: 0.88rem;
+}
+
+.about-snapshot-row:last-child {
+  border-bottom: none;
+}
+
+.about-snapshot-icon {
+  color: #15803d;
+}
+
+.about-snapshot-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.about-snapshot-value {
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+}
+
+.about-snapshot-value a {
+  color: #15803d;
+  text-decoration: none;
+}
+
+.about-snapshot-value a:hover {
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------
+   5. OUR IMPACT
+   --------------------------------------------------- */
+.about-impact-block {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #dcf2e3;
+  border-radius: 6px;
+  padding: 2.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(22, 101, 52, 0.03);
+}
+
+.about-impact-bg-pattern {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 45%;
+  height: 100%;
+  background: radial-gradient(circle at 100% 100%, #edf8f1 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.about-impact-header {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 2rem;
+}
+
+.about-impact-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.about-impact-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.about-impact-card:hover {
+  transform: translateY(-3px);
+  border-color: #86efac;
+  background: #ffffff;
+}
+
+.about-impact-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.about-impact-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-impact-icon.green { background: #e8f7ee; color: #16a34a; }
+.about-impact-icon.orange { background: #fff7ed; color: #ea580c; }
+.about-impact-icon.blue { background: #eff6ff; color: #2563eb; }
+.about-impact-icon.purple { background: #f5f3ff; color: #7c3aed; }
+
+.about-impact-num {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #0b3d20;
+  line-height: 1;
+}
+
+.about-impact-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 0.35rem;
+}
+
+.about-impact-sub {
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ---------------------------------------------------
+   6. OUR LOCATION
+   --------------------------------------------------- */
+.about-location-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.75rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.about-office-image-box {
+  width: 100%;
+  height: 180px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.about-office-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-office-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-office-pin-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #15803d;
+}
+
+.about-office-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.25rem;
+}
+
+.about-office-city {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 0.65rem;
+}
+
+.about-office-desc {
+  font-size: 0.86rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.about-map-box {
+  width: 100%;
+  height: 180px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.about-map-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ---------------------------------------------------
+   RESPONSIVE QUERIES
+   --------------------------------------------------- */
+@media (max-width: 1024px) {
+  .about-hero-card {
+    min-height: auto;
+  }
+  .about-hero-content {
+    padding: 2.5rem 2rem;
+    max-width: 100%;
+  }
+  .about-hero-slogan-decor {
+    display: none;
+  }
+  .about-core-pillars-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .about-story-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-leadership-snapshot-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-impact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .about-location-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-section-wrapper {
+    padding: 3rem 1rem 4rem;
+  }
+  .about-hero-title {
+    font-size: 2rem;
+  }
+  .about-hero-pillars {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .about-core-pillars-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-founder-composite-card {
+    grid-template-columns: 1fr;
+  }
+  .about-founder-profile-card {
+    width: 100%;
+  }
+  .about-impact-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-snapshot-row {
+    grid-template-columns: 24px 110px 1fr;
+    font-size: 0.8rem;
+  }
+}

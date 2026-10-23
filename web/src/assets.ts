@@ -22,6 +22,24 @@ export const ASSETS = {
     AI_ASSISTANT: '/assets/services/ai-assistant.png',
   },
 
+  // How It Works Steps
+  STEPS: {
+    DOWNLOAD: '/assets/steps/step1_download@2x.png',
+    FARM_SETUP: '/assets/steps/step2_farm_setup@2x.png',
+    CHOOSE_SERVICE: '/assets/steps/step3_choose_service@2x.png',
+    GROW_EARN: '/assets/steps/step4_grow_earn@2x.png',
+    REFERENCE_BANNER: '/assets/steps/how_it_works_reference.png',
+  },
+
+  // About Section Assets
+  ABOUT: {
+    HERO_BANNER: '/assets/about/about_hero_banner.png',
+    FOUNDER: '/assets/ceo&founder.png',
+    STORY_QUOTE_BG: '/assets/about/story_quote_bg.png',
+    OFFICE: '/assets/about/office_building.png',
+    MAP: '/assets/about/telangana_map.png',
+  },
+
   // App Promo
   MOBILE_APP: '/assets/Kissan Mithar Agriculture App Mockup.png',
 };

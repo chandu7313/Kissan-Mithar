@@ -24,6 +24,7 @@ import { SocketProvider } from './context/SocketContext.js';
 import { LandingPage } from './pages/public/LandingPage.js';
 import { ServiceDetailPage } from './pages/public/ServiceDetailPage.js';
 import { PartnershipsPage } from './pages/public/PartnershipsPage.js';
+import { AboutPage } from './pages/public/AboutPage.js';
 
 const ROLE_DEFAULT_TABS: Record<string, string> = {
   SUPER_ADMIN: 'dashboard',
@@ -52,12 +53,13 @@ export const App: React.FC = () => {
     if (path.startsWith('/admin') || path.startsWith('/admin-login') || path === '/login') return 'app';
     if (path.startsWith('/agri-bazaar') || path === '/services/crop-connect') return 'agri-bazaar';
     if (path.startsWith('/partnerships') || path === '/partners') return 'partnerships';
+    if (path === '/about' || path.startsWith('/about')) return 'about';
     if (path.startsWith('/services/')) return 'service-detail';
     return 'landing';
   };
 
-  // App routing state (Landing vs Admin Dashboard vs Service Detail vs Agri Bazaar vs Partnerships)
-  const [view, setView] = useState<'landing' | 'app' | 'service-detail' | 'agri-bazaar' | 'partnerships'>(getInitialView());
+  // App routing state (Landing vs Admin Dashboard vs Service Detail vs Agri Bazaar vs Partnerships vs About)
+  const [view, setView] = useState<'landing' | 'app' | 'service-detail' | 'agri-bazaar' | 'partnerships' | 'about'>(getInitialView());
   const [serviceSlug, setServiceSlug] = useState<string>(
     window.location.pathname.startsWith('/services/') ? window.location.pathname.split('/services/')[1] : ''
   );
@@ -65,9 +67,13 @@ export const App: React.FC = () => {
   // Keep URL in sync with state
   useEffect(() => {
     if (view === 'landing') {
-      const validLandingPaths = ['/', '/about', '/contact', '/services'];
+      const validLandingPaths = ['/', '/contact', '/services'];
       if (!validLandingPaths.includes(window.location.pathname)) {
         window.history.replaceState({}, '', '/');
+      }
+    } else if (view === 'about') {
+      if (window.location.pathname !== '/about') {
+        window.history.replaceState({}, '', '/about');
       }
     } else if (view === 'agri-bazaar') {
       if (!window.location.pathname.startsWith('/agri-bazaar') && window.location.pathname !== '/services/crop-connect') {
@@ -131,7 +137,17 @@ export const App: React.FC = () => {
     window.history.pushState({}, '', `/services/${slug}`);
   };
 
+  const navigateToAbout = () => {
+    setView('about');
+    window.history.pushState({}, '', '/about');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const navigateToSection = (sectionId: string) => {
+    if (sectionId === 'about') {
+      navigateToAbout();
+      return;
+    }
     if (sectionId === 'agri-bazaar') {
       setView('agri-bazaar');
       window.history.pushState({}, '', '/agri-bazaar');
@@ -164,6 +180,18 @@ export const App: React.FC = () => {
     setReportBuilderSource(null);
     navigateToHome();
   };
+
+  if (view === 'about') {
+    return (
+      <AboutPage
+        onNavigateHome={navigateToHome}
+        onAdminLogin={navigateToAdminLogin}
+        onNavigateSection={navigateToSection}
+        onNavigateService={navigateToService}
+        onNavigatePartnerships={navigateToPartnerships}
+      />
+    );
+  }
 
   if (view === 'agri-bazaar') {
     return (

@@ -413,49 +413,104 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
       {/* How it Works Section */}
       <section id="experts" className="how-it-works-section">
-        <div className="section-header">
-          <div className="section-badge"><Tractor size={14} /> SIMPLE 4-STEP PROCESS</div>
-          <h2 className="section-title">How It Works</h2>
-          <p className="section-subtitle">
+        {/* Soft Decorative Botanical Leaf Accents in corners */}
+        <div className="how-it-works-leaf-decor leaf-top-left" aria-hidden="true">
+          <svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M-20 20C20 40 45 85 50 140C72 75 130 50 175 42C130 26 85 5 42 -10C30 10 2 15 -20 20Z" fill="#a3d6b0" fillOpacity="0.45" />
+            <path d="M12 65C38 80 60 112 65 155C86 102 135 80 168 74C130 58 98 42 60 30C50 44 28 54 12 65Z" fill="#78bf8b" fillOpacity="0.32" />
+          </svg>
+        </div>
+        <div className="how-it-works-leaf-decor leaf-top-right" aria-hidden="true">
+          <svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M200 20C160 40 135 85 130 140C108 75 50 50 5 42C50 26 95 5 138 -10C150 10 178 15 200 20Z" fill="#a3d6b0" fillOpacity="0.45" />
+            <path d="M168 65C142 80 120 112 115 155C94 102 45 80 12 74C50 58 82 42 120 30C130 44 152 54 168 65Z" fill="#78bf8b" fillOpacity="0.32" />
+          </svg>
+        </div>
+        <div className="how-it-works-leaf-decor leaf-bottom-left" aria-hidden="true">
+          <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M-15 145C30 120 52 75 56 18C78 82 138 110 182 115C138 132 94 154 50 170C40 148 8 142 -15 145Z" fill="#a3d6b0" fillOpacity="0.35" />
+          </svg>
+        </div>
+        <div className="how-it-works-leaf-decor leaf-bottom-right" aria-hidden="true">
+          <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M175 145C130 120 108 75 104 18C82 82 22 110 -22 115C22 132 66 154 110 170C120 148 152 142 175 145Z" fill="#a3d6b0" fillOpacity="0.35" />
+          </svg>
+        </div>
+
+        <div className="how-it-works-header">
+          <div className="how-it-works-badge">
+            <Tractor size={16} className="how-it-works-badge-icon" />
+            <span>SIMPLE 4-STEP PROCESS</span>
+          </div>
+          <h2 className="how-it-works-title">How It Works</h2>
+          <p className="how-it-works-subtitle">
             Get personalized farm advisory and market access in four easy steps
           </p>
         </div>
 
-        <div className="timeline-container">
-          <div className="timeline-step">
-            <div className="step-number">1</div>
-            <div className="step-icon">
-              <img src="https://img.icons8.com/color/96/000000/smartphone.png" alt="Download" style={{ width: 32 }} />
+        <div className="how-it-works-cards">
+          {/* Step 1 */}
+          <div className="how-it-works-card">
+            <div className="how-it-works-number">1</div>
+            <div className="how-it-works-visual">
+              <img
+                src={ASSETS.STEPS.DOWNLOAD}
+                alt="Download App"
+                className="step-illustration-img"
+              />
             </div>
-            <h4>Download App</h4>
-            <p>Install the lightweight Kissan Mithar Android App</p>
+            <h3 className="how-it-works-card-title">Download App</h3>
+            <p className="how-it-works-card-desc">
+              Install the lightweight Kissan Mithar Android App
+            </p>
           </div>
 
-          <div className="timeline-step">
-            <div className="step-number">2</div>
-            <div className="step-icon">
-              <img src="https://img.icons8.com/color/96/000000/field.png" alt="Farm Setup" style={{ width: 32 }} />
+          {/* Step 2 */}
+          <div className="how-it-works-card">
+            <div className="how-it-works-number">2</div>
+            <div className="how-it-works-visual">
+              <img
+                src={ASSETS.STEPS.FARM_SETUP}
+                alt="Set Up Your Farm"
+                className="step-illustration-img"
+              />
             </div>
-            <h4>Set Up Your Farm</h4>
-            <p>Add land acreage, soil type and current crop details</p>
+            <h3 className="how-it-works-card-title">Set Up Your Farm</h3>
+            <p className="how-it-works-card-desc">
+              Add land acreage, soil type and current crop details
+            </p>
           </div>
 
-          <div className="timeline-step">
-            <div className="step-number">3</div>
-            <div className="step-icon">
-              <img src="https://img.icons8.com/color/96/000000/farmer-male.png" alt="Pick Services" style={{ width: 32 }} />
+          {/* Step 3 */}
+          <div className="how-it-works-card">
+            <div className="how-it-works-number">3</div>
+            <div className="how-it-works-visual">
+              <img
+                src={ASSETS.STEPS.CHOOSE_SERVICE}
+                alt="Choose a Service"
+                className="step-illustration-img"
+              />
             </div>
-            <h4>Choose a Service</h4>
-            <p>Get instant scientist advisory, labour, machinery or sell crops</p>
+            <h3 className="how-it-works-card-title">Choose a Service</h3>
+            <p className="how-it-works-card-desc">
+              Get instant scientist advisory, labour, machinery or sell crops
+            </p>
           </div>
 
-          <div className="timeline-step">
-            <div className="step-number">4</div>
-            <div className="step-icon">
-              <img src="https://img.icons8.com/color/96/000000/sprout.png" alt="Harvest & Earn" style={{ width: 32 }} />
+          {/* Step 4 */}
+          <div className="how-it-works-card">
+            <div className="how-it-works-number">4</div>
+            <div className="how-it-works-visual">
+              <img
+                src={ASSETS.STEPS.GROW_EARN}
+                alt="Grow & Earn More"
+                className="step-illustration-img"
+              />
             </div>
-            <h4>Grow & Earn More</h4>
-            <p>Achieve higher yield, save input costs and connect with buyers</p>
+            <h3 className="how-it-works-card-title">Grow & Earn More</h3>
+            <p className="how-it-works-card-desc">
+              Achieve higher yield, save input costs and connect with buyers
+            </p>
           </div>
         </div>
       </section>
@@ -714,7 +769,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           <div className="footer-col">
             <h4>QUICK LINKS & TRUST</h4>
-            <a href="#about">About Kissan Mithar</a>
+            <a
+              href="/about"
+              onClick={(e) => {
+                e.preventDefault();
+                if (onNavigateSection) onNavigateSection('about');
+                else window.location.href = '/about';
+              }}
+            >
+              About Kissan Mithar
+            </a>
             <a href="#experts">Agronomist Network</a>
             <a href="/agri-bazaar">Agri Bazaar</a>
             <a
