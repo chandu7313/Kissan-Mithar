@@ -472,7 +472,280 @@ export const agentTools: AgentTool[] = [
     },
   },
 
-  // 7. Agricultural Knowledge Retrieval (RAG)
+  // 7. ML Soil Nutrient & Deficiency Analysis
+  {
+    name: 'ml_analyze_soil',
+    description: 'Analyzes soil laboratory test parameters (N, P, K, pH, EC, Organic Carbon) against Indian Soil Health Card standards to diagnose nutrient deficits and edaphic hazards.',
+    parameters: {
+      type: 'object',
+      properties: {
+        N: { type: 'number', description: 'Available Nitrogen (kg/ha)' },
+        P: { type: 'number', description: 'Available Phosphorus (kg/ha)' },
+        K: { type: 'number', description: 'Available Potassium (kg/ha)' },
+        ph: { type: 'number', description: 'Soil pH value (0-14)' },
+        ec: { type: 'number', description: 'Electrical conductivity (dS/m)' },
+        organic_carbon: { type: 'number', description: 'Soil organic carbon %' },
+        soil_type: { type: 'string', description: 'Soil texture/type e.g. Black Cotton, Red Sandy Loam' },
+        location: { type: 'string', description: 'District / State' },
+      },
+      required: ['N', 'P', 'K', 'ph'],
+    },
+    execute: async (args: any, context: FarmerContext): Promise<ToolExecutionResponse> => {
+      const result = await MLService.analyzeSoil({
+        N: Number(args.N),
+        P: Number(args.P),
+        K: Number(args.K),
+        ph: Number(args.ph),
+        ec: args.ec !== undefined ? Number(args.ec) : 0.45,
+        organic_carbon: args.organic_carbon !== undefined ? Number(args.organic_carbon) : 0.50,
+        soil_type: args.soil_type || context.soilType,
+        location: args.location || context.district,
+        farmerId: context.farmerId,
+      });
+
+      const summary = `Soil Health Card Analysis (Model ${result.model_version}): Soil reaction is ${result.soil_summary?.soil_reaction_class || 'Neutral'}, Fertility Tier: ${result.soil_summary?.predicted_fertility_tier || 'Medium'}. ${result.potential_deficiencies.length} potential deficiencies identified.${result.warnings.length > 0 ? ' Warnings: ' + result.warnings.join(' ') : ''}`;
+
+      const uiCards: UICard[] = [{
+        type: 'DIAGNOSIS_CARD',
+        title: `🧪 Soil Health Card Diagnostic: ${result.soil_summary?.predicted_fertility_tier || 'Soil Analysis'}`,
+        data: {
+          soilSummary: result.soil_summary,
+          deficiencies: result.potential_deficiencies,
+          expertReviewRequired: result.expert_review_required,
+          warnings: result.warnings,
+          modelVersion: result.model_version,
+        },
+      }];
+
+      return { summary, uiCards, rawResult: result };
+    },
+  },
+
+  // 8. ML Crop-Specific Fertilizer Recommendation (STCR)
+  {
+    name: 'ml_recommend_fertilizer',
+    description: 'Calculates exact STCR-adjusted nutrient requirements and generates commercial fertilizer schedules with certified Kissan Mithar catalogue products.',
+    parameters: {
+      type: 'object',
+      properties: {
+        crop_name: { type: 'string', description: 'Target crop e.g. Cotton, Paddy, Chilli, Maize' },
+        crop_growth_stage: { type: 'string', description: 'Basal, Vegetative, Flowering, Maturity' },
+        land_acres: { type: 'number', description: 'Acreage of the farm field' },
+        measured_n: { type: 'number', description: 'Soil test Nitrogen (kg/ha)' },
+        measured_p: { type: 'number', description: 'Soil test Phosphorus (kg/ha)' },
+        measured_k: { type: 'number', description: 'Soil test Potassium (kg/ha)' },
+        ph: { type: 'number', description: 'Soil pH' },
+        soil_texture: { type: 'string', description: 'Soil type e.g. Black Cotton, Red Sandy Loam' },
+      },
+      required: ['crop_name'],
+    },
+    execute: async (args: any, context: FarmerContext): Promise<ToolExecutionResponse> => {
+      const crop = args.crop_name || context.primaryCrop || 'Cotton';
+      const acres = args.land_acres || context.landAcres || 1.0;
+
+      const result = await MLService.recommendFertilizer({
+        crop_name: crop,
+        crop_growth_stage: args.crop_growth_stage || 'Basal',
+        land_acres: acres,
+        measured_n: args.measured_n,
+        measured_p: args.measured_p,
+        measured_k: args.measured_k,
+        ph: args.ph,
+        soil_texture: args.soil_texture || context.soilType,
+        farmerId: context.farmerId,
+      });
+
+      const options = result.fertilizer_options || [];
+      const prodNames = options.map((o: any) => `${o.product_name} (${o.total_quantity_needed})`).join(', ');
+      const summary = `Fertilizer Formulation Engine for ${acres} acres of ${crop}: Formulated balanced program. Recommended commercial inputs: ${prodNames}.`;
+
+      const uiCards: UICard[] = [{
+        type: 'DIAGNOSIS_CARD',
+        title: `🌱 Fertilizer Schedule for ${crop} (${acres} Acres)`,
+        data: {
+          crop,
+          acres,
+          nutrientRecommendations: result.nutrient_recommendations,
+          schedule: result.schedule,
+          fertilizerOptions: result.fertilizer_options,
+          expertReviewRequired: result.expert_review_required,
+          warnings: result.warnings,
+          modelVersion: result.model_version,
+        },
+      }];
+
+      return { summary, uiCards, rawResult: result };
+    },
+  },
+
+  // 9. ML Crop Disease Detection & Pest Diagnosis
+  {
+    name: 'ml_predict_disease',
+    description: 'Diagnoses crop disease or pest infestation from photographs and visual leaf symptoms across Paddy, Cotton, Chilli, Maize, and Groundnut.',
+    parameters: {
+      type: 'object',
+      properties: {
+        crop_name: { type: 'string', description: 'Crop name e.g. Paddy, Cotton, Chilli, Maize, Groundnut' },
+        farmer_symptoms: { type: 'string', description: 'Observed visible symptoms on leaves, stems, or fruits' },
+        growth_stage: { type: 'string', description: 'Crop growth stage' },
+        location: { type: 'string', description: 'Farm location / district' },
+        imageBase64: { type: 'string', description: 'Base64-encoded leaf photograph if provided' },
+      },
+      required: ['crop_name'],
+    },
+    execute: async (args: any, context: FarmerContext): Promise<ToolExecutionResponse> => {
+      const crop = args.crop_name || context.primaryCrop || 'Paddy';
+      const result = await MLService.predictDisease({
+        crop_name: crop,
+        farmer_symptoms: args.farmer_symptoms,
+        growth_stage: args.growth_stage,
+        location: args.location || context.district,
+        imageBase64: args.imageBase64,
+        farmerId: context.farmerId,
+      });
+
+      const summary = `Crop Diagnostic Engine (Model ${result.model_version}) identifies ${result.disease_name} (${Math.round(result.confidence * 100)}% confidence, Severity: ${result.severity}). Immediate Action: ${result.chemical_treatment || result.organic_treatment}. ${result.limitations_and_disclaimers}`;
+
+      const uiCards: UICard[] = [{
+        type: 'DIAGNOSIS_CARD',
+        title: `🔬 Diagnostic Report: ${result.disease_name}`,
+        data: {
+          condition: result.disease_name,
+          crop: result.crop,
+          confidence: `${Math.round(result.confidence * 100)}%`,
+          severity: result.severity,
+          causal: result.causal_organism,
+          observations: result.visible_observations,
+          verification: result.recommended_verification,
+          chemicalTreatment: result.chemical_treatment,
+          organicTreatment: result.organic_treatment,
+          prevention: result.preventative_measures,
+          expertEscalation: result.expert_escalation_status,
+          alternatives: result.alternative_possibilities,
+          disclaimer: result.limitations_and_disclaimers,
+          modelVersion: result.model_version,
+        },
+      }];
+
+      return { summary, uiCards, rawResult: result };
+    },
+  },
+
+  // 10. ML Harvest Yield Prediction Regressor
+  {
+    name: 'ml_predict_yield',
+    description: 'Forecasts potential crop harvest yield in Quintals/Acre and total production using historical district agronomic statistics.',
+    parameters: {
+      type: 'object',
+      properties: {
+        crop: { type: 'string', description: 'Crop e.g. Paddy, Cotton, Chilli, Maize, Groundnut' },
+        land_acres: { type: 'number', description: 'Cultivated land acreage' },
+        district: { type: 'string', description: 'District in Telangana/AP' },
+        irrigation_type: { type: 'string', description: 'Drip, Borewell, Canal, Rainfed' },
+        soil_type: { type: 'string', description: 'Black Cotton, Red Sandy Loam, Alluvial' },
+        seasonal_rainfall_mm: { type: 'number', description: 'Seasonal rainfall in mm' },
+        fertilizer_applied_kg_per_acre: { type: 'number', description: 'Fertilizer applied (kg/acre)' },
+      },
+      required: ['crop', 'land_acres'],
+    },
+    execute: async (args: any, context: FarmerContext): Promise<ToolExecutionResponse> => {
+      const crop = args.crop || context.primaryCrop || 'Paddy';
+      const acres = args.land_acres || context.landAcres || 1.0;
+
+      const result = await MLService.predictYield({
+        crop,
+        land_acres: acres,
+        district: args.district || context.district || 'Warangal',
+        irrigation_type: args.irrigation_type || context.irrigationType || 'Borewell',
+        soil_type: args.soil_type || context.soilType || 'Black Cotton (Vertisol)',
+        seasonal_rainfall_mm: args.seasonal_rainfall_mm,
+        fertilizer_applied_kg_per_acre: args.fertilizer_applied_kg_per_acre,
+        farmerId: context.farmerId,
+      });
+
+      const summary = `Yield Regressor (Model ${result.model_version}) estimates ${result.estimated_yield_per_acre_quintals} Quintals/Acre for ${crop} in ${result.district} (Total: ${result.total_estimated_production_quintals} Q, 90% range: ${result.confidence_interval_90}).`;
+
+      const uiCards: UICard[] = [{
+        type: 'ADVISORY_CARD',
+        title: `🌾 Harvest Yield Projection: ${crop} (${acres} Acres)`,
+        data: {
+          crop,
+          acres,
+          district: result.district,
+          estimatedYieldPerAcre: `${result.estimated_yield_per_acre_quintals} Q/Acre`,
+          totalEstimatedProduction: `${result.total_estimated_production_quintals} Quintals`,
+          confidenceInterval90: result.confidence_interval_90,
+          benchmarkDistrictAverage: `${result.benchmark_district_average_quintals} Q/Acre`,
+          contributingFactors: result.important_contributing_factors,
+          optimizationSuggestions: result.optimization_suggestions,
+          limitations: result.prediction_limitations,
+          modelVersion: result.model_version,
+        },
+      }];
+
+      return { summary, uiCards, rawResult: result };
+    },
+  },
+
+  // 11. ML Smart Irrigation Recommendation
+  {
+    name: 'ml_recommend_irrigation',
+    description: 'Evaluates crop water requirements, soil moisture depletion, and weather forecasts to advise if and how much irrigation is required.',
+    parameters: {
+      type: 'object',
+      properties: {
+        crop: { type: 'string', description: 'Crop e.g. Cotton, Paddy, Chilli, Maize' },
+        growth_stage: { type: 'string', description: 'Initial, Vegetative, Flowering, Maturity' },
+        soil_type: { type: 'string', description: 'Black Cotton, Red Sandy Loam, Alluvial' },
+        soil_moisture_pct: { type: 'number', description: 'Measured volumetric soil moisture %' },
+        forecast_rain_48h_mm: { type: 'number', description: 'Upcoming 48-hour rain forecast in mm' },
+        irrigation_method: { type: 'string', description: 'Drip, Sprinkler, Flood' },
+        land_acres: { type: 'number', description: 'Land acreage' },
+      },
+      required: ['crop'],
+    },
+    execute: async (args: any, context: FarmerContext): Promise<ToolExecutionResponse> => {
+      const crop = args.crop || context.primaryCrop || 'Cotton';
+      const acres = args.land_acres || context.landAcres || 1.0;
+
+      const result = await MLService.recommendIrrigation({
+        crop,
+        growth_stage: args.growth_stage,
+        soil_type: args.soil_type || context.soilType,
+        soil_moisture_pct: args.soil_moisture_pct,
+        forecast_rain_48h_mm: args.forecast_rain_48h_mm,
+        irrigation_method: args.irrigation_method || 'Drip',
+        land_acres: acres,
+        farmerId: context.farmerId,
+      });
+
+      const waterReq = result.water_requirement;
+      const summary = result.irrigation_needed
+        ? `Irrigation Engine (Model ${result.model_version}): Irrigation NEEDED (${result.urgency} Priority). Apply ${waterReq.litres_per_acre} Litres/acre (${waterReq.recommended_runtime_hours} hrs drip runtime). ${result.suggested_timing}`
+        : `Irrigation Engine (Model ${result.model_version}): No irrigation required at this time. ${result.assessment_summary}${result.rainfall_warnings.length > 0 ? ' Rain alert: ' + result.rainfall_warnings.join(' ') : ''}`;
+
+      const uiCards: UICard[] = [{
+        type: 'ADVISORY_CARD',
+        title: `💧 Smart Irrigation Advisory: ${crop} (${result.urgency} Urgency)`,
+        data: {
+          crop,
+          irrigationNeeded: result.irrigation_needed,
+          urgency: result.urgency,
+          assessmentSummary: result.assessment_summary,
+          waterRequirement: result.water_requirement,
+          suggestedTiming: result.suggested_timing,
+          rainfallWarnings: result.rainfall_warnings,
+          soilWaterBalance: result.soil_water_balance,
+          limitations: result.uncertainty_and_limitations,
+          modelVersion: result.model_version,
+        },
+      }];
+
+      return { summary, uiCards, rawResult: result };
+    },
+  },
+
+  // 12. Agricultural Knowledge Retrieval (RAG)
   {
     name: 'rag_query_agricultural_corpus',
     description: 'Queries verified ICAR, State Agricultural University, and CIBRC handbooks for official pest, disease, and fertilizer guidelines.',
