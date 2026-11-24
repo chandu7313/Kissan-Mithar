@@ -656,7 +656,7 @@ export const agentTools: AgentTool[] = [
         crop,
         land_acres: acres,
         district: args.district || context.district || 'Warangal',
-        irrigation_type: args.irrigation_type || context.irrigationType || 'Borewell',
+        irrigation_type: args.irrigation_type || 'Borewell',
         soil_type: args.soil_type || context.soilType || 'Black Cotton (Vertisol)',
         seasonal_rainfall_mm: args.seasonal_rainfall_mm,
         fertilizer_applied_kg_per_acre: args.fertilizer_applied_kg_per_acre,
@@ -666,7 +666,7 @@ export const agentTools: AgentTool[] = [
       const summary = `Yield Regressor (Model ${result.model_version}) estimates ${result.estimated_yield_per_acre_quintals} Quintals/Acre for ${crop} in ${result.district} (Total: ${result.total_estimated_production_quintals} Q, 90% range: ${result.confidence_interval_90}).`;
 
       const uiCards: UICard[] = [{
-        type: 'ADVISORY_CARD',
+        type: 'DIAGNOSIS_CARD',
         title: `🌾 Harvest Yield Projection: ${crop} (${acres} Acres)`,
         data: {
           crop,
@@ -725,7 +725,7 @@ export const agentTools: AgentTool[] = [
         : `Irrigation Engine (Model ${result.model_version}): No irrigation required at this time. ${result.assessment_summary}${result.rainfall_warnings.length > 0 ? ' Rain alert: ' + result.rainfall_warnings.join(' ') : ''}`;
 
       const uiCards: UICard[] = [{
-        type: 'ADVISORY_CARD',
+        type: 'DIAGNOSIS_CARD',
         title: `💧 Smart Irrigation Advisory: ${crop} (${result.urgency} Urgency)`,
         data: {
           crop,

@@ -32,6 +32,7 @@ import {
 import { UserSession, DevAccountRole } from '../../types/index.js';
 import { AuthStore } from '../../services/authStore.js';
 import { AuthApi } from '../../api/auth.api.js';
+import './LoginPage.css';
 
 interface Props {
   onLoginSuccess: (session: UserSession) => void;
@@ -402,36 +403,11 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        width: '100vw',
-        display: 'flex',
-        flexDirection: 'row',
-        backgroundColor: '#ffffff',
-        fontFamily: "'Inter', sans-serif",
-        overflowX: 'hidden',
-      }}
-    >
+    <div className="login-page-root">
       {/* ============================================================ */}
-      {/* LEFT PANEL: HERO & BRAND STORY (MATCHING PROVIDED IMAGE)      */}
+      {/* LEFT PANEL: HERO & BRAND STORY (DESKTOP ONLY)                 */}
       {/* ============================================================ */}
-      <div
-        style={{
-          flex: '1 1 50%',
-          position: 'relative',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-start',
-          padding: '2.25rem 3.5rem',
-          boxSizing: 'border-box',
-          backgroundImage: 'url(/assets/loginpage-img.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center bottom',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
+      <div className="login-left-panel">
         {/* Soft top gradient to ensure crystal-clear text contrast */}
         <div
           style={{
@@ -593,14 +569,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
           </p>
 
           {/* 4 Feature Cards in a row */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '0.85rem',
-              maxWidth: '680px',
-            }}
-          >
+          <div className="login-left-features">
             {/* Feature 1 */}
             <div
               style={{
@@ -804,46 +773,14 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
       {/* ============================================================ */}
       {/* RIGHT PANEL: LOGIN & DEVELOPER QUICK LOGIN (MATCHING SCREEN)  */}
       {/* ============================================================ */}
-      <div
-        style={{
-          flex: '1 1 50%',
-          minHeight: '100vh',
-          backgroundColor: '#f8fafc',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '2.5rem 3rem',
-          boxSizing: 'border-box',
-          overflowY: 'auto',
-        }}
-      >
+      <div className="login-right-panel">
         {/* Top Navigation Row: Language Selector & Back Button */}
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '640px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1.25rem',
-          }}
-        >
+        <div className="login-top-nav">
           {onBackToHome ? (
             <button
               type="button"
               onClick={onBackToHome}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                background: 'none',
-                border: 'none',
-                color: '#64748b',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                padding: '0.25rem 0',
-              }}
+              className="login-back-btn"
             >
               <ArrowLeft size={14} />
               <span>Back to Website</span>
@@ -875,19 +812,23 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
           </div>
         </div>
 
+        {/* Mobile Brand Header: Visible only on tablets & mobile when left hero is hidden */}
+        <div className="login-mobile-brand">
+          <div className="login-mobile-logo">
+            <img
+              src="/kissan_mithar_logo_v2.png"
+              alt="Kissan Mithar"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+          <div>
+            <div className="login-mobile-brand-title">Kissan Mithar</div>
+            <div className="login-mobile-brand-sub">For a Prosperous Farmer</div>
+          </div>
+        </div>
+
         {/* White Card Container */}
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '640px',
-            backgroundColor: '#ffffff',
-            borderRadius: '20px',
-            padding: '2.25rem 2.25rem',
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.05)',
-            border: '1px solid #f1f5f9',
-            boxSizing: 'border-box',
-          }}
-        >
+        <div className="login-card-container">
           {/* Card Header */}
           <div style={{ marginBottom: '1.5rem' }}>
             <div
@@ -902,16 +843,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
             >
               KISSAN MITHAR ADMIN PORTAL
             </div>
-            <h2
-              style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: '2rem',
-                fontWeight: 800,
-                color: '#0f172a',
-                margin: 0,
-                letterSpacing: '-0.025em',
-              }}
-            >
+            <h2 className="login-card-title">
               Welcome back
             </h2>
             <p
@@ -1229,6 +1161,8 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                     required
                     style={{
                       flex: 1,
+                      minWidth: 0,
+                      boxSizing: 'border-box',
                       padding: '0.6rem 0.75rem',
                       borderRadius: '8px',
                       border: '1px solid #cbd5e1',
@@ -1247,6 +1181,8 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                       borderRadius: '8px',
                       fontSize: '0.75rem',
                       fontWeight: 700,
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
                       cursor: otpCountdown > 0 || loading ? 'not-allowed' : 'pointer',
                     }}
                   >
@@ -1381,15 +1317,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
           {/* ============================================================ */}
           {/* DEVELOPER QUICK LOGIN SECTION (MATCHING SCREENSHOT)           */}
           {/* ============================================================ */}
-          <div
-            style={{
-              backgroundColor: '#f6fcf8',
-              borderRadius: '12px',
-              border: '1px solid #e0f2e9',
-              padding: '1rem',
-              boxSizing: 'border-box',
-            }}
-          >
+          <div className="login-quick-wrapper">
             {/* Quick Login Header with Chevron */}
             <div
               onClick={() => setQuickLoginOpen(!quickLoginOpen)}
@@ -1464,7 +1392,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                   </div>
                 </div>
 
-                {/* 2-Column Grid of 10 Roles */}
+                {/* Responsive Grid of 10 Roles */}
                 {loadingDevAccounts ? (
                   <div
                     style={{
@@ -1480,16 +1408,8 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                     <span style={{ fontSize: '0.75rem' }}>Checking database accounts...</span>
                   </div>
                 ) : (
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                      gap: '0.45rem',
-                      width: '100%',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    {/* Render roles in 2 columns according to specification */}
+                  <div className="login-quick-grid">
+                    {/* Render roles in responsive grid according to specification */}
                     {Object.entries(ROLE_UI_SPECS)
                       .sort((a, b) => {
                         if (a[1].column !== b[1].column) return a[1].column - b[1].column;
@@ -1503,20 +1423,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                         return (
                           <div
                             key={roleKey}
-                            style={{
-                              backgroundColor: '#ffffff',
-                              borderRadius: '7px',
-                              border: '1px solid #e2e8f0',
-                              padding: '0.45rem 0.55rem',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              gap: '0.4rem',
-                              minWidth: 0,
-                              minHeight: '46px',
-                              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.02)',
-                              boxSizing: 'border-box',
-                            }}
+                            className="login-quick-card"
                           >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0, flex: 1 }}>
                               <div
@@ -1570,28 +1477,7 @@ export const LoginPage: React.FC<Props> = ({ onLoginSuccess, onBackToHome }) => 
                               type="button"
                               disabled={isSubmitting || loading || isSuccess}
                               onClick={() => handleUseAccount(roleKey)}
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.2rem',
-                                padding: '0.28rem 0.45rem',
-                                borderRadius: '4px',
-                                backgroundColor: '#f0fdf4',
-                                border: '1px solid #bbf7d0',
-                                color: '#166534',
-                                fontSize: '0.625rem',
-                                fontWeight: 700,
-                                cursor: 'pointer',
-                                whiteSpace: 'nowrap',
-                                flexShrink: 0,
-                                transition: 'all 0.15s ease',
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = '#dcfce7';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = '#f0fdf4';
-                              }}
+                              className="login-quick-btn"
                             >
                               {isSubmitting ? (
                                 <Loader2 size={10} className="animate-spin" />

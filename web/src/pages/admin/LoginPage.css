@@ -1,0 +1,316 @@
+/* ===================================================
+   KISSAN MITHAR — Admin Login Responsive Stylesheet
+   =================================================== */
+
+.login-page-root {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: row;
+  background-color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* ===================================================
+   LEFT HERO PANEL (Desktop only, hides gracefully)
+   =================================================== */
+.login-left-panel {
+  flex: 1 1 50%;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2.25rem 3.5rem;
+  box-sizing: border-box;
+  background-image: url(/assets/loginpage-img.png);
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+}
+
+.login-left-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+  max-width: 680px;
+  box-sizing: border-box;
+}
+
+/* ===================================================
+   RIGHT PANEL (Form & Developer Quick Login)
+   =================================================== */
+.login-right-panel {
+  flex: 1 1 50%;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 3rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.login-top-nav {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  gap: 0.75rem;
+  box-sizing: border-box;
+}
+
+.login-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.2rem;
+  border-radius: 6px;
+  transition: color 0.15s ease;
+  touch-action: manipulation;
+}
+
+.login-back-btn:hover {
+  color: #0f172a;
+}
+
+/* Mobile Brand Header inside right panel */
+.login-mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+  width: 100%;
+  max-width: 640px;
+  box-sizing: border-box;
+}
+
+.login-mobile-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 4px;
+  flex-shrink: 0;
+  border: 1px solid #e2e8f0;
+}
+
+.login-mobile-brand-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.login-mobile-brand-sub {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #16a34a;
+  margin-top: 0.15rem;
+}
+
+/* Main White Card Container */
+.login-card-container {
+  width: 100%;
+  max-width: 640px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 2.25rem 2.25rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  box-sizing: border-box;
+}
+
+.login-card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+/* Developer Quick Login Section */
+.login-quick-wrapper {
+  background-color: #f6fcf8;
+  border-radius: 12px;
+  border: 1px solid #e0f2e9;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.login-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login-quick-card {
+  background-color: #ffffff;
+  border-radius: 7px;
+  border: 1px solid #e2e8f0;
+  padding: 0.45rem 0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  min-width: 0;
+  min-height: 46px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.login-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.28rem 0.45rem;
+  border-radius: 4px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 0.625rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+
+.login-quick-btn:hover:not(:disabled) {
+  background-color: #dcfce7;
+}
+
+/* ===================================================
+   RESPONSIVE MEDIA QUERIES
+   =================================================== */
+
+/* Between 1025px and 1280px (Compact Laptops) */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .login-left-panel {
+    padding: 2rem 2rem;
+  }
+  .login-left-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .login-right-panel {
+    padding: 2rem 2rem;
+  }
+}
+
+/* Tablets & Small Laptops (<= 1024px) */
+@media (max-width: 1024px) {
+  .login-page-root {
+    flex-direction: column;
+  }
+
+  .login-left-panel {
+    display: none !important;
+  }
+
+  .login-right-panel {
+    flex: 1 1 100%;
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem;
+    justify-content: flex-start;
+  }
+
+  .login-mobile-brand {
+    display: flex;
+  }
+}
+
+/* Mobile Screens (<= 768px) */
+@media (max-width: 768px) {
+  .login-right-panel {
+    padding: 1.5rem 1rem 2.5rem 1rem;
+  }
+
+  .login-card-container {
+    padding: 1.75rem 1.25rem;
+    border-radius: 16px;
+  }
+
+  .login-card-title {
+    font-size: 1.75rem;
+  }
+
+  /* Single column for quick login on mobile to prevent squishing */
+  .login-quick-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .login-quick-card {
+    padding: 0.55rem 0.65rem;
+  }
+
+  /* Prevent auto-zoom on iOS Safari when focusing inputs */
+  .login-card-container input[type="text"],
+  .login-card-container input[type="email"],
+  .login-card-container input[type="password"] {
+    font-size: 16px !important;
+  }
+}
+
+/* Small Phones (<= 480px) */
+@media (max-width: 480px) {
+  .login-right-panel {
+    padding: 1rem 0.65rem 2rem 0.65rem;
+  }
+
+  .login-card-container {
+    padding: 1.25rem 0.875rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  }
+
+  .login-card-title {
+    font-size: 1.5rem;
+  }
+
+  .login-top-nav {
+    margin-bottom: 0.85rem;
+  }
+
+  .login-mobile-brand {
+    margin-bottom: 0.85rem;
+  }
+
+  .login-quick-wrapper {
+    padding: 0.75rem;
+  }
+
+  .login-quick-card {
+    padding: 0.5rem;
+  }
+
+  .login-quick-btn {
+    padding: 0.35rem 0.45rem;
+    font-size: 0.625rem;
+  }
+}
