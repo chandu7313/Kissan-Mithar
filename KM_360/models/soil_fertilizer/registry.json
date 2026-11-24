@@ -1,0 +1,16 @@
+{
+  "active_version": "v1.0.0",
+  "model_key": "soil_fertilizer_intelligence_v1.0.0",
+  "algorithm": "Gradient Boosting Classifier",
+  "accuracy": 0.9911111111111112,
+  "f1_macro": 0.9892691923576382,
+  "features": [
+    "N",
+    "P",
+    "K",
+    "ph",
+    "ec",
+    "organic_carbon"
+  ],
+  "artifact_path": "/Volumes/My Files/Projects/Kissan Mithar/KM_360/models/soil_fertilizer/v1.0.0/soil_fertility_pipeline.joblib"
+}

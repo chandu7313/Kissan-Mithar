@@ -1,0 +1,19 @@
+{
+  "active_version": "v1.0.0",
+  "model_key": "crop_disease_vision_v1.0.0",
+  "algorithm": "Random Forest Classifier",
+  "accuracy": 0.8577777777777778,
+  "f1_macro": 0.8582243351313972,
+  "classes_count": 12,
+  "features": [
+    "mean_hue",
+    "mean_saturation",
+    "mean_brightness",
+    "chlorosis_ratio",
+    "necrotic_ratio",
+    "edge_density",
+    "green_vegetation_index",
+    "spot_count_index"
+  ],
+  "artifact_path": "/Volumes/My Files/Projects/Kissan Mithar/KM_360/models/crop_disease/v1.0.0/crop_disease_pipeline.joblib"
+}

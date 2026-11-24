@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "KM 360"
+version = "1.2.0"
+description = "KM 360 — Production-grade Agricultural Intelligence & Machine Learning Service"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Kissan Mithar ML Engineering Team" }
+]
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.31.0",
+    "pydantic>=2.9.0",
+    "scikit-learn>=1.5.0",
+    "xgboost>=2.1.0",
+    "numpy>=1.26.0",
+    "pandas>=2.2.0",
+    "joblib>=1.4.0",
+    "pillow>=10.4.0",
+    "python-multipart>=0.0.9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+pythonpath = ["."]

@@ -1,0 +1,56 @@
+{
+  "model_key": "crop_yield_v1.0.0",
+  "champion_algorithm": "Gradient Boosting Regressor",
+  "features": {
+    "numeric": [
+      "land_acres",
+      "seasonal_rainfall_mm",
+      "temperature_c",
+      "fertilizer_applied_kg",
+      "ph"
+    ],
+    "categorical": [
+      "crop",
+      "district",
+      "soil_type",
+      "irrigation_type"
+    ]
+  },
+  "metrics": {
+    "test_r2": 0.9799015727439243,
+    "test_mae_quintals": 0.9574556804403425,
+    "test_rmse_quintals": 1.3591152881116386
+  },
+  "model_comparison": {
+    "Random Forest Regressor": {
+      "cv_mae_mean": 1.09356799814469,
+      "cv_r2_mean": 0.9750262846343138,
+      "val_mae": 1.0537995855553726,
+      "val_rmse": 1.4602092754776628,
+      "val_r2": 0.9753229024493827,
+      "test_mae": 1.0303230297365862,
+      "test_rmse": 1.4513559691791882,
+      "test_r2": 0.9770809102228623
+    },
+    "Gradient Boosting Regressor": {
+      "cv_mae_mean": 1.0316351519537623,
+      "cv_r2_mean": 0.977082027995986,
+      "val_mae": 1.0117189591069808,
+      "val_rmse": 1.4323231185370213,
+      "val_r2": 0.9762564378056549,
+      "test_mae": 0.9574556804403425,
+      "test_rmse": 1.3591152881116386,
+      "test_r2": 0.9799015727439243
+    },
+    "Ridge Baseline Regressor": {
+      "cv_mae_mean": 1.571406790360747,
+      "cv_r2_mean": 0.9510964732484419,
+      "val_mae": 1.5309533613518127,
+      "val_rmse": 2.0787879707025207,
+      "val_r2": 0.949986843833225,
+      "test_mae": 1.565532213825686,
+      "test_rmse": 2.121701579622836,
+      "test_r2": 0.9510200792218599
+    }
+  }
+}

@@ -1,0 +1,323 @@
+{
+  "model_key": "crop_disease_v1.0.0",
+  "champion_algorithm": "Random Forest Classifier",
+  "features": [
+    "mean_hue",
+    "mean_saturation",
+    "mean_brightness",
+    "chlorosis_ratio",
+    "necrotic_ratio",
+    "edge_density",
+    "green_vegetation_index",
+    "spot_count_index"
+  ],
+  "classes": [
+    "chilli_anthracnose",
+    "chilli_leaf_curl",
+    "cotton_bacterial_blight",
+    "cotton_leaf_curl_virus",
+    "groundnut_rust",
+    "groundnut_tikka_leaf_spot",
+    "healthy_crop_tissue",
+    "maize_fall_armyworm",
+    "maize_leaf_blight",
+    "paddy_bacterial_leaf_blight",
+    "paddy_blast",
+    "paddy_brown_spot"
+  ],
+  "metrics": {
+    "test_accuracy": 0.8577777777777778,
+    "test_f1_macro": 0.8582243351313972,
+    "test_precision_macro": 0.8626419652735442,
+    "test_recall_macro": 0.8568634423897582
+  },
+  "model_comparison": {
+    "Random Forest Classifier": {
+      "cv_accuracy_mean": 0.8837652005909762,
+      "cv_f1_mean": 0.8833118801332057,
+      "val_accuracy": 0.8580931263858093,
+      "val_f1_macro": 0.8558358828294813,
+      "test_accuracy": 0.8577777777777778,
+      "test_f1_macro": 0.8582243351313972,
+      "test_precision_macro": 0.8626419652735442,
+      "test_recall_macro": 0.8568634423897582
+    },
+    "Gradient Boosting Classifier": {
+      "cv_accuracy_mean": 0.8547005341516082,
+      "cv_f1_mean": 0.8553353460705203,
+      "val_accuracy": 0.8470066518847007,
+      "val_f1_macro": 0.8467522052880402,
+      "test_accuracy": 0.8422222222222222,
+      "test_f1_macro": 0.843360231788527,
+      "test_precision_macro": 0.8503699091122497,
+      "test_recall_macro": 0.8413347558084401
+    },
+    "Decision Tree Classifier": {
+      "cv_accuracy_mean": 0.7937061029662462,
+      "cv_f1_mean": 0.7941131867679899,
+      "val_accuracy": 0.7671840354767184,
+      "val_f1_macro": 0.7648416338742906,
+      "test_accuracy": 0.8,
+      "test_f1_macro": 0.7997861718483749,
+      "test_precision_macro": 0.8060041286450613,
+      "test_recall_macro": 0.7987197724039831
+    }
+  },
+  "per_class_metrics": {
+    "chilli_anthracnose": {
+      "precision": 0.7692307692307693,
+      "recall": 0.8108108108108109,
+      "f1-score": 0.7894736842105263,
+      "support": 37.0
+    },
+    "chilli_leaf_curl": {
+      "precision": 0.8205128205128205,
+      "recall": 0.8421052631578947,
+      "f1-score": 0.8311688311688312,
+      "support": 38.0
+    },
+    "cotton_bacterial_blight": {
+      "precision": 0.6428571428571429,
+      "recall": 0.7297297297297297,
+      "f1-score": 0.6835443037974683,
+      "support": 37.0
+    },
+    "cotton_leaf_curl_virus": {
+      "precision": 0.8378378378378378,
+      "recall": 0.8157894736842105,
+      "f1-score": 0.8266666666666667,
+      "support": 38.0
+    },
+    "groundnut_rust": {
+      "precision": 0.9487179487179487,
+      "recall": 0.9736842105263158,
+      "f1-score": 0.961038961038961,
+      "support": 38.0
+    },
+    "groundnut_tikka_leaf_spot": {
+      "precision": 1.0,
+      "recall": 0.7837837837837838,
+      "f1-score": 0.8787878787878788,
+      "support": 37.0
+    },
+    "healthy_crop_tissue": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 38.0
+    },
+    "maize_fall_armyworm": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 38.0
+    },
+    "maize_leaf_blight": {
+      "precision": 0.7948717948717948,
+      "recall": 0.8378378378378378,
+      "f1-score": 0.8157894736842105,
+      "support": 37.0
+    },
+    "paddy_bacterial_leaf_blight": {
+      "precision": 0.8285714285714286,
+      "recall": 0.7837837837837838,
+      "f1-score": 0.8055555555555556,
+      "support": 37.0
+    },
+    "paddy_blast": {
+      "precision": 0.7631578947368421,
+      "recall": 0.7837837837837838,
+      "f1-score": 0.7733333333333333,
+      "support": 37.0
+    },
+    "paddy_brown_spot": {
+      "precision": 0.9459459459459459,
+      "recall": 0.9210526315789473,
+      "f1-score": 0.9333333333333333,
+      "support": 38.0
+    },
+    "accuracy": 0.8577777777777778,
+    "macro avg": {
+      "precision": 0.8626419652735442,
+      "recall": 0.8568634423897582,
+      "f1-score": 0.8582243351313972,
+      "support": 450.0
+    },
+    "weighted avg": {
+      "precision": 0.8634801047432626,
+      "recall": 0.8577777777777778,
+      "f1-score": 0.8591195835345512,
+      "support": 450.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      30,
+      0,
+      6,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      32,
+      0,
+      6,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      6,
+      0,
+      27,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      1
+    ],
+    [
+      0,
+      7,
+      0,
+      31,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      37,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      1,
+      0,
+      1,
+      29,
+      0,
+      0,
+      0,
+      0,
+      6,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      38,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      38,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      31,
+      6,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      8,
+      29,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      29,
+      0
+    ],
+    [
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      35
+    ]
+  ]
+}

@@ -1,4 +1,8 @@
-# Kissan Mithar — Docker + AWS Lambda Deployment & Operations Guide
+# Kissan Mithar — AWS Lambda & EC2 Deployment & Operations Guide
+
+> 📖 **Quick Reference**: See [DEPLOYMENT_AWS_LAMBDA_EC2.md](DEPLOYMENT_AWS_LAMBDA_EC2.md) for the complete dual-deployment manual.
+> - To deploy on **AWS EC2**: Run `./deploy-ec2.sh`
+> - To deploy on **AWS Lambda**: Run `./deploy.sh`
 
 ## 1. Architecture Summary
 

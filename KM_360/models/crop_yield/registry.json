@@ -1,0 +1,8 @@
+{
+  "active_version": "v1.0.0",
+  "model_key": "crop_yield_regressor_v1.0.0",
+  "algorithm": "Gradient Boosting Regressor",
+  "test_r2": 0.9799015727439243,
+  "test_mae": 0.9574556804403425,
+  "artifact_path": "/Volumes/My Files/Projects/Kissan Mithar/KM_360/models/crop_yield/v1.0.0/crop_yield_pipeline.joblib"
+}

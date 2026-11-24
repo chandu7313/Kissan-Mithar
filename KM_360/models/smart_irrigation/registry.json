@@ -1,0 +1,8 @@
+{
+  "active_version": "v1.0.0",
+  "model_key": "smart_irrigation_classifier_v1.0.0",
+  "algorithm": "Gradient Boosting Classifier",
+  "accuracy": 0.9977777777777778,
+  "f1_macro": 0.9634660421545668,
+  "artifact_path": "/Volumes/My Files/Projects/Kissan Mithar/KM_360/models/smart_irrigation/v1.0.0/irrigation_pipeline.joblib"
+}

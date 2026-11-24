@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { CropAdvisoryService } from '../services/advisory.service.js';
+import { MLService } from '../services/ml.service.js';
 import { AuthenticatedRequest } from '../types/index.js';
 
 export class AdvisoryController {
@@ -35,6 +36,32 @@ export class AdvisoryController {
       res.status(201).json({
         success: true,
         data: advisory,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async recommendCrop(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { N, P, K, ph, temperature, humidity, rainfall, soil_type, location, season } = req.body;
+      const result = await MLService.recommendCrop({
+        N: Number(N),
+        P: Number(P),
+        K: Number(K),
+        ph: Number(ph),
+        temperature: Number(temperature),
+        humidity: Number(humidity),
+        rainfall: Number(rainfall),
+        soil_type,
+        location,
+        season,
+        farmerId: req.user?.farmerId,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
       });
     } catch (error) {
       next(error);

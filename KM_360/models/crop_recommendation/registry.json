@@ -1,0 +1,25 @@
+{
+  "active_version": "v1.2.0",
+  "versions": {
+    "v1.2.0": {
+      "model_key": "crop_recommendation_random_forest",
+      "algorithm": "Random_Forest",
+      "framework": "Scikit-Learn",
+      "accuracy": 0.9944,
+      "f1_macro": 0.9944,
+      "features": [
+        "N",
+        "P",
+        "K",
+        "temperature",
+        "humidity",
+        "ph",
+        "rainfall"
+      ],
+      "classes_count": 24,
+      "artifact_path": "/Volumes/My Files/Projects/Kissan Mithar/ml_service/models/crop_recommendation/v1.2.0/crop_recommendation_pipeline.joblib",
+      "evaluation_path": "/Volumes/My Files/Projects/Kissan Mithar/ml_service/models/crop_recommendation/v1.2.0/evaluation_report.json",
+      "is_active": true
+    }
+  }
+}

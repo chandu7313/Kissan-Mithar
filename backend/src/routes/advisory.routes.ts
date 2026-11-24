@@ -17,8 +17,30 @@ const createAdvisorySchema = z.object({
   }),
 });
 
+const cropRecommendSchema = z.object({
+  body: z.object({
+    N: z.number(),
+    P: z.number(),
+    K: z.number(),
+    ph: z.number(),
+    temperature: z.number(),
+    humidity: z.number(),
+    rainfall: z.number(),
+    soil_type: z.string().optional(),
+    location: z.string().optional(),
+    season: z.string().optional(),
+  }),
+});
+
 // Public: Anyone can view advisories
 router.get('/', AdvisoryController.list);
+
+// Crop Suitability ML Recommendation
+router.post(
+  '/crop-recommend',
+  validateRequest(cropRecommendSchema),
+  AdvisoryController.recommendCrop
+);
 
 // Expert/Admin: Create advisory
 router.post(

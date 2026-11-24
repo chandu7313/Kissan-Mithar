@@ -8,6 +8,8 @@
     "build": "prisma generate && tsc",
     "postinstall": "prisma generate",
     "start": "node dist/server.js",
+    "docker:build:ec2": "docker build -f Dockerfile.ec2 -t kissan-mithar-backend:latest .",
+    "docker:run:ec2": "docker run -d -p 4000:4000 --env-file .env --name kissan-backend kissan-mithar-backend:latest",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",
@@ -21,7 +23,8 @@
     "test:agronomy-advisory": "tsx test/agronomy-advisory.test.ts",
     "test:core-identity": "tsx test/core-identity.test.ts",
     "test:auth-staff": "tsx test/auth-staff-rbac.test.ts",
-    "test:collaboration": "tsx test/collaboration-lifecycle.test.ts"
+    "test:collaboration": "tsx test/collaboration-lifecycle.test.ts",
+    "test:ai": "tsx test/ai-orchestrator.test.ts"
   },
   "keywords": [
     "kisan-mithar",

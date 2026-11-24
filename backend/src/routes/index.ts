@@ -18,6 +18,8 @@ import agriBazaarRoutes from './agriBazaar.routes.js';
 import adminRoutes from './admin.routes.js';
 import collaborationRoutes from './collaboration.routes.js';
 import adminCollaborationRoutes from './adminCollaboration.routes.js';
+import aiRoutes from './ai.routes.js';
+import commerceRoutes from './commerce.routes.js';
 
 const router = Router();
 
@@ -83,5 +85,7 @@ router.use('/collaborations', collaborationRoutes);
 router.use('/partnerships', collaborationRoutes);
 router.use('/admin/collaborations', adminCollaborationRoutes);
 router.use('/admin', adminRoutes);
+router.use('/ai', aiRoutes);
+router.use('/commerce', commerceRoutes);
 
 export default router;

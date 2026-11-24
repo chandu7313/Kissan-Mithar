@@ -123,7 +123,6 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                 handleNavClick('agri-bazaar');
               }}
             >
-              <span className="nav-tag-badge">Market</span>
               Agri Bazaar
             </a>
             <a
@@ -144,24 +143,8 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
             >
               About
             </a>
-            <a
-              href="/farmers"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick('farmers');
-              }}
-            >
-              For Farmers
-            </a>
-            <a
-              href="/experts"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick('experts');
-              }}
-            >
-              Experts
-            </a>
+
+
             <a
               href="/partners"
               onClick={(e) => {
@@ -184,29 +167,19 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
 
           {/* Desktop Actions */}
           <div className="navbar-actions">
-            {/* Language toggle */}
-            <div className="navbar-lang-pill">
-              <button
-                type="button"
-                className={`lang-btn ${activeLang === 'EN' ? 'active' : ''}`}
-                onClick={() => setActiveLang('EN')}
+            {/* Language select dropdown */}
+            <div className="navbar-lang-dropdown">
+              <Globe size={14} className="navbar-lang-icon" />
+              <select
+                value={activeLang}
+                onChange={(e) => setActiveLang(e.target.value as 'EN' | 'TE' | 'HI')}
+                className="navbar-lang-select"
+                aria-label="Select Language"
               >
-                EN
-              </button>
-              <button
-                type="button"
-                className={`lang-btn ${activeLang === 'TE' ? 'active' : ''}`}
-                onClick={() => setActiveLang('TE')}
-              >
-                తెలుగు
-              </button>
-              <button
-                type="button"
-                className={`lang-btn ${activeLang === 'HI' ? 'active' : ''}`}
-                onClick={() => setActiveLang('HI')}
-              >
-                हिंदी
-              </button>
+                <option value="EN">EN</option>
+                <option value="TE">తెలుగు</option>
+                <option value="HI">हिंदी</option>
+              </select>
             </div>
 
             <a

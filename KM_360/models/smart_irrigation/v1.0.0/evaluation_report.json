@@ -1,0 +1,127 @@
+{
+  "model_key": "smart_irrigation_v1.0.0",
+  "champion_algorithm": "Gradient Boosting Classifier",
+  "features": {
+    "numeric": [
+      "temperature_c",
+      "humidity_pct",
+      "rainfall_past_48h_mm",
+      "forecast_rain_48h_mm",
+      "soil_moisture_pct"
+    ],
+    "categorical": [
+      "crop",
+      "growth_stage",
+      "soil_type"
+    ]
+  },
+  "classes": [
+    "delay_rain_imminent",
+    "irrigation_required",
+    "optimal_moisture",
+    "waterlogging_hazard"
+  ],
+  "metrics": {
+    "test_accuracy": 0.9977777777777778,
+    "test_f1_macro": 0.9634660421545668,
+    "test_precision_macro": 0.9983660130718954,
+    "test_recall_macro": 0.9375
+  },
+  "model_comparison": {
+    "Random Forest Classifier": {
+      "cv_accuracy_mean": 0.9861825207409932,
+      "cv_f1_mean": 0.7682853791901658,
+      "val_accuracy": 0.9933481152993349,
+      "val_f1_macro": 0.8720170464538732,
+      "test_accuracy": 0.9888888888888889,
+      "test_f1_macro": 0.8448193882620112,
+      "test_precision_macro": 0.9929428668018931,
+      "test_recall_macro": 0.8092105263157895
+    },
+    "Gradient Boosting Classifier": {
+      "cv_accuracy_mean": 0.9957131492215024,
+      "cv_f1_mean": 0.9465179276245195,
+      "val_accuracy": 0.9977827050997783,
+      "val_f1_macro": 0.9491856677524431,
+      "test_accuracy": 0.9977777777777778,
+      "test_f1_macro": 0.9634660421545668,
+      "test_precision_macro": 0.9983660130718954,
+      "test_recall_macro": 0.9375
+    },
+    "Decision Tree Classifier": {
+      "cv_accuracy_mean": 0.9957131492215024,
+      "cv_f1_mean": 0.9241365391783841,
+      "val_accuracy": 0.9977827050997783,
+      "val_f1_macro": 0.9491856677524431,
+      "test_accuracy": 0.9977777777777778,
+      "test_f1_macro": 0.9634660421545668,
+      "test_precision_macro": 0.9983660130718954,
+      "test_recall_macro": 0.9375
+    }
+  },
+  "per_class_metrics": {
+    "delay_rain_imminent": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 64.0
+    },
+    "irrigation_required": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 230.0
+    },
+    "optimal_moisture": {
+      "precision": 0.9934640522875817,
+      "recall": 1.0,
+      "f1-score": 0.9967213114754099,
+      "support": 152.0
+    },
+    "waterlogging_hazard": {
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1-score": 0.8571428571428571,
+      "support": 4.0
+    },
+    "accuracy": 0.9977777777777778,
+    "macro avg": {
+      "precision": 0.9983660130718954,
+      "recall": 0.9375,
+      "f1-score": 0.9634660421545668,
+      "support": 450.0
+    },
+    "weighted avg": {
+      "precision": 0.9977923021060277,
+      "recall": 0.9977777777777778,
+      "f1-score": 0.9976226906062972,
+      "support": 450.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      64,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      230,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      152,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      3
+    ]
+  ]
+}

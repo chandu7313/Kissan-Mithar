@@ -25,6 +25,7 @@ import { LandingPage } from './pages/public/LandingPage.js';
 import { ServiceDetailPage } from './pages/public/ServiceDetailPage.js';
 import { PartnershipsPage } from './pages/public/PartnershipsPage.js';
 import { AboutPage } from './pages/public/AboutPage.js';
+import { FarmerChatDrawer } from './components/chat/FarmerChatDrawer.js';
 
 const ROLE_DEFAULT_TABS: Record<string, string> = {
   SUPER_ADMIN: 'dashboard',
@@ -378,6 +379,7 @@ export const App: React.FC = () => {
       >
         {renderContent()}
       </Layout>
+      <FarmerChatDrawer />
     </SocketProvider>
   );
 };

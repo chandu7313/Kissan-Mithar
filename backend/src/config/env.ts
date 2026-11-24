@@ -51,6 +51,17 @@ export const env = {
   SUPABASE_URL: process.env.SUPABASE_URL || '',
   SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
 
+  // AI & Multi-Agent Engine
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+  GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-1.5-pro',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+  OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-4o',
+  ML_SERVICE_URL: process.env.ML_SERVICE_URL || 'http://localhost:8000',
+
+  // Payment Gateway
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || '',
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || '',
+
   // CORS: comma-separated allowed origins
   CORS_ORIGINS: process.env.CORS_ORIGINS || '*',
 };

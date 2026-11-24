@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/ai_state.dart';
 import '../../domain/models/ai_message.dart';
 import '../../data/services/mock_voice_providers.dart';
+import '../../data/services/live_ai_orchestrator.dart';
 import '../../domain/services/voice_service_interface.dart';
 import '../../../../core/localization/app_language.dart';
 
@@ -145,7 +146,7 @@ class AIAssistantNotifier extends StateNotifier<AIAssistantStateData> {
 
 final ttsProvider = Provider<TTSProvider>((ref) => LocalTTSProvider());
 final sttProvider = Provider<STTProvider>((ref) => MockSTTProvider());
-final aiOrchestratorProvider = Provider<AIOrchestrator>((ref) => MockAIOrchestrator());
+final aiOrchestratorProvider = Provider<AIOrchestrator>((ref) => LiveAIOrchestrator());
 
 final aiAssistantProvider = StateNotifierProvider<AIAssistantNotifier, AIAssistantStateData>((ref) {
   final tts = ref.watch(ttsProvider);

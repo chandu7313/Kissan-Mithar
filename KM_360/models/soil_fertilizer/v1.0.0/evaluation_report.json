@@ -1,0 +1,124 @@
+{
+  "model_key": "soil_fertility_v1.0.0",
+  "champion_algorithm": "Gradient Boosting Classifier",
+  "features": [
+    "N",
+    "P",
+    "K",
+    "ph",
+    "ec",
+    "organic_carbon"
+  ],
+  "classes": [
+    "high_fertility",
+    "low_fertility",
+    "medium_fertility",
+    "problematic_soil"
+  ],
+  "metrics": {
+    "test_accuracy": 0.9911111111111112,
+    "test_f1_macro": 0.9892691923576382,
+    "test_precision_macro": 0.9943808041636901,
+    "test_recall_macro": 0.9844686948853616
+  },
+  "model_comparison": {
+    "Random Forest Classifier": {
+      "cv_accuracy_mean": 0.9666462097965678,
+      "cv_accuracy_std": 0.005033352685862906,
+      "cv_f1_mean": 0.9274594982018358,
+      "val_accuracy": 0.9623059866962306,
+      "val_f1_macro": 0.9094730008185847,
+      "test_accuracy": 0.9711111111111111,
+      "test_f1_macro": 0.949148153547088,
+      "test_precision_macro": 0.971728650137741,
+      "test_recall_macro": 0.9298555996472664
+    },
+    "Gradient Boosting Classifier": {
+      "cv_accuracy_mean": 0.9833208319127174,
+      "cv_accuracy_std": 0.005451348960523783,
+      "cv_f1_mean": 0.9679162919821463,
+      "val_accuracy": 0.9822616407982262,
+      "val_f1_macro": 0.9646412013706915,
+      "test_accuracy": 0.9911111111111112,
+      "test_f1_macro": 0.9892691923576382,
+      "test_precision_macro": 0.9943808041636901,
+      "test_recall_macro": 0.9844686948853616
+    },
+    "Decision Tree Classifier": {
+      "cv_accuracy_mean": 0.9661700193203773,
+      "cv_accuracy_std": 0.0077611720408383225,
+      "cv_f1_mean": 0.9259637114214223,
+      "val_accuracy": 0.9645232815964523,
+      "val_f1_macro": 0.9151065101952667,
+      "test_accuracy": 0.9777777777777777,
+      "test_f1_macro": 0.948867041144308,
+      "test_precision_macro": 0.9661532493610807,
+      "test_recall_macro": 0.936629188712522
+    }
+  },
+  "per_class_metrics": {
+    "high_fertility": {
+      "precision": 1.0,
+      "recall": 0.9523809523809523,
+      "f1-score": 0.975609756097561,
+      "support": 21.0
+    },
+    "low_fertility": {
+      "precision": 0.99581589958159,
+      "recall": 0.9916666666666667,
+      "f1-score": 0.9937369519832986,
+      "support": 240.0
+    },
+    "medium_fertility": {
+      "precision": 0.9817073170731707,
+      "recall": 0.9938271604938271,
+      "f1-score": 0.9877300613496932,
+      "support": 162.0
+    },
+    "problematic_soil": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 27.0
+    },
+    "accuracy": 0.9911111111111112,
+    "macro avg": {
+      "precision": 0.9943808041636901,
+      "recall": 0.9844686948853616,
+      "f1-score": 0.9892691923576382,
+      "support": 450.0
+    },
+    "weighted avg": {
+      "precision": 0.9911831139231895,
+      "recall": 0.9911111111111112,
+      "f1-score": 0.9911043184282016,
+      "support": 450.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      20,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      238,
+      2,
+      0
+    ],
+    [
+      0,
+      1,
+      161,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      27
+    ]
+  ]
+}
