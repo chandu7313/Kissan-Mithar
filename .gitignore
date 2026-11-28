@@ -21,6 +21,7 @@ Thumbs.db
 build/
 dist/
 .dart_tool/
+.aws-sam/
 
 # Logs
 *.log
