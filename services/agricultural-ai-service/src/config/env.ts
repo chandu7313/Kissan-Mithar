@@ -30,7 +30,7 @@ export const env = {
   ),
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
   GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-1.5-pro',
-  ML_SERVICE_URL: process.env.ML_SERVICE_URL || 'http://localhost:8000',
+  ML_SERVICE_URL: (process.env.ML_SERVICE_URL || 'http://localhost:8000').replace(/\/+$/, ''),
   MEDIA_SERVICE_URL: process.env.MEDIA_SERVICE_URL || '',
   NOTIFICATION_SERVICE_URL: process.env.NOTIFICATION_SERVICE_URL || '',
   FIELD_SERVICE_URL: process.env.FIELD_SERVICE_URL || '',

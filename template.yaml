@@ -1,0 +1,387 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Kissan Mithar — Complete 9-Microservices AWS Lambda Architecture
+  (API Gateway + 7 Domain Microservices + KM 360 Python ML Inference)
+
+Globals:
+  Function:
+    Architectures:
+      - arm64
+    MemorySize: 512
+    Timeout: 29
+    Tracing: Active
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+  ApiPrefix:
+    Type: String
+    Default: /api
+  CorsOrigins:
+    Type: String
+    Default: "*"
+  LogLevel:
+    Type: String
+    Default: info
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+  DirectUrl:
+    Type: String
+    NoEcho: true
+  JwtSecret:
+    Type: String
+    NoEcho: true
+  JwtExpiresIn:
+    Type: String
+    Default: 30d
+  InternalServiceSecret:
+    Type: String
+    NoEcho: true
+    Default: kissan_mithar_prod_internal_secret_2026_rotate
+  FirebaseProjectId:
+    Type: String
+    Default: kissan-mithar-app
+  FirebaseClientEmail:
+    Type: String
+    Default: ""
+  FirebasePrivateKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+  MockFirebaseAuth:
+    Type: String
+    Default: "false"
+  CloudinaryCloudName:
+    Type: String
+    Default: kissan-mithar
+  CloudinaryApiKey:
+    Type: String
+    Default: ""
+  CloudinaryApiSecret:
+    Type: String
+    NoEcho: true
+    Default: ""
+  CloudinaryUploadPreset:
+    Type: String
+    Default: kissan_mithar_uploads
+  WeatherApiKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+  WeatherApiUrl:
+    Type: String
+    Default: https://api.openweathermap.org/data/2.5
+  SmsProvider:
+    Type: String
+    Default: FAST2SMS
+  SmsApiKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+  SupabaseUrl:
+    Type: String
+    Default: ""
+  SupabaseAnonKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+  GeminiApiKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+
+Resources:
+  PlatformHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: $default
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Authorization
+          - X-Request-Id
+          - Idempotency-Key
+
+  # 1. Media Service
+  MediaServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-media-${Environment}
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NODE_ENV: !Ref Environment
+          API_PREFIX: !Ref ApiPrefix
+          CORS_ORIGINS: !Ref CorsOrigins
+          JWT_SECRET: !Ref JwtSecret
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+          CLOUDINARY_CLOUD_NAME: !Ref CloudinaryCloudName
+          CLOUDINARY_API_KEY: !Ref CloudinaryApiKey
+          CLOUDINARY_API_SECRET: !Ref CloudinaryApiSecret
+          CLOUDINARY_UPLOAD_PRESET: !Ref CloudinaryUploadPreset
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./services/media-service
+      DockerTag: latest
+
+  # 2. Identity & Farmer Service
+  IdentityServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-identity-${Environment}
+      MemorySize: 768
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NODE_ENV: !Ref Environment
+          API_PREFIX: !Ref ApiPrefix
+          CORS_ORIGINS: !Ref CorsOrigins
+          DATABASE_URL: !Ref DatabaseUrl
+          DIRECT_URL: !Ref DirectUrl
+          JWT_SECRET: !Ref JwtSecret
+          JWT_EXPIRES_IN: !Ref JwtExpiresIn
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+          FIREBASE_PROJECT_ID: !Ref FirebaseProjectId
+          FIREBASE_CLIENT_EMAIL: !Ref FirebaseClientEmail
+          FIREBASE_PRIVATE_KEY: !Ref FirebasePrivateKey
+          MOCK_FIREBASE_AUTH: !Ref MockFirebaseAuth
+          SMS_PROVIDER: !Ref SmsProvider
+          SMS_API_KEY: !Ref SmsApiKey
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./services/identity-service
+      DockerTag: latest
+
+  # 3. Analytics & Telemetry Service
+  AnalyticsServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-analytics-${Environment}
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NODE_ENV: !Ref Environment
+          API_PREFIX: !Ref ApiPrefix
+          CORS_ORIGINS: !Ref CorsOrigins
+          DATABASE_URL: !Ref DatabaseUrl
+          DIRECT_URL: !Ref DirectUrl
+          JWT_SECRET: !Ref JwtSecret
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./services/analytics-service
+      DockerTag: latest
+
+  # 4. KM 360 Python ML Inference Service
+  Km360MlServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-km360-ml-${Environment}
+      MemorySize: 2048
+      Timeout: 30
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+          REQUIRE_INTERNAL_AUTH: "true"
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./KM_360
+      DockerTag: latest
+
+  # 5. Notification Service
+  NotificationServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-notification-${Environment}
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NODE_ENV: !Ref Environment
+          API_PREFIX: !Ref ApiPrefix
+          CORS_ORIGINS: !Ref CorsOrigins
+          DATABASE_URL: !Ref DatabaseUrl
+          DIRECT_URL: !Ref DirectUrl
+          JWT_SECRET: !Ref JwtSecret
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+          FIREBASE_PROJECT_ID: !Ref FirebaseProjectId
+          FIREBASE_CLIENT_EMAIL: !Ref FirebaseClientEmail
+          FIREBASE_PRIVATE_KEY: !Ref FirebasePrivateKey
+          MOCK_FIREBASE_AUTH: !Ref MockFirebaseAuth
+          IDENTITY_SERVICE_URL: !GetAtt IdentityServiceFunctionUrl.FunctionUrl
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./services/notification-service
+      DockerTag: latest
+
+  # 6. Field Services & Booking Service
+  FieldServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-field-${Environment}
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NODE_ENV: !Ref Environment
+          API_PREFIX: !Ref ApiPrefix
+          CORS_ORIGINS: !Ref CorsOrigins
+          DATABASE_URL: !Ref DatabaseUrl
+          DIRECT_URL: !Ref DirectUrl
+          JWT_SECRET: !Ref JwtSecret
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+          MEDIA_SERVICE_URL: !GetAtt MediaServiceFunctionUrl.FunctionUrl
+          NOTIFICATION_SERVICE_URL: !GetAtt NotificationServiceFunctionUrl.FunctionUrl
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./services/field-service
+      DockerTag: latest
+
+  # 7. Marketplace Service
+  MarketplaceServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-marketplace-${Environment}
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NODE_ENV: !Ref Environment
+          API_PREFIX: !Ref ApiPrefix
+          CORS_ORIGINS: !Ref CorsOrigins
+          DATABASE_URL: !Ref DatabaseUrl
+          DIRECT_URL: !Ref DirectUrl
+          JWT_SECRET: !Ref JwtSecret
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+          NOTIFICATION_SERVICE_URL: !GetAtt NotificationServiceFunctionUrl.FunctionUrl
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./services/marketplace-service
+      DockerTag: latest
+
+  # 8. Agricultural AI Service
+  AgriculturalAiServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-agricultural-ai-${Environment}
+      MemorySize: 1024
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NODE_ENV: !Ref Environment
+          API_PREFIX: !Ref ApiPrefix
+          CORS_ORIGINS: !Ref CorsOrigins
+          DATABASE_URL: !Ref DatabaseUrl
+          DIRECT_URL: !Ref DirectUrl
+          JWT_SECRET: !Ref JwtSecret
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+          GEMINI_API_KEY: !Ref GeminiApiKey
+          WEATHER_API_KEY: !Ref WeatherApiKey
+          WEATHER_API_URL: !Ref WeatherApiUrl
+          ML_SERVICE_URL: !GetAtt Km360MlServiceFunctionUrl.FunctionUrl
+          MEDIA_SERVICE_URL: !GetAtt MediaServiceFunctionUrl.FunctionUrl
+          NOTIFICATION_SERVICE_URL: !GetAtt NotificationServiceFunctionUrl.FunctionUrl
+          FIELD_SERVICE_URL: !GetAtt FieldServiceFunctionUrl.FunctionUrl
+          MARKETPLACE_SERVICE_URL: !GetAtt MarketplaceServiceFunctionUrl.FunctionUrl
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./services/agricultural-ai-service
+      DockerTag: latest
+
+  # 9. API Gateway (Public Entry Point)
+  ApiGatewayFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      FunctionName: !Sub kissan-mithar-api-gateway-${Environment}
+      MemorySize: 1024
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          NODE_ENV: !Ref Environment
+          API_PREFIX: !Ref ApiPrefix
+          CORS_ORIGINS: !Ref CorsOrigins
+          DATABASE_URL: !Ref DatabaseUrl
+          DIRECT_URL: !Ref DirectUrl
+          JWT_SECRET: !Ref JwtSecret
+          JWT_EXPIRES_IN: !Ref JwtExpiresIn
+          INTERNAL_SERVICE_SECRET: !Ref InternalServiceSecret
+          SERVICE_TIMEOUT_MS: "20000"
+          MEDIA_SERVICE_URL: !GetAtt MediaServiceFunctionUrl.FunctionUrl
+          NOTIFICATION_SERVICE_URL: !GetAtt NotificationServiceFunctionUrl.FunctionUrl
+          FIELD_SERVICE_URL: !GetAtt FieldServiceFunctionUrl.FunctionUrl
+          MARKETPLACE_SERVICE_URL: !GetAtt MarketplaceServiceFunctionUrl.FunctionUrl
+          AI_SERVICE_URL: !GetAtt AgriculturalAiServiceFunctionUrl.FunctionUrl
+          IDENTITY_SERVICE_URL: !GetAtt IdentityServiceFunctionUrl.FunctionUrl
+          ANALYTICS_SERVICE_URL: !GetAtt AnalyticsServiceFunctionUrl.FunctionUrl
+          ML_SERVICE_URL: !GetAtt Km360MlServiceFunctionUrl.FunctionUrl
+      Events:
+        RootProxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PlatformHttpApi
+            Path: /
+            Method: ANY
+        CatchAllProxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PlatformHttpApi
+            Path: /{proxy+}
+            Method: ANY
+    Metadata:
+      Dockerfile: Dockerfile.lambda
+      DockerContext: ./services/api-gateway
+      DockerTag: latest
+
+Outputs:
+  HttpApiGatewayUrl:
+    Description: Base HTTPS URL for Kissan Mithar API Gateway
+    Value: !Sub https://${PlatformHttpApi}.execute-api.${AWS::Region}.amazonaws.com
+  ApiEndpointUrl:
+    Description: Public API prefix URL for Web & Mobile clients
+    Value: !Sub https://${PlatformHttpApi}.execute-api.${AWS::Region}.amazonaws.com${ApiPrefix}
+  ApiGatewayFunctionUrl:
+    Value: !GetAtt ApiGatewayFunctionUrl.FunctionUrl
+  IdentityServiceUrl:
+    Value: !GetAtt IdentityServiceFunctionUrl.FunctionUrl
+  MediaServiceUrl:
+    Value: !GetAtt MediaServiceFunctionUrl.FunctionUrl
+  NotificationServiceUrl:
+    Value: !GetAtt NotificationServiceFunctionUrl.FunctionUrl
+  FieldServiceUrl:
+    Value: !GetAtt FieldServiceFunctionUrl.FunctionUrl
+  MarketplaceServiceUrl:
+    Value: !GetAtt MarketplaceServiceFunctionUrl.FunctionUrl
+  AgriculturalAiServiceUrl:
+    Value: !GetAtt AgriculturalAiServiceFunctionUrl.FunctionUrl
+  AnalyticsServiceUrl:
+    Value: !GetAtt AnalyticsServiceFunctionUrl.FunctionUrl
+  Km360MlServiceUrl:
+    Value: !GetAtt Km360MlServiceFunctionUrl.FunctionUrl
