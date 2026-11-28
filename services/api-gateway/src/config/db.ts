@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client';
+import { env } from './env.js';
 
 declare global {
   // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined;
 }
 
-function getDatabaseUrl(): string | undefined {
-  let url = process.env.DATABASE_URL;
-  if (!url) return undefined;
+function getDatabaseUrl(): string {
+  let url = env.DATABASE_URL;
 
   // Supabase pooler host: automatically route to Transaction mode port 6543
   // to avoid "EMAXCONNSESSION max clients reached in session mode (limit 15)"
