@@ -1,0 +1,401 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+enum OrchardRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  EXPERT_ASSIGNED
+  PLAN_READY
+  COMPLETED
+}
+
+enum FertilizerRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  EXPERT_ASSIGNED
+  PLAN_READY
+  COMPLETED
+  CANCELLED
+}
+
+enum DiseaseRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  EXPERT_ASSIGNED
+  DIAGNOSED
+  COMPLETED
+  CANCELLED
+}
+
+enum MessageSender {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum MessageContentType {
+  TEXT
+  VOICE
+  IMAGE
+  PRODUCT_CARD
+  DIAGNOSIS_CARD
+  BOOKING_CARD
+  ORDER_CONFIRMATION
+}
+
+enum KnowledgeSourceType {
+  ICAR_PUBLICATION
+  STATE_AGRI_UNIVERSITY
+  GOVT_DEPARTMENT
+  RESEARCH_PAPER
+  PRODUCT_LABEL
+  VERIFIED_EXPERT
+}
+
+/// Scoped read-only Farmer projection until Stage 5 Identity REST API
+model Farmer {
+  id           String  @id @default(uuid())
+  phoneNumber  String  @unique
+  name         String
+  photoUrl     String?
+  village      String?
+  district     String?
+  state        String?
+  landAcres    Float?  @default(0.0)
+  primaryCrop  String?
+  languageCode String  @default("en")
+
+  orchardRequests    OrchardRequest[]
+  fertilizerRequests FertilizerRequest[]
+  diseaseRequests    DiseaseRequest[]
+  memory             FarmerMemory?
+  sessions           ConversationSession[]
+  predictionLogs     PredictionAuditLog[]
+
+  @@map("farmers")
+}
+
+/// Scoped read-only Expert projection until Stage 5 / Field API hydration
+model Expert {
+  id             String  @id @default(uuid())
+  name           String
+  phoneNumber    String  @unique
+  photoUrl       String?
+  specialization String
+  rating         Float   @default(4.8)
+
+  assignedOrchardRequests    OrchardRequest[]
+  advisories                 CropAdvisory[]
+  assignedFertilizerRequests FertilizerRequest[]
+  assignedDiseaseRequests    DiseaseRequest[]
+
+  @@map("experts")
+}
+
+model OrchardRequest {
+  id            String               @id @default(uuid())
+  farmerId      String
+  expertId      String?
+  status        OrchardRequestStatus @default(SUBMITTED)
+  surveyMapUrl  String?
+  surveyMapType String?
+  photos        Json
+  gps           Json
+  landDetails   Json
+  preferences   Json?
+  notes         String?
+  voiceNoteUrl  String?
+  submittedAt   DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  farmer Farmer         @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert Expert?        @relation(fields: [expertId], references: [id], onDelete: SetNull)
+  report OrchardReport?
+
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+  @@map("orchard_requests")
+}
+
+model OrchardReport {
+  id                     String   @id @default(uuid())
+  orchardRequestId       String   @unique
+  pdfUrl                 String?
+  summary                String
+  recommendedVarieties   Json
+  plantationLayout       Json
+  waterRequirement       String
+  soilTreatment          String
+  fertilizerSchedule     String?
+  pestControl            String
+  estimatedBudget        Float
+  projectedRoi           String?
+  implementationTimeline String?
+  governmentSchemes      String?
+  maintenanceCalendar    String?
+  generatedAt            DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  orchardRequest OrchardRequest @relation(fields: [orchardRequestId], references: [id], onDelete: Cascade)
+
+  @@map("orchard_reports")
+}
+
+model CropAdvisory {
+  id          String   @id @default(uuid())
+  expertId    String?
+  crop        String
+  title       String
+  description String
+  alertLevel  String   @default("NORMAL")
+  season      String   @default("KHARIF")
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  expert Expert? @relation(fields: [expertId], references: [id], onDelete: SetNull)
+
+  @@index([crop])
+  @@index([alertLevel])
+  @@map("crop_advisories")
+}
+
+model FertilizerRequest {
+  id                  String                  @id @default(uuid())
+  farmerId            String
+  expertId            String?
+  status              FertilizerRequestStatus @default(SUBMITTED)
+  cropType            String?
+  cropAge             String?
+  landAcres           Float?
+  soilType            String?
+  problemCategory     String?
+  issueDescription    String?
+  voiceNoteUrl        String?
+  voiceText           String?
+  photos              Json
+  gps                 Json
+  previousFertilizers String?
+  irrigationType      String?
+  notes               String?
+  submittedAt         DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  farmer Farmer          @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert Expert?         @relation(fields: [expertId], references: [id], onDelete: SetNull)
+  plan   FertilizerPlan?
+
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+  @@index([cropType])
+  @@map("fertilizer_requests")
+}
+
+model FertilizerPlan {
+  id                  String   @id @default(uuid())
+  fertilizerRequestId String   @unique
+  diagnosis           String
+  summary             String
+  schedule            Json
+  organicAlternatives String?
+  soilTreatment       String?
+  precautions         String?
+  estimatedBudget     Float?
+  pdfUrl              String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  fertilizerRequest FertilizerRequest @relation(fields: [fertilizerRequestId], references: [id], onDelete: Cascade)
+
+  @@map("fertilizer_plans")
+}
+
+model DiseaseRequest {
+  id                 String               @id @default(uuid())
+  farmerId           String
+  expertId           String?
+  status             DiseaseRequestStatus @default(SUBMITTED)
+  cropType           String?
+  cropAge            String?
+  affectedPart       String?
+  symptomDescription String?
+  voiceNoteUrl       String?
+  voiceText          String?
+  photos             Json
+  gps                Json?
+  spreadRate         String?
+  previousPesticides String?
+  notes              String?
+  submittedAt        DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  farmer    Farmer                @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert    Expert?               @relation(fields: [expertId], references: [id], onDelete: SetNull)
+  treatment DiseaseTreatmentPlan?
+
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+  @@index([cropType])
+  @@map("disease_requests")
+}
+
+model DiseaseTreatmentPlan {
+  id                   String   @id @default(uuid())
+  diseaseRequestId     String   @unique
+  diseaseName          String
+  causalOrganism       String?
+  severity             String   @default("MEDIUM")
+  diagnosisSummary     String
+  immediateAction      String
+  chemicalTreatment    Json
+  organicTreatment     String?
+  preventativeMeasures String?
+  followUpDays         Int?     @default(7)
+  estimatedCost        Float?
+  pdfUrl               String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  diseaseRequest DiseaseRequest @relation(fields: [diseaseRequestId], references: [id], onDelete: Cascade)
+
+  @@map("disease_treatment_plans")
+}
+
+model ConversationSession {
+  id           String        @id @default(uuid())
+  farmerId     String
+  title        String?       @default("New Farm Consultation")
+  languageCode String        @default("en")
+  isActive     Boolean       @default(true)
+  metadata     Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  farmer   Farmer        @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@index([farmerId])
+  @@index([isActive])
+  @@index([createdAt])
+  @@map("conversation_sessions")
+}
+
+model ChatMessage {
+  id          String              @id @default(uuid())
+  sessionId   String
+  sender      MessageSender
+  contentType MessageContentType  @default(TEXT)
+  text        String              @db.Text
+  audioUrl    String?
+  imageUrl    String?
+  toolCalls   Json?
+  uiCards     Json?
+  tokensUsed  Int?                @default(0)
+  createdAt   DateTime            @default(now())
+
+  session ConversationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+model FarmerMemory {
+  id               String    @id @default(uuid())
+  farmerId         String    @unique
+  consentGiven     Boolean   @default(false)
+  consentTimestamp DateTime?
+  soilType         String?
+  totalLandAcres   Float?
+  irrigationSource String?
+  farmLocationGps  Json?
+  activeCrops      Json?
+  facts            Json?
+  notes            String?   @db.Text
+  updatedAt        DateTime  @updatedAt
+
+  farmer Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  @@map("farmer_memories")
+}
+
+model KnowledgeDocument {
+  id              String              @id @default(uuid())
+  title           String
+  sourceName      String
+  sourceType      KnowledgeSourceType @default(STATE_AGRI_UNIVERSITY)
+  sourceUrl       String?
+  documentVersion String              @default("1.0")
+  applicableCrops String[]
+  applicableState String?
+  languageCode    String              @default("en")
+  isVerified      Boolean             @default(true)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  chunks KnowledgeChunk[]
+
+  @@index([sourceType])
+  @@index([applicableState])
+  @@map("knowledge_documents")
+}
+
+model KnowledgeChunk {
+  id         String            @id @default(uuid())
+  documentId String
+  content    String            @db.Text
+  metadata   Json?
+  chunkIndex Int
+  createdAt  DateTime          @default(now())
+
+  document KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("knowledge_chunks")
+}
+
+model MLModelRegistry {
+  id             String               @id @default(uuid())
+  modelKey       String               @unique
+  name           String
+  version        String
+  framework      String
+  artifactPath   String
+  accuracyMetric Float
+  features       Json
+  isActive       Boolean              @default(true)
+  deployedAt     DateTime             @default(now())
+
+  predictions PredictionAuditLog[]
+
+  @@map("ml_model_registry")
+}
+
+model PredictionAuditLog {
+  id            String          @id @default(uuid())
+  modelId       String
+  farmerId      String?
+  inputFeatures Json
+  outputLabel   String
+  confidence    Float
+  latencyMs     Int
+  createdAt     DateTime        @default(now())
+
+  model  MLModelRegistry @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  farmer Farmer?         @relation(fields: [farmerId], references: [id], onDelete: SetNull)
+
+  @@index([modelId])
+  @@index([farmerId])
+  @@index([createdAt])
+  @@map("prediction_audit_logs")
+}

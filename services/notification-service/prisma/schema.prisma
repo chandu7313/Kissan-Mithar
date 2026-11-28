@@ -1,0 +1,102 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+enum Role {
+  FARMER
+  EXPERT
+  ADMIN
+}
+
+enum NotificationType {
+  ALERT
+  SUCCESS
+  CONSULTATION
+  MARKET
+  INFO
+}
+
+enum AuthAction {
+  LOGIN
+  LOGOUT
+  TOKEN_REFRESH
+  PASSWORD_RESET
+}
+
+/// Scoped read-only projection until Identity Service internal API extraction (Stage 5)
+model Farmer {
+  id           String   @id @default(uuid())
+  phoneNumber  String   @unique
+  name         String
+  village      String?
+  district     String?
+  primaryCrop  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  notifications Notification[]
+  devices       Device[]
+
+  @@map("farmers")
+}
+
+/// Owned exclusively by Notification Service
+model Notification {
+  id        String           @id @default(uuid())
+  farmerId  String
+  title     String
+  body      String
+  type      NotificationType @default(INFO)
+  deepLink  String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  farmer Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  @@index([farmerId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+/// Scoped read-only projection for FCM token resolution until Stage 5
+model Device {
+  id         String   @id @default(uuid())
+  farmerId   String
+  fcmToken   String   @unique
+  platform   String   @default("android")
+  lastActive DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  farmer Farmer @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  @@index([farmerId])
+  @@map("devices")
+}
+
+/// Transitional audit log write for ADMIN_BROADCAST_SENT until Stage 5 audit API
+model AuthAuditLog {
+  id        String     @id @default(uuid())
+  userId    String
+  userType  Role       @default(EXPERT)
+  userName  String?
+  userEmail String?
+  action    AuthAction
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+  timestamp DateTime   @default(now())
+
+  @@index([userId])
+  @@index([userType])
+  @@index([action])
+  @@index([timestamp])
+  @@map("auth_audit_logs")
+}

@@ -1,8 +1,22 @@
 import os
 import json
-from fastapi import FastAPI
+import time
+import hmac
+import hashlib
+import uuid
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.endpoints import router as ml_router
+
+INTERNAL_SERVICE_SECRET = os.getenv(
+    "INTERNAL_SERVICE_SECRET",
+    "kissan_mithar_internal_service_secret_dev_2026",
+)
+REQUIRE_INTERNAL_AUTH = os.getenv("REQUIRE_INTERNAL_AUTH", "false").lower() == "true"
+
+_PUBLIC_PATHS = {"/health", "/ml/health", "/readiness", "/metrics", "/models", "/ml/models", "/docs", "/openapi.json", "/redoc"}
+_METRICS = {"requests_total": 0, "errors_total": 0, "total_inference_ms": 0.0}
 
 app = FastAPI(
     title="KM 360 — Agricultural Intelligence Machine Learning Microservice",
@@ -18,6 +32,75 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def request_tracing_and_service_auth(request: Request, call_next):
+    request_id = request.headers.get("x-request-id") or str(uuid.uuid4())
+    start_time = time.perf_counter()
+
+    if REQUIRE_INTERNAL_AUTH and request.method != "OPTIONS" and request.url.path not in _PUBLIC_PATHS:
+        service_name = request.headers.get("x-service-name", "")
+        timestamp = request.headers.get("x-service-timestamp", "")
+        signature = request.headers.get("x-service-signature", "")
+
+        valid = False
+        try:
+            ts_ms = int(timestamp)
+            now_ms = int(time.time() * 1000)
+            if service_name and abs(now_ms - ts_ms) <= 5 * 60 * 1000:
+                payload = f"{service_name}:{timestamp}:{request.method.upper()}:{request.url.path}"
+                expected = hmac.new(
+                    INTERNAL_SERVICE_SECRET.encode("utf-8"),
+                    payload.encode("utf-8"),
+                    hashlib.sha256,
+                ).hexdigest()
+                valid = hmac.compare_digest(signature, expected)
+        except Exception:
+            valid = False
+
+        if not valid:
+            return JSONResponse(
+                status_code=403,
+                content={
+                    "success": False,
+                    "error": {
+                        "message": "Forbidden: Valid internal service signature required",
+                        "statusCode": 403,
+                        "requestId": request_id,
+                    },
+                },
+                headers={"x-request-id": request_id},
+            )
+
+    response = await call_next(request)
+    elapsed_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
+    _METRICS["requests_total"] += 1
+    _METRICS["total_inference_ms"] += elapsed_ms
+    if response.status_code >= 500:
+        _METRICS["errors_total"] += 1
+
+    response.headers["x-request-id"] = request_id
+    response.headers["x-inference-ms"] = str(elapsed_ms)
+    return response
+
+
+@app.get("/readiness")
+def readiness_check():
+    return {"ready": True, "service": "KM 360", "version": "1.2.0"}
+
+
+@app.get("/metrics")
+def ml_metrics():
+    total = _METRICS["requests_total"]
+    avg_ms = round(_METRICS["total_inference_ms"] / total, 2) if total > 0 else 0.0
+    return {
+        "service": "KM 360",
+        "requests_total": total,
+        "errors_total": _METRICS["errors_total"],
+        "avg_inference_ms": avg_ms,
+        "require_internal_auth": REQUIRE_INTERNAL_AUTH,
+    }
 
 def get_loaded_models_registry():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

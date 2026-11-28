@@ -1,0 +1,271 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+enum ConsultationStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum ConsultationMode {
+  VOICE
+  VIDEO
+  CHAT
+}
+
+enum LabourRequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  LABOURERS_ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum LabourTaskType {
+  PLOUGHING
+  SOWING
+  TRANSPLANTING
+  WEEDING
+  SPRAYING
+  HARVESTING
+  IRRIGATION
+  PRUNING
+  LOADING_UNLOADING
+  FENCING
+  OTHER
+}
+
+enum CollaborationVerificationStatus {
+  NOT_VERIFIED
+  IN_PROGRESS
+  VERIFIED
+  VERIFICATION_FAILED
+}
+
+enum CollaborationReviewStatus {
+  NEW
+  UNDER_REVIEW
+  NEEDS_INFORMATION
+  ACCEPTED
+  REJECTED
+  CLOSED
+}
+
+/// Scoped read-only Farmer projection until Stage 5 Identity REST API
+model Farmer {
+  id          String   @id @default(uuid())
+  phoneNumber String   @unique
+  name        String
+  photoUrl    String?
+  village     String?
+  district    String?
+  state       String?
+
+  consultations  Consultation[]
+  labourRequests LabourRequest[]
+
+  @@map("farmers")
+}
+
+/// Owned by Field Services & Booking
+model Expert {
+  id              String   @id @default(uuid())
+  firebaseUid     String?  @unique
+  name            String
+  phoneNumber     String   @unique
+  email           String?  @unique
+  passwordHash    String?
+  photoUrl        String?
+  specialization  String
+  experienceYears Int      @default(5)
+  rating          Float    @default(4.8)
+  isAvailable     Boolean  @default(true)
+  staffRole       String?  @default("AGRONOMY_EXPERT")
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  consultations          Consultation[]
+  assignedLabourRequests LabourRequest[]
+
+  @@map("experts")
+}
+
+model Consultation {
+  id           String             @id @default(uuid())
+  farmerId     String
+  expertId     String?
+  mode         ConsultationMode   @default(VOICE)
+  category     String
+  scheduledAt  DateTime
+  language     String             @default("English")
+  status       ConsultationStatus @default(SCHEDULED)
+  notes        String?
+  mediaUrls    Json?
+  voiceNoteUrl String?
+  prescription Json?
+  followUpDate DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  farmer Farmer  @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert Expert? @relation(fields: [expertId], references: [id], onDelete: SetNull)
+
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+  @@map("consultations")
+}
+
+model LabourRequest {
+  id                  String              @id @default(uuid())
+  farmerId            String
+  expertId            String?
+  status              LabourRequestStatus @default(SUBMITTED)
+  taskType            LabourTaskType      @default(OTHER)
+  taskDescription     String?
+  cropType            String?
+  landAcres           Float?
+  labourersRequired   Int                 @default(1)
+  preferredStartDate  DateTime?
+  preferredEndDate    DateTime?
+  durationDays        Int?
+  dailyWage           Float?
+  totalBudget         Float?
+  mealsProvided       Boolean             @default(false)
+  transportProvided   Boolean             @default(false)
+  gps                 Json?
+  voiceNoteUrl        String?
+  voiceText           String?
+  photos              Json?
+  specialRequirements String?
+  notes               String?
+  urgency             String              @default("NORMAL")
+  submittedAt         DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  farmer      Farmer             @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  expert      Expert?            @relation(fields: [expertId], references: [id], onDelete: SetNull)
+  allocations LabourAllocation[]
+
+  @@index([farmerId])
+  @@index([expertId])
+  @@index([status])
+  @@index([taskType])
+  @@index([urgency])
+  @@map("labour_requests")
+}
+
+model LabourAllocation {
+  id              String    @id @default(uuid())
+  labourRequestId String
+  labourerName    String
+  labourerPhone   String?
+  skillset        String?
+  dailyWage       Float?
+  startDate       DateTime?
+  endDate         DateTime?
+  daysWorked      Int?
+  totalPaid       Float?
+  isConfirmed     Boolean   @default(false)
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  labourRequest LabourRequest @relation(fields: [labourRequestId], references: [id], onDelete: Cascade)
+
+  @@index([labourRequestId])
+  @@map("labour_allocations")
+}
+
+model CollaborationRequest {
+  id                    String                          @id @default(uuid())
+  referenceId           String                          @unique
+  companyName           String
+  contactPerson         String
+  officialEmail         String
+  phoneNumber           String
+  organizationType      String
+  collaborationCategory String
+  country               String                          @default("India")
+  state                 String
+  cityDistrict          String?
+  website               String?
+  proposalDescription   String                          @db.Text
+  expectedOutcomes      String?                         @db.Text
+  documentUrl           String?
+  documentName          String?
+  documentSizeBytes     Int?
+  consentAgreed         Boolean                         @default(true)
+  verificationStatus    CollaborationVerificationStatus @default(NOT_VERIFIED)
+  verificationNotes     String?                         @db.Text
+  verifiedByAdminId     String?
+  verifiedAt            DateTime?
+  reviewStatus          CollaborationReviewStatus       @default(NEW)
+  assignedReviewerId    String?
+  assignedReviewerName  String?
+  decisionNotes         String?                         @db.Text
+  rejectionReason       String?                         @db.Text
+  informationRequested  String?                         @db.Text
+  decidedByAdminId      String?
+  decidedAt             DateTime?
+  concurrencyVersion    Int                             @default(1)
+  submittedAt           DateTime                        @default(now())
+  updatedAt             DateTime                        @updatedAt
+
+  history CollaborationAuditLog[]
+  notes   CollaborationInternalNote[]
+
+  @@index([reviewStatus])
+  @@index([verificationStatus])
+  @@index([organizationType])
+  @@index([collaborationCategory])
+  @@index([submittedAt])
+  @@index([officialEmail])
+  @@map("collaboration_requests")
+}
+
+model CollaborationAuditLog {
+  id            String               @id @default(uuid())
+  requestId     String
+  action        String
+  previousState Json?
+  newState      Json?
+  reason        String?              @db.Text
+  actorId       String?
+  actorName     String?
+  actorRole     String?
+  createdAt     DateTime             @default(now())
+
+  request CollaborationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([createdAt])
+  @@map("collaboration_audit_logs")
+}
+
+model CollaborationInternalNote {
+  id         String               @id @default(uuid())
+  requestId  String
+  authorId   String
+  authorName String
+  authorRole String
+  note       String               @db.Text
+  createdAt  DateTime             @default(now())
+
+  request CollaborationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  @@index([requestId])
+  @@index([createdAt])
+  @@map("collaboration_internal_notes")
+}

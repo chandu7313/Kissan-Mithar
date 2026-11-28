@@ -1,0 +1,243 @@
+# ==============================================================================
+# Docker Compose — Kissan Mithar Strangler Fig Platform (Local & Staging)
+# ==============================================================================
+# Orchestrates the transitional API Gateway alongside Stage 3 & Stage 4 extracted
+# domain microservices and Python ML (KM_360).
+#
+# Usage:
+#   docker compose -f docker-compose.platform.yml up -d --build
+# ==============================================================================
+
+services:
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: km-api-gateway
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./services/api-gateway/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - MEDIA_SERVICE_URL=http://media-service:4010
+      - NOTIFICATION_SERVICE_URL=http://notification-service:4011
+      - FIELD_SERVICE_URL=http://field-service:4012
+      - MARKETPLACE_SERVICE_URL=http://marketplace-service:4013
+      - AI_SERVICE_URL=http://agricultural-ai-service:4014
+      - IDENTITY_SERVICE_URL=http://identity-service:4015
+      - ANALYTICS_SERVICE_URL=http://analytics-service:4016
+      - ML_SERVICE_URL=http://ml-service:8000
+    depends_on:
+      media-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+      field-service:
+        condition: service_healthy
+      marketplace-service:
+        condition: service_healthy
+      agricultural-ai-service:
+        condition: service_healthy
+      identity-service:
+        condition: service_healthy
+      analytics-service:
+        condition: service_healthy
+    networks:
+      - kissan-platform-net
+
+  media-service:
+    build:
+      context: ./services/media-service
+      dockerfile: Dockerfile
+    container_name: km-media-service
+    restart: unless-stopped
+    ports:
+      - "4010:4010"
+    env_file:
+      - ./services/api-gateway/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4010
+      - PUBLIC_BASE_URL=http://localhost:4010
+    volumes:
+      - kissan_media_uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4010/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - kissan-platform-net
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: km-notification-service
+    restart: unless-stopped
+    ports:
+      - "4011:4011"
+    env_file:
+      - ./services/api-gateway/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4011
+      - IDENTITY_SERVICE_URL=http://identity-service:4015
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4011/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - kissan-platform-net
+
+  field-service:
+    build:
+      context: ./services/field-service
+      dockerfile: Dockerfile
+    container_name: km-field-service
+    restart: unless-stopped
+    ports:
+      - "4012:4012"
+    env_file:
+      - ./services/api-gateway/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4012
+      - MEDIA_SERVICE_URL=http://media-service:4010
+      - NOTIFICATION_SERVICE_URL=http://notification-service:4011
+      - GATEWAY_URL=http://api-gateway:4000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4012/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - kissan-platform-net
+
+  marketplace-service:
+    build:
+      context: ./services/marketplace-service
+      dockerfile: Dockerfile
+    container_name: km-marketplace-service
+    restart: unless-stopped
+    ports:
+      - "4013:4013"
+    env_file:
+      - ./services/api-gateway/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4013
+      - NOTIFICATION_SERVICE_URL=http://notification-service:4011
+      - GATEWAY_URL=http://api-gateway:4000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4013/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - kissan-platform-net
+
+  agricultural-ai-service:
+    build:
+      context: ./services/agricultural-ai-service
+      dockerfile: Dockerfile
+    container_name: km-agricultural-ai-service
+    restart: unless-stopped
+    ports:
+      - "4014:4014"
+    env_file:
+      - ./services/api-gateway/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4014
+      - ML_SERVICE_URL=http://ml-service:8000
+      - MEDIA_SERVICE_URL=http://media-service:4010
+      - NOTIFICATION_SERVICE_URL=http://notification-service:4011
+      - FIELD_SERVICE_URL=http://field-service:4012
+      - MARKETPLACE_SERVICE_URL=http://marketplace-service:4013
+      - GATEWAY_URL=http://api-gateway:4000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4014/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - kissan-platform-net
+
+  identity-service:
+    build:
+      context: ./services/identity-service
+      dockerfile: Dockerfile
+    container_name: km-identity-service
+    restart: unless-stopped
+    ports:
+      - "4015:4015"
+    env_file:
+      - ./services/api-gateway/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4015
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4015/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - kissan-platform-net
+
+  analytics-service:
+    build:
+      context: ./services/analytics-service
+      dockerfile: Dockerfile
+    container_name: km-analytics-service
+    restart: unless-stopped
+    ports:
+      - "4016:4016"
+    env_file:
+      - ./services/api-gateway/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4016
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4016/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - kissan-platform-net
+
+  ml-service:
+    build:
+      context: ./KM_360
+      dockerfile: Dockerfile.ml
+    container_name: km-ml-service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - kissan-platform-net
+
+volumes:
+  kissan_media_uploads:
+    name: kissan_media_uploads
+
+networks:
+  kissan-platform-net:
+    driver: bridge
